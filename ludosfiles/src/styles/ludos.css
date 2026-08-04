@@ -1,0 +1,179 @@
+/* ============================================================
+   LUDOS design system — vendored verbatim from the handoff bundle
+   _ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/
+   Do not hand-edit: re-vendor from the design system instead.
+   ============================================================ */
+
+/* ============================================================
+   LUDOS — CRIMSON NOIR color system (dark-first)
+   Dark = :root, light (cozy-paper) = [data-theme="light"].
+   Crimson (--accent-500) is reserved: primary action OR positive
+   sentiment only. Never decoration, alignment, or status-current.
+   Three independent encodings — action=hue(crimson),
+   sentiment=warm↔cool, trust=neutral brightness.
+   ============================================================ */
+:root {
+  /* warm-graphite elevation ladder */
+  --surface-0: #241B1D;
+  --surface-1: #322528;
+  --surface-2: #3D2D31;
+  --surface-3: #48363B;
+
+  /* borders */
+  --border: #45353A;
+  --border-strong: #57434A;
+
+  /* text */
+  --text-primary: #F0E9E9;
+  --text-secondary: #C2B2B4;
+  --text-muted: #9C8A8E;
+  --text-disabled: #6E5A60;
+
+  /* crimson accent — brand / CTA / positive sentiment */
+  --accent-300: #F08C95;
+  --accent-400: #EC6571;
+  --accent-500: #E23E4E;
+  --accent-600: #C62E3D;
+  --on-accent: #2A0A0E;
+  --bg-accent: #3A1E24;
+  --border-accent: #6E3540;
+  --text-accent: #F08C95;
+
+  /* sentiment (diverging warm <-> cool) */
+  --sent-really-liked: #E23E4E;
+  --sent-liked: #EC8290;
+  --sent-didnt-like: #7C8AA0;
+  --sent-really-disliked: #49566B;
+
+  /* sentiment pills */
+  --pill-rl-bg: #3A1E24; --pill-rl-tx: #F08C95;
+  --pill-l-bg:  #34232A; --pill-l-tx:  #EC97A2;
+  --pill-dl-bg: #2C333D; --pill-dl-tx: #9DAAB8;
+  --pill-rd-bg: #28303A; --pill-rd-tx: #8593A2;
+
+  /* trust ladder (neutral brightness axis) */
+  --trust-friends: #F0E9E9;
+  --trust-taste: #A9989C;
+  --trust-global: #6E5A60;
+
+  /* relate chip (alignment — neutral, never sentiment) */
+  --relate-bg: #3D2D31; --relate-border: #4A3940; --relate-tx: #BCAEB1;
+
+  /* semantic */
+  --text-danger: #EE8A7E; --bg-danger: #3A211F; --fill-danger: #CF4636; --on-danger: #2A0B09;
+  --text-warning: #E3B341; --bg-warning: #3A2E16;
+  --text-success: #86B79A; --bg-success: #1F2E26;
+}
+
+/* ── Light theme port — cozy-paper cream ── */
+[data-theme="light"] {
+  --surface-0: #F6F1E7;
+  --surface-1: #FCF9F1;
+  --surface-2: #FFFFFF;
+  --surface-3: #EFE7D7;
+  --border: #E7DECB;
+  --border-strong: #D8CBB0;
+  --text-primary: #2B2722;
+  --text-secondary: #6E6358;
+  --text-muted: #8C8478;
+  --text-disabled: #B3A893;
+
+  /* crimson deepens for white-on-fill + legible text on cream */
+  --accent-500: #D62C3D;
+  --accent-400: #C0273A;
+  --accent-600: #A82232;
+  --on-accent: #FFFFFF;
+  --bg-accent: #F7E4E0;
+  --border-accent: #EFCFC9;
+  --text-accent: #BE2A3A;
+
+  /* sentiment pills — light tints (bar hues unchanged) */
+  --pill-rl-bg: #F7E4E0; --pill-rl-tx: #A8293A;
+  --pill-l-bg:  #FAEAE6; --pill-l-tx:  #B85563;
+  --pill-dl-bg: #E8EAEC; --pill-dl-tx: #4F6178;
+  --pill-rd-bg: #E2E5E9; --pill-rd-tx: #3D4A5C;
+
+  /* trust ladder — inverted (dark = most trusted) */
+  --trust-friends: #2B2722;
+  --trust-taste: #897C72;
+  --trust-global: #C3B6A4;
+
+  --relate-bg: #EFE7D7; --relate-border: #DFD3BE; --relate-tx: #6E6358;
+
+  --text-danger: #B23322; --bg-danger: #FBE8E4; --fill-danger: #C8392B; --on-danger: #FFFFFF;
+  --text-warning: #9A6B12; --bg-warning: #FAEFD6;
+  --text-success: #4E876A; --bg-success: #E6F1EA;
+}
+
+/* LUDOS — typography tokens.
+   --font-sans  = Familjen Grotesk — the approachable UI voice.
+   --font-voice = Newsreader — the editorial/literary voice for archetype
+                  names, review excerpts, big quotes. A publication moment.
+   --font-mono  = system mono for counts / codes. */
+:root {
+  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-voice: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* LUDOS — spacing (4px base), radius, and motion tokens. */
+:root {
+  /* spacing (4px base) */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px;
+  --sp-6: 24px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px;
+
+  /* radius — segments are near-square; controls, cards, pills climb */
+  --r-seg: 3px; --r-control: 8px; --r-card: 12px; --r-pill: 999px;
+
+  /* motion — one house easing, three durations */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 200ms; /* @kind other */
+  --dur-slow: 320ms; /* @kind other */
+  --ease: cubic-bezier(0.2, 0, 0, 1); /* @kind other */
+}
+
+/* LUDOS — root surface. Components must render inside a .ds-root (see
+   ThemeRoot) to be styled: it sets background, base text color, and font. */
+.ds-root {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ds-button {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--r-control);
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.ds-button--primary { background: var(--accent-500); color: var(--on-accent); }
+.ds-button--primary:hover { background: var(--accent-400); }
+.ds-button--primary:active { background: var(--accent-600); }
+.ds-button--secondary { background: transparent; color: var(--text-primary); border-color: var(--border-strong); }
+.ds-button--secondary:hover { background: var(--surface-2); }
+.ds-button--ghost { background: transparent; color: var(--text-secondary); }
+.ds-button--ghost:hover { background: var(--surface-2); color: var(--text-primary); }
+.ds-button--danger { background: transparent; color: var(--text-danger); border-color: var(--bg-danger); }
+.ds-button--danger:hover { background: var(--bg-danger); }
+.ds-button:disabled { color: var(--text-disabled); cursor: not-allowed; }
+
+.ds-sentiment-pill {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+}
+.ds-sentiment-pill--really-liked { background: var(--pill-rl-bg); color: var(--pill-rl-tx); }
+.ds-sentiment-pill--liked { background: var(--pill-l-bg); color: var(--pill-l-tx); }
+.ds-sentiment-pill--didnt-like { background: var(--pill-dl-bg); color: var(--pill-dl-tx); }
+.ds-sentiment-pill--really-disliked { background: var(--pill-rd-bg); color: var(--pill-rd-tx); }

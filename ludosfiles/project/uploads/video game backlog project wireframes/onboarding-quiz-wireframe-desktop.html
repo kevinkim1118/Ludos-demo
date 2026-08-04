@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding &amp; Personality Quiz — Wireframe (Desktop)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; color: #111; font-size: 14px; line-height: 1.5; }
+
+  .ann { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 7px; vertical-align: middle; flex-shrink: 0; }
+  .page-meta { text-align: center; padding: 24px 0 6px; font-size: 11px; color: #AAAAAA; letter-spacing: 0.08em; text-transform: uppercase; }
+  .page-sub { text-align: center; padding: 0 24px 14px; font-size: 12px; color: #999; max-width: 860px; margin: 0 auto; line-height: 1.5; }
+  .page-sub strong { color: #666; }
+  .page-sub em { color: #888; font-style: italic; }
+
+  .legend-wrap { max-width: 1100px; margin: 0 auto 26px; padding: 0 40px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* flow layout */
+  .flow { max-width: 1040px; margin: 0 auto; padding: 0 40px 90px; }
+  .step { margin-bottom: 8px; }
+  .step-label { font-size: 12px; color: #AAA; text-transform: uppercase; letter-spacing: 0.07em; margin: 26px 0 12px; display: flex; align-items: center; font-weight: 600; }
+  .step-label .num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: #111; color: white; border-radius: 50%; font-size: 11px; margin-right: 10px; }
+  .step-note { font-size: 12px; color: #999; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 12px; }
+  .arrow { text-align: center; color: #CFCFCF; font-size: 22px; padding: 6px 0; }
+
+  /* a "screen" — full-bleed onboarding canvas (no app nav; this is pre-app) */
+  .screen { background: white; border: 1px solid #E0E0E0; border-radius: 14px; overflow: hidden; }
+  .screen-chrome { height: 40px; border-bottom: 1px solid #EEE; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
+  .logo { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+  .chrome-right { margin-left: auto; font-size: 12px; color: #AAA; }
+  .screen-body { padding: 48px 56px; min-height: 380px; display: flex; flex-direction: column; }
+
+  .btn-primary { background: #111; color: white; border-radius: 9px; padding: 13px 26px; font-size: 14px; font-weight: 600; display: inline-block; }
+  .btn-ghost { border: 1.5px solid #E0E0E0; color: #666; border-radius: 9px; padding: 13px 22px; font-size: 14px; font-weight: 500; background: white; display: inline-block; }
+  .link-skip { font-size: 13px; color: #999; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ── Welcome ── */
+  .welcome { align-items: center; text-align: center; justify-content: center; padding: 64px 56px; }
+  .welcome-badge { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #999; border: 1px solid #E4E4E4; border-radius: 20px; padding: 5px 14px; margin-bottom: 22px; }
+  .welcome h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 14px; max-width: 560px; }
+  .welcome p { font-size: 15px; color: #777; max-width: 500px; line-height: 1.55; margin-bottom: 10px; }
+  .welcome .meta-line { font-size: 12px; color: #AAA; margin-bottom: 30px; }
+  .welcome-actions { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .axis-peek { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 34px; max-width: 520px; }
+  .axis-chip { font-size: 11px; color: #888; border: 1px dashed #D5D5D5; border-radius: 7px; padding: 6px 11px; background: #FAFAFA; }
+
+  /* ── Question ── */
+  .q-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 38px; }
+  .q-back { width: 34px; height: 34px; border: 1.5px solid #E4E4E4; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 15px; flex-shrink: 0; }
+  .q-bar { flex: 1; height: 6px; background: #ECECEC; border-radius: 3px; overflow: hidden; }
+  .q-bar-fill { height: 100%; background: #111; border-radius: 3px; }
+  .q-count { font-size: 12px; color: #999; flex-shrink: 0; font-weight: 600; }
+
+  .q-eyebrow { font-size: 12px; color: #AAA; margin-bottom: 8px; letter-spacing: 0.03em; }
+  .q-prompt { font-size: 18px; font-weight: 700; letter-spacing: -0.005em; line-height: 1.42; margin-bottom: 24px; max-width: 600px; }
+  .q-setup { font-weight: 400; color: #888; }
+  .q-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .q-opt { border: 1.5px solid #E4E4E4; border-radius: 11px; padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px; cursor: pointer; background: white; }
+  .q-opt.sel { border-color: #111; border-width: 2px; padding: 17px 19px; }
+  .q-opt-ic { width: 34px; height: 34px; border-radius: 9px; background: #E6E6E6; flex-shrink: 0; }
+  .q-opt-txt { flex: 1; }
+  .q-opt-txt .lead { font-size: 15px; font-weight: 600; color: #111; line-height: 1.3; margin-bottom: 3px; }
+  .q-opt-txt .sub { font-size: 12px; color: #999; line-height: 1.4; }
+  .q-axis-tag { font-size: 10px; color: #E8640A; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 7px; display: inline-block; }
+  .q-foot { margin-top: 26px; display: flex; align-items: center; }
+  .q-foot .hint { font-size: 12px; color: #AAA; }
+
+  /* the full deck — all six questions shown as a grid of compact screens */
+  .q-deck { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .q-deck .screen-body { padding: 24px 26px; min-height: 0; }
+  .q-deck .q-progress { margin-bottom: 20px; }
+  .q-deck .q-prompt { font-size: 16px; margin-bottom: 16px; }
+  .q-deck .q-options { grid-template-columns: 1fr; gap: 9px; }
+  .q-deck .q-opt { padding: 12px 14px; gap: 11px; }
+  .q-deck .q-opt.sel { padding: 11px 13px; }
+  .q-deck .q-opt-ic { width: 28px; height: 28px; border-radius: 8px; }
+  .q-deck .q-opt-txt .lead { font-size: 13.5px; }
+  .q-deck .q-axis-tag { margin-top: 5px; }
+  @media (max-width: 980px) { .q-deck { grid-template-columns: 1fr; } }
+
+  /* exit-quiz chip + explicit bottom back/next nav */
+  .chrome-exit { margin-left: auto; font-size: 12px; color: #888; font-weight: 500; border: 1.5px solid #E4E4E4; border-radius: 7px; padding: 5px 12px; }
+  .q-nav { display: flex; gap: 12px; margin-top: 20px; }
+  .nav-back { border: 1.5px solid #E0E0E0; color: #555; border-radius: 9px; padding: 12px 22px; font-size: 14px; font-weight: 500; background: white; }
+  .nav-next { flex: 1; background: #111; color: white; border-radius: 9px; padding: 12px; font-size: 14px; font-weight: 600; text-align: center; }
+  .nav-next.disabled { background: #E2E2E2; color: #AEAEAE; }
+
+  /* ── Reading beat ── */
+  .reading { align-items: center; justify-content: center; text-align: center; padding: 80px 56px; }
+  .reading-orb { width: 64px; height: 64px; border-radius: 50%; border: 3px solid #ECECEC; border-top-color: #111; margin-bottom: 26px; }
+  .reading h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .reading p { font-size: 13px; color: #999; }
+
+  /* ── Result hero ── */
+  .result-body { padding: 0; }
+  .result-hero { border: 1.5px solid #111; border-radius: 14px; margin: 0; overflow: hidden; }
+  .rh-top { padding: 40px 48px 34px; text-align: center; border-bottom: 1px solid #EEE; }
+  .rh-eyebrow { font-size: 12px; color: #999; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+  .rh-typename { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 12px; }
+  .rh-essence { font-size: 16px; color: #555; max-width: 540px; margin: 0 auto 16px; line-height: 1.55; }
+  .rh-rarity { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: #888; border: 1px solid #E4E4E4; border-radius: 20px; padding: 6px 14px; }
+  .rh-rarity strong { color: #111; }
+
+  .rh-section { padding: 30px 48px; border-bottom: 1px solid #EEE; }
+  .rh-section:last-child { border-bottom: none; }
+  .rh-sec-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #999; margin-bottom: 4px; display: flex; align-items: center; }
+  .rh-sec-sub { font-size: 12px; color: #AAA; margin-bottom: 20px; }
+
+  /* axes */
+  .axis { margin-bottom: 18px; }
+  .axis:last-child { margin-bottom: 0; }
+  .axis-labels { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 7px; }
+  .axis-labels .lo, .axis-labels .hi { color: #AAA; }
+  .axis-labels .on { color: #111; font-weight: 700; }
+  .axis-track { height: 8px; background: #ECECEC; border-radius: 4px; position: relative; }
+  .axis-dot { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; border-radius: 50%; background: #111; border: 3px solid #fff; box-shadow: 0 0 0 1.5px #111; }
+
+  /* players like you */
+  .ply-row { display: flex; gap: 12px; }
+  .ply-card { flex: 1; border: 1px solid #E8E8E8; border-radius: 10px; overflow: hidden; }
+  .ply-cover { aspect-ratio: 3/4; background: #D8D8D8; border-bottom: 1px dashed #C4C4C4; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #AAA; }
+  .ply-meta { padding: 9px 10px; }
+  .ply-name { font-size: 12px; font-weight: 600; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ply-plat { font-size: 10px; color: #AAA; }
+  .tier-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: #555; color: white; margin-left: auto; }
+
+  .rh-actions { padding: 26px 48px 32px; display: flex; align-items: center; gap: 12px; }
+  .rh-actions .spacer { flex: 1; }
+  .icon-btn { width: 46px; height: 46px; border: 1.5px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 16px; background: white; }
+
+  /* ── Connect Steam ── */
+  .steam { align-items: center; text-align: center; justify-content: center; padding: 56px; }
+  .steam-eyebrow { font-size: 12px; color: #AAA; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 16px; }
+  .steam h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; max-width: 480px; }
+  .steam p { font-size: 14px; color: #777; max-width: 460px; line-height: 1.55; margin-bottom: 26px; }
+  .ladder { display: flex; gap: 10px; align-items: stretch; max-width: 560px; width: 100%; margin: 0 auto 30px; }
+  .rung { flex: 1; border: 1.5px solid #E4E4E4; border-radius: 10px; padding: 14px 12px; text-align: left; background: #FAFAFA; }
+  .rung.done { border-color: #111; background: white; }
+  .rung.now { border-color: #111; border-style: dashed; background: #FFF7F0; }
+  .rung-tier { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #AAA; margin-bottom: 5px; }
+  .rung.done .rung-tier { color: #111; }
+  .rung-state { font-size: 12px; color: #888; line-height: 1.35; }
+  .rung-state strong { color: #111; }
+  .steam-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+  /* ── Payoff / land on Discover ── */
+  .payoff { border: 1.5px dashed #CFCFCF; background: #FAFAFA; border-radius: 12px; padding: 22px 26px; display: flex; align-items: center; gap: 18px; max-width: 1040px; margin: 0 auto; }
+  .payoff-ic { width: 44px; height: 44px; border-radius: 10px; background: #E4E4E4; flex-shrink: 0; }
+  .payoff-txt { flex: 1; }
+  .payoff-txt strong { display: block; font-size: 14px; color: #111; margin-bottom: 3px; }
+  .payoff-txt span { font-size: 12.5px; color: #888; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Onboarding &amp; Personality Quiz — Desktop (flow board)</div>
+<div class="page-sub">The first-run flow, and the last of the four core flows to reach wireframe. The quiz is <strong>load-bearing, not novelty</strong>: it seeds the <em>taste</em> rung of the trust ladder before any play history exists — the cold-start fix for "people who share your profile," exactly as Steam-connect is the cold-start fix for the friends rung. Mechanic is <strong>scenario / vibe choices</strong> (no game-recognition required); the result is a <strong>named archetype backed by four taste axes</strong>. Quiz-first, skippable. Grayscale lo-fi; reuses the locked tokens, hero border, button, trust-tier, and game-card grammar. Same example throughout: Kevin → <em>The Completionist</em>.</div>
+
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — how onboarding does its job</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span><strong>The quiz is the cold-start taste lever.</strong> It fills the "Your type" rung the same way Steam-connect fills the friends rung — so a day-one user isn't stranded on the global (least-trusted) tier. This is why it leads onboarding.</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>Scenario / vibe questions, not game pairings.</strong> No game-recognition required, so it works for lapsed and casual players. Each option quietly loads one or more <em>taste axes</em> (tagged here in orange — not shown to the real user).</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span><strong>Explicit Back / Next</strong> at the bottom of every question; the final <em>See your result</em> stays greyed until all six are answered. Progress bar up top, <em>Exit quiz</em> always in the corner. ~6 questions, ~90 seconds.</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span><strong>Two-level result.</strong> A shareable <em>named archetype</em> is the hero (the identity payoff); the <strong>four taste axes</strong> sit beneath it as the "here's why" evidence — and as the engine layer that powers taste-match.</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span><strong>The result pays off immediately</strong> — "players like you really liked these" is the now-warm taste rail, previewed right on the result screen. The quiz's value becomes visible before the user even reaches the app.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span><strong>Steam-connect is the matched second lever.</strong> Framed against the same trust ladder: taste rung now warm (from the quiz), friends rung still cold → connect to fill it. Both skippable; skipping is honest about the cost.</span></div>
+      <div class="legend-item"><span class="legend-num">7</span><span><strong>Skip is always available but never free.</strong> Skipping the quiz drops the user to the global tier until they've rated enough games; the copy makes that trade legible rather than hiding it.</span></div>
+      <div class="legend-item"><span class="legend-num">8</span><span><strong>Lands on Discover with both personal rungs warm</strong> — the existing home surface, now populated rather than collapsed to cold-start. Onboarding's whole job is to hand off a non-empty trust ladder.</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="flow">
+
+  <!-- ═══ STEP 1 — WELCOME ═══ -->
+  <div class="step-label"><span class="num">1</span>Welcome — set up the quiz <span class="step-note">first real screen after sign-up · the identity hook leads <span class="ann">1</span></span></div>
+  <div class="screen">
+    <div class="screen-chrome"><span class="logo">LEVELUP</span><span class="chrome-right">Step 1 of 3</span></div>
+    <div class="screen-body welcome">
+      <div class="welcome-badge">First, your player type</div>
+      <h1>Let's find out what kind of player you are</h1>
+      <p>Six quick scenarios — no right answers, just what sounds fun. We'll use it to find games you'll love and people who play like you.</p>
+      <div class="meta-line">About 90 seconds · you can retake it anytime</div>
+      <div class="welcome-actions">
+        <span class="btn-primary">Start the quiz</span>
+        <span class="link-skip">Skip for now <span class="ann">7</span></span>
+      </div>
+      <div class="axis-peek">
+        <span class="axis-chip">Depth ↔ Breadth</span>
+        <span class="axis-chip">Challenge ↔ Comfort</span>
+        <span class="axis-chip">Story ↔ Systems</span>
+        <span class="axis-chip">Solo ↔ Social</span>
+        <span style="font-size:11px;color:#BBB;align-self:center;">← the axes it reads (shown here for the wireframe; the user just sees scenarios)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- ═══ STEP 2 — THE QUESTION DECK (all 6) ═══ -->
+  <div class="step-label"><span class="num">2</span>The question deck — all six scenarios <span class="step-note">one shown at a time in product; each option loads taste axes (orange = wireframe only) <span class="ann">2</span></span></div>
+  <div class="q-deck">
+
+    <!-- Q1 -->
+    <div class="screen">
+      <div class="screen-chrome"><span class="chrome-exit">Exit quiz</span></div>
+      <div class="screen-body">
+        <div class="q-progress"><div class="q-bar"><div class="q-bar-fill" style="width: 16%;"></div></div><span class="q-count">1 / 6</span></div>
+        <div class="q-prompt"><span class="q-setup">You boot up a brand-new game for the first time.</span> What's your first instinct?</div>
+        <div class="q-options">
+          <div class="q-opt sel"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Dig into the menus — settings, systems, how it all works</div><div class="sub">Learn the machine before I play it.</div><span class="q-axis-tag">→ Systems · Depth</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Crank the difficulty up before I even start</div><div class="sub">Make it count from minute one.</div><span class="q-axis-tag">→ Challenge</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Soak in the opening — world, characters, mood</div><div class="sub">Let it set the scene.</div><span class="q-axis-tag">→ Story · Comfort</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Ping a friend so we start it together</div><div class="sub">More fun if we're both in it.</div><span class="q-axis-tag">→ Social</span></div></div>
+        </div>
+        <div class="q-nav"><span class="nav-back">Back</span><span class="nav-next">Next</span></div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="screen">
+      <div class="screen-chrome"><span class="chrome-exit">Exit quiz</span></div>
+      <div class="screen-body">
+        <div class="q-progress"><div class="q-bar"><div class="q-bar-fill" style="width: 33%;"></div></div><span class="q-count">2 / 6</span></div>
+        <div class="q-prompt"><span class="q-setup">A free Saturday, nothing on the calendar.</span> What actually sounds best?</div>
+        <div class="q-options">
+          <div class="q-opt sel"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Finally beating that boss I've been stuck on</div><div class="sub">The one taunting me all week.</div><span class="q-axis-tag">→ Challenge · Depth</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Starting something completely new</div><div class="sub">A genre I've never even tried.</div><span class="q-axis-tag">→ Breadth</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Sinking into a story I can get lost in</div><div class="sub">Dim the lights, lose a few hours.</div><span class="q-axis-tag">→ Story · Comfort</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">An online night with the group</div><div class="sub">Whatever we're all playing right now.</div><span class="q-axis-tag">→ Social</span></div></div>
+        </div>
+        <div class="q-nav"><span class="nav-back">Back</span><span class="nav-next">Next</span></div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="screen">
+      <div class="screen-chrome"><span class="chrome-exit">Exit quiz</span></div>
+      <div class="screen-body">
+        <div class="q-progress"><div class="q-bar"><div class="q-bar-fill" style="width: 50%;"></div></div><span class="q-count">3 / 6</span></div>
+        <div class="q-prompt"><span class="q-setup">A game you're loving turns out to be 100 hours long.</span> How does that land?</div>
+        <div class="q-options">
+          <div class="q-opt sel"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Perfect — I want to see every corner of it</div><div class="sub">The length is the reward.</div><span class="q-axis-tag">→ Depth</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Great, as long as I can take it slow and unwind</div><div class="sub">No rush, no pressure.</div><span class="q-axis-tag">→ Comfort</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Too much — I'd rather finish three shorter ones</div><div class="sub">I like moving on.</div><span class="q-axis-tag">→ Breadth</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Fine, if the story keeps pulling me forward</div><div class="sub">Carry me and I'll stay.</div><span class="q-axis-tag">→ Story</span></div></div>
+        </div>
+        <div class="q-nav"><span class="nav-back">Back</span><span class="nav-next">Next</span></div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="screen">
+      <div class="screen-chrome"><span class="chrome-exit">Exit quiz</span></div>
+      <div class="screen-body">
+        <div class="q-progress"><div class="q-bar"><div class="q-bar-fill" style="width: 67%;"></div></div><span class="q-count">4 / 6</span></div>
+        <div class="q-prompt"><span class="q-setup">You hit a wall — a fight or puzzle you just can't crack.</span> What do you do?</div>
+        <div class="q-options">
+          <div class="q-opt sel"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Grind it out solo until it clicks — no guides</div><div class="sub">Figuring it out is the point.</div><span class="q-axis-tag">→ Challenge · Solo</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Look up the optimal strategy and run it</div><div class="sub">Solve it like a system.</div><span class="q-axis-tag">→ Systems</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Drop the difficulty and keep enjoying it</div><div class="sub">I'm here to have fun.</div><span class="q-axis-tag">→ Comfort</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Shelve it and jump into something else</div><div class="sub">Plenty more to play.</div><span class="q-axis-tag">→ Breadth</span></div></div>
+        </div>
+        <div class="q-nav"><span class="nav-back">Back</span><span class="nav-next">Next</span></div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="screen">
+      <div class="screen-chrome"><span class="chrome-exit">Exit quiz</span></div>
+      <div class="screen-body">
+        <div class="q-progress"><div class="q-bar"><div class="q-bar-fill" style="width: 83%;"></div></div><span class="q-count">5 / 6</span></div>
+        <div class="q-prompt"><span class="q-setup">A game everyone's talking about just dropped.</span> What makes you hit "buy"?</div>
+        <div class="q-options">
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">It's brutally hard and deeply rewarding</div><div class="sub">People say it broke them. Good.</div><span class="q-axis-tag">→ Challenge</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Systems so deep you can optimize forever</div><div class="sub">A build to theorycraft, numbers to tune.</div><span class="q-axis-tag">→ Systems · Depth</span></div></div>
+          <div class="q-opt sel"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">A world I won't want to leave</div><div class="sub">Somewhere worth 100 hours.</div><span class="q-axis-tag">→ Depth · Story</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">Everyone I know is already playing it</div><div class="sub">I don't want to miss the moment.</div><span class="q-axis-tag">→ Social</span></div></div>
+        </div>
+        <div class="q-nav"><span class="nav-back">Back</span><span class="nav-next">Next</span></div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="screen">
+      <div class="screen-chrome"><span class="chrome-exit">Exit quiz</span></div>
+      <div class="screen-body">
+        <div class="q-progress"><div class="q-bar"><div class="q-bar-fill" style="width: 100%;"></div></div><span class="q-count">6 / 6</span></div>
+        <div class="q-prompt"><span class="q-setup">Months later, you still think about a game.</span> What made it stick?</div>
+        <div class="q-options">
+          <div class="q-opt sel"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">I mastered it — got good in a way that felt earned</div><div class="sub">The skill stayed with me.</div><span class="q-axis-tag">→ Challenge · Depth</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">A story and characters I couldn't shake</div><div class="sub">It stayed with me like a great film.</div><span class="q-axis-tag">→ Story</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">The nights I spent playing it with people</div><div class="sub">It was really about them.</div><span class="q-axis-tag">→ Social</span></div></div>
+          <div class="q-opt"><span class="q-opt-ic"></span><div class="q-opt-txt"><div class="lead">My comfort place — just me, decompressing</div><div class="sub">Where I went to switch off.</div><span class="q-axis-tag">→ Comfort · Solo</span></div></div>
+        </div>
+        <div class="q-nav"><span class="nav-back">Back</span><span class="nav-next disabled">See your result</span></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="q-foot" style="max-width:1040px;margin:14px auto 0;padding:0 4px;"><span class="hint">In product these appear one at a time, with explicit Back / Next at the bottom; the final <em>See your result</em> stays greyed until all six are answered <span class="ann">3</span> &nbsp;·&nbsp; the four axes are each probed from a few angles — that repetition is what makes the read reliable. The selected answers here trace one example player → <strong style="color:#666;">The Completionist</strong>.</span></div>
+
+  <div class="arrow">↓</div>
+
+  <!-- ═══ STEP 3 — READING BEAT ═══ -->
+  <div class="step-label"><span class="num">3</span>Reading your answers <span class="step-note">brief beat — builds anticipation for the reveal</span></div>
+  <div class="screen">
+    <div class="screen-chrome"><span class="logo">LEVELUP</span><span class="chrome-right">Quiz</span></div>
+    <div class="screen-body reading">
+      <div class="reading-orb"></div>
+      <h2>Reading your answers…</h2>
+      <p>Finding your type and the players who match it</p>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- ═══ STEP 4 — RESULT HERO ═══ -->
+  <div class="step-label"><span class="num">4</span>Your player type — the result <span class="step-note">the expressive payoff: named archetype + the axes underneath <span class="ann">4</span></span></div>
+  <div class="result-hero">
+    <div class="rh-top">
+      <div class="rh-eyebrow">Your player type</div>
+      <div class="rh-typename">The Completionist</div>
+      <div class="rh-essence">You don't just finish games — you <em>finish</em> them. Mastery over novelty, the long haul over the quick hit. When a world is worth it, you see every corner of it.</div>
+      <div class="rh-rarity">◆ <strong>12%</strong> of players share your type</div>
+    </div>
+
+    <!-- axes: the "here's why" + the engine layer -->
+    <div class="rh-section">
+      <div class="rh-sec-title">What shapes your taste <span class="ann">4</span></div>
+      <div class="rh-sec-sub">The four reads behind your type — and what we use to match you to games and people.</div>
+
+      <div class="axis">
+        <div class="axis-labels"><span class="lo on">Depth</span><span class="hi">Breadth</span></div>
+        <div class="axis-track"><span class="axis-dot" style="left: 16%;"></span></div>
+      </div>
+      <div class="axis">
+        <div class="axis-labels"><span class="lo on">Challenge</span><span class="hi">Comfort</span></div>
+        <div class="axis-track"><span class="axis-dot" style="left: 24%;"></span></div>
+      </div>
+      <div class="axis">
+        <div class="axis-labels"><span class="lo">Story</span><span class="hi on">Systems</span></div>
+        <div class="axis-track"><span class="axis-dot" style="left: 68%;"></span></div>
+      </div>
+      <div class="axis">
+        <div class="axis-labels"><span class="lo on">Solo</span><span class="hi">Social</span></div>
+        <div class="axis-track"><span class="axis-dot" style="left: 22%;"></span></div>
+      </div>
+    </div>
+
+    <!-- payoff: the now-warm taste rail -->
+    <div class="rh-section">
+      <div class="rh-sec-title" style="display:flex;align-items:center;">Players like you really liked these <span class="ann">5</span> <span class="tier-badge">Your type</span></div>
+      <div class="rh-sec-sub">These come straight from your quiz answers — matched to your taste before you've rated a single game.</div>
+      <div class="ply-row">
+        <div class="ply-card"><div class="ply-cover">Cover</div><div class="ply-meta"><div class="ply-name">Hollow Knight</div><div class="ply-plat">PC · Switch</div></div></div>
+        <div class="ply-card"><div class="ply-cover">Cover</div><div class="ply-meta"><div class="ply-name">Outer Wilds</div><div class="ply-plat">PC · Xbox</div></div></div>
+        <div class="ply-card"><div class="ply-cover">Cover</div><div class="ply-meta"><div class="ply-name">Tunic</div><div class="ply-plat">PC · PS5</div></div></div>
+        <div class="ply-card"><div class="ply-cover">Cover</div><div class="ply-meta"><div class="ply-name">Celeste</div><div class="ply-plat">PC · Switch</div></div></div>
+        <div class="ply-card"><div class="ply-cover">Cover</div><div class="ply-meta"><div class="ply-name">Inscryption</div><div class="ply-plat">PC</div></div></div>
+      </div>
+    </div>
+
+    <div class="rh-actions">
+      <span class="btn-primary">Continue</span>
+      <span class="icon-btn" title="Share your type">↗</span>
+      <span class="icon-btn" title="Retake the quiz">↻</span>
+      <span class="spacer"></span>
+      <span class="link-skip">Not quite right? Retake</span>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- ═══ STEP 5 — CONNECT STEAM ═══ -->
+  <div class="step-label"><span class="num">5</span>Connect Steam — the friends lever <span class="step-note">the matched second cold-start lever, against the same ladder <span class="ann">6</span></span></div>
+  <div class="screen">
+    <div class="screen-chrome"><span class="logo">LEVELUP</span><span class="chrome-right">Step 3 of 3</span></div>
+    <div class="screen-body steam">
+      <div class="steam-eyebrow">One more thing</div>
+      <h2>See what your friends are playing</h2>
+      <p>The quiz already set your picks to your taste. Connect Steam to add what your friends actually play — the recommendations you'll trust most — and the rest of the app fills in from there.</p>
+
+      <div class="ladder">
+        <div class="rung now">
+          <div class="rung-tier">From your friends</div>
+          <div class="rung-state"><strong>Connect to turn on</strong></div>
+        </div>
+        <div class="rung done">
+          <div class="rung-tier">Matched to your taste</div>
+          <div class="rung-state"><strong>Set ✓</strong> from your quiz</div>
+        </div>
+        <div class="rung done">
+          <div class="rung-tier">Popular overall</div>
+          <div class="rung-state"><strong>Always on</strong></div>
+        </div>
+      </div>
+
+      <div class="steam-actions">
+        <span class="btn-primary">Connect Steam</span>
+        <span class="link-skip">Maybe later — I'll add friends another time <span class="ann">7</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- ═══ STEP 6 — PAYOFF / LAND ON DISCOVER ═══ -->
+  <div class="step-label"><span class="num">6</span>Land on Discover <span class="step-note">hands off a non-empty trust ladder <span class="ann">8</span></span></div>
+  <div class="payoff">
+    <div class="payoff-ic"></div>
+    <div class="payoff-txt">
+      <strong>→ Opens the existing Discover / Home surface — now populated, not collapsed to cold-start.</strong>
+      <span>Because the quiz warmed the taste rung (and Steam, if connected, warmed the friends rung), the home page's "Matched to your taste" and "Your friends have been playing" rails arrive with content instead of empty states. Onboarding's entire job was to make Discover land full. See <em>discover-home-wireframe-desktop.html</em>.</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

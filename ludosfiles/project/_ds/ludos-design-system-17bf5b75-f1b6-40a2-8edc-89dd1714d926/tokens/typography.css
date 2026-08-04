@@ -1,0 +1,10 @@
+/* LUDOS — typography tokens.
+   --font-sans  = Familjen Grotesk — the approachable UI voice.
+   --font-voice = Newsreader — the editorial/literary voice for archetype
+                  names, review excerpts, big quotes. A publication moment.
+   --font-mono  = system mono for counts / codes. */
+:root {
+  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-voice: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}

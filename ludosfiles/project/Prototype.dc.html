@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/colors.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/base.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/core/button.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/sentiment-pill.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/styles.css">
+<script src="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/_ds_bundle.js"></script>
+<script src="./image-manifest.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #120D0E; }
+  [data-screen]::-webkit-scrollbar { width: 0; display: none; }
+  [data-rail]::-webkit-scrollbar { height: 0; display: none; }
+  image-slot[placeholder="cover"]::part(ctl) { display: none !important; }
+  a { color: var(--text-accent); text-decoration: none; }
+  a:hover { color: var(--accent-400); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes introFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes orbPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+  @keyframes popIn { 0% { transform: scale(.5); } 60% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes sheetDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+  image-slot[id^="cv-played-blank-"]::part(ctl), image-slot[id^="cv-search-"]::part(ctl) { display: none; }
+  @keyframes cardFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes riseIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes spotCollapse { 0% { opacity: 1; max-height: 340px; } 40% { opacity: 0; } 100% { opacity: 0; max-height: 0; margin: 0; padding: 0; border-width: 0; } }
+  @keyframes marqueeLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  image-slot#intro-logo::part(ctl) { display: none; }
+  image-slot[id^="cv-review-"]::part(icon), image-slot[id^="cv-review-"]::part(sub) { display: none; }
+  image-slot[id^="cv-review-"]::part(ring) { display: none; }
+  image-slot[id^="cv-review-"]::part(frame) { background: var(--surface-3); }
+  image-slot[id^="cv-review-"]::part(empty) { gap: 0; padding: 0; font-size: 13px; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(120% 80% at 50% 0%, #1A1314 0%, #110C0D 70%); font-family: 'Familjen Grotesk', ui-sans-serif, system-ui, sans-serif;">
+
+  <div style="width: 430px; padding: 11px; background: #080606; border-radius: 46px; box-shadow: 0 30px 70px rgba(0,0,0,0.55), inset 0 0 0 1.5px #2A2023;">
+    <div data-screen-label="{{ screenLabel }}" style="position: relative; width: 100%; height: 868px; background: var(--surface-0); border-radius: 36px; overflow: hidden; display: flex; flex-direction: column; color: var(--text-primary);">
+
+      <!-- status bar -->
+      <div style="flex: none; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px 0 28px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; z-index: 5;">
+        <span>9:41</span>
+        <span style="display: flex; align-items: center; gap: 7px;">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="var(--text-primary)"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="var(--text-primary)" stroke-opacity="0.5"></rect><rect x="2.2" y="2.2" width="14.5" height="7.6" rx="1.6" fill="var(--text-primary)"></rect><rect x="21.6" y="4" width="2" height="4" rx="1" fill="var(--text-primary)" fill-opacity="0.5"></rect></svg>
+        </span>
+      </div>
+
+      <!-- ============================= ONBOARDING ============================= -->
+      <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ true }}">
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+        <div data-screen="" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0;">
+
+          <!-- INTRO 1 · WELCOME -->
+          <sc-if value="{{ obIntro1 }}" hint-placeholder-val="{{ false }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding: 24px 28px 12px; animation: introFade 340ms cubic-bezier(0.2,0,0,1);">
+            <div style="flex: 1;"></div>
+            <image-slot id="intro-logo" shape="rounded" radius="16" placeholder="Ludos hero — drop an image" style="display: block; width: 50%; height: 150px; margin: 0 auto; background: transparent; border: none; border-radius: 16px;"></image-slot>
+            <h1 style="font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.02; margin: 26px 0 16px; text-align: center;">Welcome to Ludos</h1>
+            <p style="font-size: 21px; font-weight: 400; color: var(--text-secondary); line-height: 1.35; margin: 0; text-align: center;">Uncover hidden gems<br>Figure out what to play next<br>Conquer your backlog</p>
+            <div style="flex: 1.4;"></div>
+          </div>
+          </sc-if>
+
+          <!-- INTRO 2 · DISCOVER -->
+          <sc-if value="{{ obIntro2 }}" hint-placeholder-val="{{ false }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding: 26px 0 12px; animation: introFade 340ms cubic-bezier(0.2,0,0,1); overflow: hidden;">
+            <div style="flex: 1;"></div>
+            <div style="flex: none; display: flex; flex-direction: column; gap: 14px;">
+              <div style="overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);">
+                <div style="display: flex; gap: 14px; width: max-content; animation: marqueeLeft 34s linear infinite;" style-hover="animation-play-state: paused">
+                  <sc-for list="{{ row1 }}" as="g" hint-placeholder-count="6"><image-slot id="{{ g.id }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 128px; height: 176px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;"></image-slot></sc-for>
+                  <sc-for list="{{ row1 }}" as="g" hint-placeholder-count="6"><image-slot id="{{ g.id }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 128px; height: 176px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;"></image-slot></sc-for>
+                </div>
+              </div>
+              <div style="overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);">
+                <div style="display: flex; gap: 14px; width: max-content; animation: marqueeLeft 44s linear infinite;" style-hover="animation-play-state: paused">
+                  <sc-for list="{{ row2 }}" as="g" hint-placeholder-count="6"><image-slot id="{{ g.id }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 128px; height: 176px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;"></image-slot></sc-for>
+                  <sc-for list="{{ row2 }}" as="g" hint-placeholder-count="6"><image-slot id="{{ g.id }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 128px; height: 176px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;"></image-slot></sc-for>
+                </div>
+              </div>
+              <div style="overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);">
+                <div style="display: flex; gap: 14px; width: max-content; animation: marqueeLeft 38s linear infinite;" style-hover="animation-play-state: paused">
+                  <sc-for list="{{ row3 }}" as="g" hint-placeholder-count="6"><image-slot id="{{ g.id }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 128px; height: 176px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;"></image-slot></sc-for>
+                  <sc-for list="{{ row3 }}" as="g" hint-placeholder-count="6"><image-slot id="{{ g.id }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 128px; height: 176px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;"></image-slot></sc-for>
+                </div>
+              </div>
+            </div>
+            <h2 style="flex: none; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; margin: 34px 28px 0; text-align: center; text-wrap: balance;">Discover video games matched to your tastes</h2>
+            <div style="flex: 1.6;"></div>
+          </div>
+          </sc-if>
+
+          <!-- INTRO 3 · ADD TO LIST -->
+          <sc-if value="{{ obIntro3 }}" hint-placeholder-val="{{ false }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding: 20px 24px 12px; animation: introFade 340ms cubic-bezier(0.2,0,0,1); overflow: hidden;">
+            <div style="flex: 0.5;"></div>
+            <div style="position: relative; flex: none; align-self: center; width: 340px; border-radius: 18px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-0);">
+              <div style="position: relative; height: 200px; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(20,13,14,0.85) 100%), var(--surface-3);">
+                <image-slot id="intro-elden-cover" shape="rect" placeholder="cover" style="position: absolute; inset: 0; width: 100%; height: 100%; background: var(--surface-3); z-index: 0;"></image-slot>
+                <div style="position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; padding: 12px 14px; pointer-events: none;">
+                  <div style="margin-top: auto;">
+                    <div style="font-size: 11px; color: rgba(240,233,233,0.8); margin-bottom: 2px;">Sandfall Interactive · 2025 · Turn Based RPG</div>
+                    <div style="font-size: 23px; font-weight: 700; letter-spacing: -0.02em;">Clair Obscur: Expedition 33</div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding: 12px 14px 130px;">
+                <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+                  <span style="font-size: 11px; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; background: var(--surface-1);">PC</span>
+                  <span style="font-size: 11px; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; background: var(--surface-1);">PS5</span>
+                  <span style="font-size: 11px; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; background: var(--surface-1);">Xbox</span>
+                </div>
+                <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">About Clair Obscur: Expedition 33</div>
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.55;">An action RPG open-world masterpiece that blends FromSoftware's combat with vast exploration — a world of grandeur that rewards curiosity, discovery, and patience at every turn.</div>
+              </div>
+              <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(12,9,10,0.12) 0%, rgba(12,9,10,0.30) 32%, rgba(12,9,10,0.74) 58%); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; box-sizing: border-box; pointer-events: none;">
+                <div style="background: var(--accent-500); color: var(--on-accent); text-align: center; border-radius: 14px; padding: 15px; font-size: 15px; font-weight: 600; margin-bottom: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">Add to List</div>
+                <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border);"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="var(--accent-500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10v14l-5-3.5L5 17z"></path></svg><span style="font-size: 14px; font-weight: 600;">Add to library</span></div>
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border);"><svg width="16" height="16" viewBox="0 0 20 20" fill="var(--text-secondary)"><path d="M6 4l10 6-10 6z"></path></svg><span style="font-size: 14px; font-weight: 500; color: var(--text-secondary);">Mark as playing</span></div>
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"></path></svg><span style="font-size: 14px; font-weight: 500; color: var(--text-secondary);">Mark as finished</span></div>
+                </div>
+              </div>
+            </div>
+            <h2 style="flex: none; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; margin: 32px 4px 0; text-align: center; text-wrap: balance;">Find video games to play, add them to your lists</h2>
+            <div style="flex: 1;"></div>
+          </div>
+          </sc-if>
+
+          <!-- INTRO 4 · REVIEWS -->
+          <sc-if value="{{ obIntro4 }}" hint-placeholder-val="{{ false }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding: 24px 24px 12px; animation: introFade 340ms cubic-bezier(0.2,0,0,1); overflow: hidden;">
+            <div style="flex: 1;"></div>
+            <div style="flex: none; display: flex; flex-direction: column; gap: 12px;">
+              <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
+              <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                  <image-slot id="{{ r.slotId }}" shape="circle" placeholder="{{ r.initials }}" style="width: 40px; height: 40px; flex: none; border-radius: 50%; font-size: 11px; font-weight: 600; color: var(--text-secondary);"></image-slot>
+                  <span style="min-width: 0; flex: 1;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 14px; font-weight: 700;">{{ r.name }}</span>
+                      <span style="font-size: 10.5px; color: var(--relate-tx); background: var(--relate-bg); border: 1px solid var(--relate-border); border-radius: 999px; padding: 2px 9px;">{{ r.archetype }}</span>
+                    </span>
+                    <span style="display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">{{ r.meta }}</span>
+                  </span>
+                  <span class="ds-sentiment-pill {{ r.pillClass }}" style="flex: none; font-size: 11px;">{{ r.verdict }}</span>
+                </div>
+                <p style="font-family: Newsreader, Georgia, serif; font-style: italic; font-size: 14.5px; line-height: 1.5; color: var(--text-secondary); margin: 0;">{{ r.text }}</p>
+              </div>
+              </sc-for>
+            </div>
+            <h2 style="flex: none; font-size: 30px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; margin: 32px 4px 0; text-align: center; text-wrap: balance;">Read honest reviews from players like you</h2>
+            <div style="flex: 1.4;"></div>
+          </div>
+          </sc-if>
+
+          <!-- PLAYED GAMES -->
+          <sc-if value="{{ obPlayed }}" hint-placeholder-val="{{ true }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; animation: fadeIn 300ms cubic-bezier(0.2,0,0,1);">
+
+            <div style="flex: none; padding: 30px 20px 0;">
+              <h1 style="font-size: 29px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.14; margin: 0 0 10px;">What games have you played?</h1>
+              <p style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.45; margin: 0 0 20px; text-wrap: pretty;">We'll use what you selected to recommend games that you'll like. They'll also be added to your “Finished” list in your library.</p>
+              <div style="display: flex; align-items: center; gap: 12px; border-bottom: 1.5px solid {{ playedUnderline }}; padding: 8px 2px; transition: border-color 160ms;">
+                <input value="{{ playedQuery }}" onInput="{{ onPlayedInput }}" onFocus="{{ onPlayedFocus }}" onBlur="{{ onPlayedBlur }}" placeholder="Search for a game" style="flex: 1; min-width: 0; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: inherit; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; padding: 0;">
+                <sc-if value="{{ hasPlayedQuery }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ onClearPlayed }}" style="width: 24px; height: 24px; flex: none; border: none; background: var(--surface-2); border-radius: 50%; color: var(--text-secondary); font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;" style-hover="background: var(--surface-3); color: var(--text-primary);">✕</button>
+                </sc-if>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.8" style="flex: none;"><circle cx="10.5" cy="10.5" r="6.5"></circle><line x1="15.5" y1="15.5" x2="21" y2="21" stroke-linecap="round"></line></svg>
+              </div>
+            </div>
+
+            <div data-screen="" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; padding: 16px 20px 0;">
+              <sc-if value="{{ hasPlayedResults }}" hint-placeholder-val="{{ true }}">
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px;">
+                <sc-for list="{{ playedGames }}" as="g" hint-placeholder-count="9">
+                  <div style="background: var(--surface-2); border: 1.5px solid {{ g.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ g.onToggle }}" title="{{ g.toggleLabel }}">
+                    <div style="position: relative;">
+                      <image-slot id="{{ g.slotId }}" shape="rect" placeholder="cover" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                      <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                        <sc-if value="{{ g.notSelected }}" hint-placeholder-val="{{ true }}">
+                          <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);" style-hover="background: var(--accent-500); border-color: var(--accent-500); color: var(--on-accent);">+</span>
+                        </sc-if>
+                        <sc-if value="{{ g.selected }}" hint-placeholder-val="{{ false }}">
+                          <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                        </sc-if>
+                      </div>
+                    </div>
+                    <div style="padding: 8px 9px 10px;">
+                      <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">{{ g.name }}</div>
+                      
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ showBlanks }}" hint-placeholder-val="{{ true }}">
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b1.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b1.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-1" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b1.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b1.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Balatro</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b2.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b2.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-2" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b2.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b2.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Super Mario Galaxy 2</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b3.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b3.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-3" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b3.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b3.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Katana Zero<br><br></div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b4.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b4.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-4" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b4.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b4.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Clair Obscur: Expedition 33</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b5.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b5.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-5" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b5.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b5.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Lies of P</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b6.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b6.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-6" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b6.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b6.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Dead Cells</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b7.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b7.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-7" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b7.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b7.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">NiER Automata</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b8.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b8.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-8" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b8.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b8.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Sea of Stars</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b9.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b9.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-9" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b9.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b9.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Until Then</div>
+                  </div>
+                </div>
+                <div style="background: var(--surface-2); border: 1.5px solid {{ b10.borderColor }}; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 140ms, transform 160ms cubic-bezier(0.2,0,0,1);" style-hover="transform: translateY(-2px);" onClick="{{ b10.onToggle }}">
+                  <div style="position: relative;">
+                    <image-slot id="cv-played-blank-10" shape="rect" placeholder="cover art" style="display: block; width: 100%; aspect-ratio: 600 / 900; background: var(--border);"></image-slot>
+                    <div style="position: absolute; top: 6px; right: 6px; pointer-events: none;">
+                      <sc-if value="{{ b10.notSelected }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1; backdrop-filter: blur(4px);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ b10.selected }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 9px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="padding: 8px 9px 10px;">
+                    <div style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.18">Assassin's Creed: Odyssey</div>
+                  </div>
+                </div>
+                </sc-if>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ noPlayedResults }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 60px 24px 40px;">
+                <div style="width: 54px; height: 54px; border-radius: 15px; background: var(--surface-1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #8A787C; margin-bottom: 16px;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"></circle><line x1="15.5" y1="15.5" x2="21" y2="21" stroke-linecap="round"></line></svg>
+                </div>
+                <div style="font-size: 17px; font-weight: 600;">No games found</div>
+                <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-top: 6px; max-width: 240px;">Nothing matches “<span>{{ playedQuery }}</span>”. Try a different title or spelling.</div>
+              </div>
+              </sc-if>
+              <div style="height: 14px;"></div>
+            </div>
+
+            <div style="flex: none; padding: 12px 20px 24px; background: var(--surface-0); box-shadow: 0 -20px 26px -14px var(--surface-0);">
+              <div style="text-align: center; font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 13px;">{{ pickHint }}</div>
+              <div style="display: flex; gap: 10px;">
+                <sc-if value="{{ nextEnabled }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ onPlayedNext }}" style="flex: 1; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">Next</button>
+                </sc-if>
+                <sc-if value="{{ nextDisabled }}" hint-placeholder-val="{{ true }}">
+                  <span style="flex: 1; text-align: center; background: #2E2224; color: #6E5A5F; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; cursor: not-allowed;">Next</span>
+                </sc-if>
+                <button onClick="{{ onSkipPlayed }}" style="flex: none; border: 1.5px solid var(--border-strong); color: var(--text-primary); border-radius: 12px; padding: 15px 20px; font-size: 15px; font-weight: 500; background: transparent; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--surface-2);">Skip for now</button>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- READING -->
+          <sc-if value="{{ obReading }}" hint-placeholder-val="{{ false }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; overflow: hidden; animation: fadeIn 320ms cubic-bezier(0.2,0,0,1);">
+            <div style="flex: none; width: 58px; height: 58px; border-radius: 50%; border: 3px solid var(--surface-2); border-top-color: var(--accent-500); margin-bottom: 24px; animation: spin 900ms linear infinite;"></div>
+            <h2 style="flex: none; font-size: 21px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 8px;">Analyzing what you've played...</h2>
+            <p style="flex: none; font-size: 13px; color: var(--text-muted); margin: 0; animation: orbPulse 1600ms ease-in-out infinite;">Evaluating what you've played to find your playstyle</p>
+          </div>
+          </sc-if>
+
+          <!-- RESULT -->
+          <sc-if value="{{ obResult }}" hint-placeholder-val="{{ false }}">
+          <div style="animation: fadeIn 340ms cubic-bezier(0.2,0,0,1);">
+            <div style="padding: 26px 22px 22px; text-align: center; border-bottom: 1px solid var(--surface-1); background: var(--surface-0);">
+              <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px">Your player type</div>
+              <div style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 12px; opacity: 0; animation: fadeIn 340ms cubic-bezier(0.2,0,0,1) 400ms both;">{{ archetype }}</div>
+              <div style="font-size: 16px; color: var(--text-secondary); line-height: 1.5; margin: 0 auto 16px; max-width: 296px">You don't just play games, you finish&nbsp;<span style="font-family: Newsreader, Georgia, serif; font-style: italic; color: rgb(240, 233, 233); font-size: 15px;"></span>them. Mastery over novelty, the long haul over the quick hit.</div>
+              <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; background: #2B2023;"><span style="width: 8px; height: 8px; background: var(--accent-500); transform: rotate(45deg); border-radius: 1px;"></span><span style="color: var(--text-primary); font-weight: 600;">{{ rarityPct }}</span> of players share your type</span>
+            </div>
+
+            <div style="padding: 24px 22px; border-bottom: 1px solid var(--surface-1);">
+              <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px">What shapes your taste</div>
+              <sc-for list="{{ axes }}" as="a" hint-placeholder-count="4">
+              <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 8px;"><span style="color: {{ a.leftCol }}; font-weight: {{ a.leftW }};">{{ a.left }}</span><span style="color: {{ a.rightCol }}; font-weight: {{ a.rightW }};">{{ a.right }}</span></div>
+                <div style="height: 8px; background: var(--surface-2); border-radius: 4px; position: relative;"><span style="position: absolute; top: 50%; left: {{ a.pos }}; transform: translate(-50%,-50%); width: 16px; height: 16px; border-radius: 50%; background: var(--accent-500); border: 3px solid var(--surface-0); box-shadow: 0 0 0 1.5px var(--accent-500);"></span></div>
+              </div>
+              </sc-for>
+            </div>
+
+            <div style="padding: 22px 0 12px;">
+              <div style="display: flex; align-items: center; gap: 8px; padding: 0 22px; margin-bottom: 4px;">
+                <span style="font-size: 16px; font-weight: 600">Start your backlog</span>
+              </div>
+              <div style="font-size: 14px; color: var(--text-muted); padding: 0 22px; margin-bottom: 14px; line-height: 1.45">Based off of the games you've played, here are a few recommendations we think you'll enjoy</div>
+              <div data-rail="" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 2px 22px 4px;">
+                <sc-for list="{{ seedItems }}" as="g" hint-placeholder-count="6">
+                <div style="background: var(--surface-2); border: 1px solid {{ g.border }}; border-radius: 12px; overflow: hidden; transition: border-color 160ms;">
+                  <div style="position: relative;">
+                    <image-slot id="{{ g.slotId }}" shape="rect" placeholder="cover" style="display: block; width: 100%; aspect-ratio: 3/4; background: var(--border);"></image-slot>
+                    <button onClick="{{ g.onToggle }}" style="position: absolute; top: 8px; right: 8px; padding: 0; border: none; background: none; cursor: pointer;">
+                      <sc-if value="{{ g.notAdded }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 8px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1;">+</span>
+                      </sc-if>
+                      <sc-if value="{{ g.added }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; font-size: 15px; font-weight: 600; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">✓</span>
+                      </sc-if>
+                    </button>
+                  </div>
+                  <div style="padding: 9px 11px 11px;"><div style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ g.name }}</div><div style="font-size: 12px; color: var(--text-muted); margin-top: 2px">{{ g.meta }}</div></div>
+                </div>
+                </sc-for>
+              </div>
+              <div style="font-size: 12px; color: var(--accent-300); padding: 14px 22px 0;"><span style="font-weight: 600;">{{ seedCount }}</span> games in your backlog</div>
+            </div>
+
+            <div style="position: sticky; bottom: 0; padding: 14px 22px 26px; background: var(--surface-0); border-top: 1px solid var(--border);">
+              <button onClick="{{ onResultContinue }}" style="width: 100%; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 11px; padding: 15px; font-size: 14.5px; font-weight: 600; font-family: inherit; cursor: pointer; margin-bottom: 12px; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">Continue</button>
+              <button onClick="{{ onRetake }}" style="display: block; width: 100%; text-align: center; background: none; border: none; color: var(--text-muted); font-size: 13px; font-family: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;" style-hover="color: var(--text-secondary);">Not quite right? Retake</button>
+            </div>
+          </div>
+          </sc-if>
+          
+
+          <!-- DONE -->
+          <sc-if value="{{ obDone }}" hint-placeholder-val="{{ false }}">
+          <div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding: 28px 22px 20px; overflow: hidden; animation: fadeIn 320ms cubic-bezier(0.2,0,0,1);">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+              <div style="width: 52px; height: 52px; border-radius: 16px; background: #2E2224; border: 1px solid var(--border-strong); display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-500)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg>
+              </div>
+              <h2 style="font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 8px;">You're all set!</h2>
+              <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.5; margin: 0; max-width: 320px">Your Ludos experience is tuned to your taste, and <span style="color: var(--text-primary); font-weight: 600;">{{ seedCount }} games</span> are waiting in your backlog. Happy logging!</p>
+            </div>
+            <div style="flex: none; margin-top: auto; padding-top: 18px;">
+              <button onClick="{{ onEnterLudos }}" style="width: 100%; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 12px; padding: 14px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1)" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">Enter Ludos</button>
+            </div>
+          </div>
+          </sc-if>
+
+        </div>
+
+        <!-- intro footer: dots + nav -->
+        <sc-if value="{{ obIntro }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: none; padding: 0 24px 26px;">
+          <div style="display: flex; justify-content: center; gap: 7px; margin-bottom: 18px;">
+            <sc-for list="{{ introDots }}" as="d" hint-placeholder-count="4">
+              <span style="width: {{ d.w }}; height: 6px; border-radius: 999px; background: {{ d.bg }}; transition: all 200ms cubic-bezier(0.2,0,0,1);"></span>
+            </sc-for>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <sc-if value="{{ introShowBack }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ onIntroBack }}" style="border: 1.5px solid var(--border-strong); color: var(--text-primary); border-radius: 999px; padding: 16px 30px; font-size: 15px; font-weight: 500; background: transparent; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--surface-2);">Back</button>
+            </sc-if>
+            <button onClick="{{ onIntroNext }}" style="flex: 1; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 999px; padding: 16px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">{{ introNextLabel }}</button>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      
+
+      <!-- ============================= HOME ============================= -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+        <div style="flex: none; height: 54px; display: flex; align-items: center; gap: 12px; padding: 0 18px; border-bottom: 1px solid var(--surface-1);">
+          <span style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">Discover</span>
+          <span style="flex: 1;"></span>
+          <button onClick="{{ onDemo }}" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7.5" cy="7.5" r="5"></circle><line x1="11.4" y1="11.4" x2="16" y2="16" stroke-linecap="round"></line></svg>
+          </button>
+          <button onClick="{{ onDemo }}" style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surface-2); cursor: pointer;"></button>
+        </div>
+
+        <div data-screen="" ref="{{ homeScrollRef }}" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; position: relative">
+
+          <div style="padding: 18px 18px 6px;">
+            <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.01em;">Currently playing</div>
+            </sc-if>
+            <sc-if value="{{ notPlaying }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.01em;">What to play next</div>
+              <div style="font-size: 14px; color: var(--text-muted); margin-top: 3px"><span style="color: var(--text-secondary);">{{ backlogCount }}</span> waiting in your backlog</div>
+            </sc-if>
+          </div>
+
+          <!-- spotlight -->
+          <sc-if value="{{ spotVisible }}" hint-placeholder-val="{{ true }}">
+          <div style="overflow: hidden; margin: 12px 14px 22px; background: var(--surface-1); border: 1px solid var(--border-strong); border-radius: 14px; padding: 16px; box-shadow: 0 6px 22px rgba(0,0,0,0.28); animation: {{ spotAnim }};">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px;">
+              <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);">Recommended for you</span>
+              <button onClick="{{ onSpotDismiss }}" title="Dismiss" style="width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">✕</button>
+            </div>
+            <div onClick="{{ onDemo }}" style="display: flex; gap: 14px; cursor: pointer;">
+              <image-slot id="cv-spotlight" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 104px; height: 139px; flex: none;"></image-slot>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 3px;">Not in your library yet</div>
+                <div style="font-size: 23px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.08;">Elden Ring</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin: 5px 0 13px;">Action RPG · PC / PS5 / Xbox · ~60h</div>
+                <div style="display: flex; align-items: flex-start; gap: 9px;">
+                  <span style="width: 9px; height: 9px; background: var(--accent-500); transform: rotate(45deg); border-radius: 1px; flex: none; margin-top: 5px;"></span>
+                  <span style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;"><span style="color: var(--accent-300); font-weight: 600;">Strong match</span> for <span style="font-family: 'Newsreader', Georgia, serif; font-style: italic; color: #E8DCDD; font-size: 13.5px;">{{ archetype }}</span></span>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 9px; margin-top: 16px;">
+              <button onClick="{{ onSpotAdd }}" style="flex: 1; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 9px; padding: 12px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">+ Add to List</button>
+              <button onClick="{{ onDemo }}" style="background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 9px; padding: 12px 16px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">View</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- What to play next -->
+          <div style="animation: {{ pickCardAnim }}; margin: 4px 14px 22px; background: var(--surface-1); border: 1.5px solid var(--border-accent); border-radius: 16px; padding: 16px; box-shadow: 0 8px 26px rgba(0,0,0,0.32); position: relative">
+            
+            <div style="display: flex; gap: 14px; opacity: {{ pickOpacity }}; transition: opacity 170ms ease;">
+              <image-slot id="{{ pickSlotId }}" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 96px; height: 128px; flex: none;"></image-slot>
+              <div style="flex: 1; min-width: 0;">
+                <sc-if value="{{ notPlaying }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px">From your Backlog</div>
+                </sc-if>
+                <div style="font-size: 22px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.06;">{{ pickName }}</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin: 5px 0 11px">{{ pickMeta }}</div>
+                <sc-for list="{{ pickReasons }}" as="r" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px;">
+                    <span style="width: 8px; height: 8px; background: var(--accent-500); transform: rotate(45deg); border-radius: 1px; flex: none; margin-top: 4px;"></span>
+                    <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;"><span style="color: var(--accent-300); font-weight: 600;">{{ r.lead }}</span>{{ r.tail }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ notPlaying }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; gap: 9px; margin-top: 15px;">
+              <button onClick="{{ onStartPlaying }}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 10px; padding: 12px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M4 3l9 5-9 5V3z"></path></svg>
+                Start playing
+              </button>
+              <button onClick="{{ onAnother }}" style="display: inline-flex; align-items: center; gap: 7px; background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 12px 15px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.5-3.5"></path><path d="M13 2.5V5h-2.5"></path></svg>
+                Another
+              </button>
+            </div>
+            </sc-if>
+            <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}">
+            <div style="position: relative;">
+            <button onClick="{{ onUpdateStatus }}" style="display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; margin-top: 15px; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">
+              Update Status
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"></path></svg>
+            </button>
+            <sc-if value="{{ statusMenuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; left: 0; right: 0; top: 100%; margin-top: 8px; z-index: 5; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 12px; padding: 5px; box-shadow: 0 14px 34px rgba(0,0,0,0.45); animation: riseIn 160ms cubic-bezier(0.2,0,0,1);">
+                <button onClick="{{ onMarkFinished }}" style="display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: none; border-radius: 9px; padding: 11px 12px; font-size: 13.5px; font-weight: 500; font-family: inherit; color: var(--text-primary); cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--surface-3);">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><path d="M3 8.5l3.2 3.2L13 4.5"></path></svg>
+                  Mark as finished
+                </button>
+                <button onClick="{{ onMoveToBacklog }}" style="display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: transparent; border: none; border-radius: 9px; padding: 11px 12px; font-size: 13.5px; font-weight: 500; font-family: inherit; color: var(--text-primary); cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--surface-3);">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><path d="M4 2.5h8v11l-4-3-4 3z"></path></svg>
+                  Move to backlog
+                </button>
+              </div>
+            </sc-if>
+            </div>
+            </sc-if>
+            
+          </div>
+
+          <!-- Head-to-head card -->
+          <button onClick="{{ onCompare }}" style="display: flex; align-items: center; gap: 14px; width: calc(100% - 28px); box-sizing: border-box; text-align: left; margin: -8px 14px 22px; padding: 14px 15px; border: 1.5px solid var(--border-accent); border-radius: 16px; background: var(--surface-1); font-family: inherit; cursor: pointer; box-shadow: 0 8px 26px rgba(0,0,0,0.32); transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--surface-2);">
+            <span style="position: relative; display: flex; align-items: center; flex: none; width: 62px; height: 44px;">
+              <span style="width: 30px; height: 44px; border-radius: 6px 3px 3px 6px; background: var(--accent-500);"></span>
+              <span style="width: 30px; height: 44px; border-radius: 3px 6px 6px 3px; background: #49566B; margin-left: 2px;"></span>
+              <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 26px; height: 26px; box-sizing: border-box; border-radius: 999px; background: #3A2C30; border: 1.5px solid var(--surface-1); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; font-weight: 700; line-height: 0; letter-spacing: 0px; color: #E8DCDD; text-transform: uppercase">vs</span>
+            </span>
+            <span style="flex: 1; min-width: 0;">
+              <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}">
+                <span style="display: block; font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em;">Want to play something new?</span>
+              </sc-if>
+              <sc-if value="{{ notPlaying }}" hint-placeholder-val="{{ true }}">
+                <span style="display: block; font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em;">Still can't decide?</span>
+              </sc-if>
+              <span style="display: block; margin-top: 3px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.4;">Compare two games against each other to narrow down what to play</span>
+            </span>
+            <span style="flex: none; color: #8A787C; display: inline-flex;">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5L10.5 8L6 12.5"></path></svg>
+            </span>
+          </button>
+
+          <!-- rails -->
+          <sc-for list="{{ rails }}" as="rail" hint-placeholder-count="3">
+          <div style="margin-bottom: 22px;">
+            <div style="display: flex; align-items: center; gap: 8px; padding: 0 18px; margin-bottom: 3px;">
+              <span style="font-size: 21px; font-weight: 600">{{ rail.title }}</span>
+            </div>
+            <div style="font-size: 14px; color: var(--text-muted); padding: 0 18px; margin-bottom: 11px">{{ rail.sub }}</div>
+            <sc-if value="{{ rail.show }}" hint-placeholder-val="{{ true }}">
+            <div data-rail="" style="display: flex; gap: 12px; overflow-x: auto; padding: 2px 18px 4px; scrollbar-width: none;">
+              <sc-for list="{{ rail.items }}" as="item" hint-placeholder-count="4">
+                <div onClick="{{ item.onView }}" style="width: 138px; flex: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 160ms cubic-bezier(0.2,0,0,1), border-color 160ms;" style-hover="transform: translateY(-3px); border-color: var(--border-strong);">
+                  <div style="position: relative;">
+                    <image-slot id="{{ item.slotId }}" shape="rect" placeholder="cover" style="display: block; width: 100%; height: 178px; background: var(--border);"></image-slot>
+                    <button onClick="{{ item.onAdd }}" style="position: absolute; top: 8px; right: 8px; padding: 0; border: none; background: none; cursor: pointer;">
+                      <sc-if value="{{ item.statusNone }}" hint-placeholder-val="{{ true }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 8px; background: rgba(18,11,13,0.62); border: 1px solid rgba(240,233,233,0.16); color: var(--text-primary); align-items: center; justify-content: center; font-size: 17px; line-height: 1;" style-hover="background: var(--accent-500); border-color: var(--accent-500); color: var(--on-accent);">+</span>
+                      </sc-if>
+                      <sc-if value="{{ item.statusBacklog }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">
+                          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 3h10v14l-5-3.4L5 17V3z"></path></svg>
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ item.statusPlaying }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">
+                          <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4l11 6-11 6V4z"></path></svg>
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ item.statusFinished }}" hint-placeholder-val="{{ false }}">
+                        <span style="display: flex; width: 28px; height: 28px; border-radius: 8px; background: var(--accent-500); color: var(--on-accent); align-items: center; justify-content: center; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">
+                          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"></path></svg>
+                        </span>
+                      </sc-if>
+                    </button>
+                  </div>
+                  <div style="padding: 9px 11px 11px;">
+                    <div style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.name }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">{{ item.platform }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            </sc-if>
+            
+            <sc-if value="{{ rail.empty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin: 0 18px; border: 1.5px dashed var(--border-strong); border-radius: 12px; padding: 16px; background: #2B2023;">
+              <div style="font-size: 14px; font-weight: 600">Empty… for now.</div>
+              <div style="font-size: 14px; color: var(--text-muted); line-height: 1.4; margin-top: 2px">Add some friends to see what they've been playing.</div>
+              <button onClick="{{ onDemo }}" style="display: block; width: 100%; margin-top: 13px; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 9px; padding: 11px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;" style-hover="background: var(--accent-400);">Add Friends</button>
+            </div>
+            </sc-if>
+          </div>
+          </sc-for>
+          
+
+          <div style="height: 14px;"></div>
+        </div>
+
+        <!-- tab bar -->
+        <div style="flex: none; height: 64px; display: flex; align-items: center; padding: 0 4px 6px; border-top: 1px solid var(--surface-1); background: var(--surface-0);">
+          <button style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: default; font-family: inherit; color: var(--accent-300);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"></circle><circle cx="11" cy="11" r="1.7" fill="currentColor" stroke="none"></circle></svg>
+            <span style="font-size: 10px; font-weight: 600;">Discover</span>
+          </button>
+          <button onClick="{{ onDemo }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><rect x="4" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="9.3" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="14.6" y="5" width="3.4" height="12" rx="1.2"></rect></svg>
+            <span style="font-size: 10px; font-weight: 500;">Library</span>
+          </button>
+          <button onClick="{{ onDemo }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="9" r="3.4"></circle><circle cx="14.5" cy="9.5" r="2.8"></circle><path d="M3.5 17c0-2.5 2-4 5-4s5 1.5 5 4"></path></svg>
+            <span style="font-size: 10px; font-weight: 500;">Friends</span>
+          </button>
+          <button onClick="{{ onDemo }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9.5" cy="9.5" r="6"></circle><line x1="14" y1="14" x2="19" y2="19" stroke-linecap="round"></line></svg>
+            <span style="font-size: 10px; font-weight: 500;">Search</span>
+          </button>
+          <button onClick="{{ onDemo }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="7.5" r="3.6"></circle><path d="M4 18.5c0-3.4 3.1-5.2 7-5.2s7 1.8 7 5.2"></path></svg>
+            <span style="font-size: 10px; font-weight: 500;">Profile</span>
+          </button>
+        </div>
+
+        <!-- status sheet -->
+        <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; inset: 0; z-index: 30;">
+          <div onClick="{{ onCloseSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: {{ sheetScrimAnim }};"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--surface-1); border-top: 1px solid var(--border-strong); border-radius: 22px 22px 0 0; padding: 10px 18px 24px; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: {{ sheetPanelAnim }};">
+            <div style="width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 16px;"></div>
+            <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Add <span>{{ sheetName }}</span> to…</div>
+            <div style="font-size: 12.5px; color: var(--text-muted); margin: 3px 0 16px;">Set a status to start tracking it</div>
+            <button onClick="{{ onAddBacklog }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--accent-400);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" style="flex: none;"><path d="M5 3h10v14l-5-3.4L5 17V3z"></path></svg>Add to backlog
+            </button>
+            <button onClick="{{ onSheetMarkPlaying }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: transparent; color: var(--text-primary); border: 1px solid var(--border-strong); border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--surface-2);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="flex: none;"><path d="M6 4l11 6-11 6V4z"></path></svg>Mark as playing
+            </button>
+            <button onClick="{{ onSheetMarkFinished }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: transparent; color: var(--text-primary); border: 1px solid var(--border-strong); border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--surface-2);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M4 10.5l4 4 8-9"></path></svg>Mark as finished
+            </button>
+            <button onClick="{{ onDemo }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: transparent; color: var(--accent-300); border: 1px dashed var(--border-accent); border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="flex: none;"><path d="M10 4v12M4 10h12"></path></svg>Add to a list
+            </button>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- time sheet -->
+        <sc-if value="{{ timeSheetOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; inset: 0; z-index: 30;">
+          <div onClick="{{ onCloseTimeSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: {{ timeScrimAnim }};"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--surface-1); border-top: 1px solid var(--border-strong); border-radius: 22px 22px 0 0; padding: 10px 18px 24px; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: {{ timePanelAnim }};">
+            <div style="width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 16px;"></div>
+            <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">How much time do you have?</div>
+            <div style="font-size: 12.5px; color: var(--text-muted); margin: 3px 0 16px;">We'll tune the pick to fit your session</div>
+            <sc-for list="{{ timeOptions }}" as="t" hint-placeholder-count="3">
+              <button onClick="{{ t.onPick }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: {{ t.bg }}; color: var(--text-primary); border: 1px solid {{ t.bd }}; border-radius: 11px; padding: 13px 14px; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--surface-2);">
+                <span style="flex: 1;"><span style="font-size: 14px; font-weight: 600; display: block;">{{ t.label }}</span><span style="font-size: 11.5px; color: var(--text-muted);">{{ t.desc }}</span></span>
+                <sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><span style="color: var(--accent-300); font-size: 15px; flex: none;">✓</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      
+
+      <!-- ============================= HEAD-TO-HEAD ============================= -->
+      <sc-if value="{{ isH2H }}" hint-placeholder-val="{{ false }}">
+      <div style="flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; min-height: 0;">
+
+        <!-- INTENT -->
+        <sc-if value="{{ h2hIntent }}" hint-placeholder-val="{{ true }}">
+        <div style="flex: 1; display: flex; flex-direction: column; animation: fadeIn 260ms ease;">
+          <div style="flex: none; display: flex; align-items: center; gap: 11px; padding: 4px 16px 8px;">
+            <button onClick="{{ onH2HBack }}" title="Back" style="width: 34px; height: 34px; flex: none; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"></path></svg>
+            </button>
+            <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em;">Back to Discover</span>
+          </div>
+          <div style="padding: 16px 22px 4px;">
+            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-300); margin-bottom: 10px;">Head-to-head</div>
+            <div style="font-size: 25px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.14;"><span style="color: var(--text-muted); font-weight: 400;">Before we compare —</span> what are you in the mood for?</div>
+          </div>
+          <div style="padding: 20px 16px 4px; display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ intentOptions }}" as="o" hint-placeholder-count="4">
+            <button onClick="{{ o.onClick }}" style="display: flex; align-items: center; gap: 13px; text-align: left; background: {{ o.bg }}; border: 1.5px solid {{ o.bc }}; border-radius: 13px; padding: 14px; font-family: inherit; cursor: pointer; transition: border-color 160ms, background 160ms;">
+              
+              <span style="flex: 1; min-width: 0;">
+                <span style="display: block; font-size: 15px; font-weight: 600; color: var(--text-primary);">{{ o.title }}</span>
+                <span style="display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">{{ o.sub }}</span>
+              </span>
+              <sc-if value="{{ o.unsel }}" hint-placeholder-val="{{ true }}"><span style="width: 22px; height: 22px; flex: none; border-radius: 50%; border: 1.5px solid var(--border-strong); background: transparent;"></span></sc-if>
+              <sc-if value="{{ o.sel }}" hint-placeholder-val="{{ false }}"><span style="width: 22px; height: 22px; flex: none; border-radius: 50%; background: var(--accent-500); color: var(--on-accent); display: flex; align-items: center; justify-content: center; animation: popIn 240ms cubic-bezier(0.2,0,0,1);"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3.2 3.2L13 4.5"></path></svg></span></sc-if>
+            </button>
+            </sc-for>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="flex: none; padding: 12px 16px 20px;">
+            <div style="font-size: 11.5px; color: #8A787C; text-align: center; margin-bottom: 12px; line-height: 1.45;">We'll pit your Backlog games against each other, {{ intentPoolNote }}</div>
+            <button onClick="{{ onStartComparing }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">
+              Start comparing
+              <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h11"></path><path d="M10 5l5 5-5 5"></path></svg>
+            </button>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- DUEL -->
+        <sc-if value="{{ h2hDuel }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; display: flex; flex-direction: column; animation: fadeIn 260ms ease;">
+          <div style="flex: none; display: flex; align-items: center; gap: 11px; padding: 4px 16px 6px;">
+            <button onClick="{{ onH2HBack }}" style="width: 34px; height: 34px; flex: none; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"></path></svg>
+            </button>
+            <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em;">Back to Discover</span>
+          </div>
+          <div style="flex: none; display: flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 16px 0;">
+            <sc-for list="{{ progressSegs }}" as="p" hint-placeholder-count="5">
+              <span style="width: 26px; height: 3px; border-radius: 2px; background: {{ p.bg }}; transition: background 200ms;"></span>
+            </sc-for>
+          </div>
+          <div style="flex: none; display: flex; justify-content: center; padding: 14px 16px 0;">
+            <button onClick="{{ onChangeIntent }}" style="display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-strong); border-radius: 999px; padding: 6px 13px; font-size: 12px; color: var(--text-secondary); background: #2B2023; font-family: inherit; cursor: pointer;" style-hover="border-color: var(--border-accent); background: #33272A;">
+              <span style="width: 9px; height: 9px; background: var(--accent-500); transform: rotate(45deg); border-radius: 1px;"></span>
+              <span style="color: var(--text-primary); font-weight: 600;">{{ intentLabel }}</span>
+              <span style="color: #8A787C; font-size: 9px;">▾</span>
+            </button>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="flex: none; text-align: center; font-size: 19px; font-weight: 600; letter-spacing: -0.015em; padding: 4px 20px 22px;">Which would you rather play?</div>
+          <div style="flex: none; padding: 0 18px; position: relative;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 34px; position: relative;">
+              <button onClick="{{ onPickChamp }}" style="display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--surface-1); border: 1.5px solid {{ champ.bc }}; border-radius: 16px; padding: 16px 8px 18px; font-family: inherit; cursor: pointer; box-shadow: {{ champ.shadow }}; transform: {{ champ.scale }}; opacity: {{ champ.op }}; transition: transform 200ms cubic-bezier(0.2,0,0,1), border-color 180ms, box-shadow 200ms, opacity 180ms;">
+                <image-slot id="{{ champ.slotId }}" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 92px; aspect-ratio: 2/3; height: auto; background: var(--border); border: 1px solid var(--border-strong); border-radius: 9px; box-sizing: border-box; margin-bottom: 13px;"></image-slot>
+                <div style="font-size: 15px; font-weight: 600; line-height: 1.15; color: var(--text-primary);">{{ champ.name }}</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">{{ champ.genre }}</div>
+                <div style="font-size: 11px; color: #8A787C; margin-top: 3px;">{{ champ.hrs }}</div>
+              </button>
+              <button onClick="{{ onPickChall }}" style="display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--surface-1); border: 1.5px solid {{ chall.bc }}; border-radius: 16px; padding: 16px 8px 18px; font-family: inherit; cursor: pointer; box-shadow: {{ chall.shadow }}; transform: {{ chall.scale }}; opacity: {{ chall.op }}; transition: transform 200ms cubic-bezier(0.2,0,0,1), border-color 180ms, box-shadow 200ms, opacity 180ms;">
+                <image-slot id="{{ chall.slotId }}" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 92px; aspect-ratio: 2/3; height: auto; background: var(--border); border: 1px solid var(--border-strong); border-radius: 9px; box-sizing: border-box; margin-bottom: 13px;"></image-slot>
+                <div style="font-size: 15px; font-weight: 600; line-height: 1.15; color: var(--text-primary);">{{ chall.name }}</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">{{ chall.genre }}</div>
+                <div style="font-size: 11px; color: #8A787C; margin-top: 3px;">{{ chall.hrs }}</div>
+              </button>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 42px; height: 42px; border-radius: 50%; background: var(--surface-2); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; z-index: 2; border: 1px solid var(--border-strong); box-shadow: 0 0 0 6px var(--surface-0);">OR</div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 22px 4px 4px;">
+              <button onClick="{{ onUndo }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; font-family: inherit; background: none; border: none; padding: 6px 4px; cursor: {{ undoCursor }}; color: {{ undoColor }};">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a5 5 0 1 1 1.5 3.5"></path><path d="M3 5v3h3"></path></svg>Undo
+              </button>
+              <button onClick="{{ onSkip }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; font-family: inherit; background: none; border: none; padding: 6px 4px; cursor: pointer; color: var(--text-secondary);" style-hover="color: var(--text-primary);">
+                Skip this matchup
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3l6 5-6 5z"></path><path d="M12 3v10"></path></svg>
+              </button>
+            </div>
+          </div>
+          <div style="flex: 1;"></div>
+        </div>
+        </sc-if>
+
+        <!-- OUTCOME -->
+        <sc-if value="{{ h2hOutcome }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; display: flex; flex-direction: column; animation: fadeIn 300ms ease;">
+          <div style="flex: none; display: flex; align-items: center; gap: 11px; padding: 4px 16px 6px;">
+            <button onClick="{{ onH2HBack }}" style="width: 34px; height: 34px; flex: none; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"></path></svg>
+            </button>
+            <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em;">Back to Discover</span>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12px 26px;">
+            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-300); margin-bottom: 20px; animation: fadeIn 400ms ease;">Your pick to play next</div>
+            <div style="animation: riseIn 460ms cubic-bezier(0.2,0,0,1);">
+              <image-slot id="{{ winner.slotId }}" shape="rounded" radius="12" placeholder="cover" style="display: block; width: 160px; aspect-ratio: 2/3; height: auto; margin: 0 auto 20px; background: var(--border); border: 1px solid var(--border-strong); border-radius: 12px; box-sizing: border-box; box-shadow: 0 18px 44px rgba(0,0,0,0.5);"></image-slot>
+            </div>
+            <div style="font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.05; animation: riseIn 500ms cubic-bezier(0.2,0,0,1);">{{ winner.name }}</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 7px; margin-bottom: 20px;">{{ winner.meta }}</div>
+            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-secondary); background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 9px 15px; animation: popIn 420ms cubic-bezier(0.2,0,0,1);">
+              <span style="width: 8px; height: 8px; background: var(--accent-500); transform: rotate(45deg); border-radius: 1px; flex: none;"></span>
+              <span><span style="color: var(--text-primary); font-weight: 600;">{{ winReasonLead }}</span>{{ winReasonTail }}</span>
+            </div>
+          </div>
+          <div style="flex: none; padding: 8px 16px 22px; display: flex; flex-direction: column; gap: 9px;">
+            <button onClick="{{ onCommitPlaying }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 3l9 5-9 5V3z"></path></svg>
+              <span>Mark {{ winner.name }} as playing</span>
+            </button>
+            <div style="display: flex; gap: 9px;">
+              <button onClick="{{ onKeepComparing }}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 13px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8a5 5 0 1 1-1.5-3.5"></path><path d="M13 2.5V5h-2.5"></path></svg>Keep comparing
+              </button>
+              <button onClick="{{ onH2HBack }}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 13px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">Back to Discover</button>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- COLD START -->
+        <sc-if value="{{ h2hCold }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; display: flex; flex-direction: column; animation: fadeIn 260ms ease;">
+          <div style="flex: none; display: flex; align-items: center; gap: 11px; padding: 4px 16px 6px;">
+            <button onClick="{{ onH2HBack }}" style="width: 34px; height: 34px; flex: none; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"></path></svg>
+            </button>
+            <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em;">Back to Discover</span>
+          </div>
+          <div style="flex: none; display: flex; justify-content: center; padding: 14px 16px 0;">
+            <button onClick="{{ onChangeIntent }}" style="display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border-strong); border-radius: 999px; padding: 6px 13px; font-size: 12px; color: var(--text-secondary); background: #2B2023; font-family: inherit; cursor: pointer;" style-hover="border-color: var(--border-accent); background: #33272A;">
+              <span style="width: 9px; height: 9px; background: var(--accent-500); transform: rotate(45deg); border-radius: 1px;"></span>
+              <span style="color: var(--text-primary); font-weight: 600;">{{ intentLabel }}</span>
+              <span style="color: #8A787C; font-size: 9px;">▾</span>
+            </button>
+          </div>
+          <div style="flex: 1;"></div>
+          <div style="flex: none; padding: 0 18px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 34px; position: relative;">
+              <div style="display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--surface-1); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px 8px 18px;">
+                <image-slot id="{{ csGame.slotId }}" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 92px; aspect-ratio: 2/3; height: auto; background: var(--border); border: 1px solid var(--border-strong); border-radius: 9px; box-sizing: border-box; margin-bottom: 13px;"></image-slot>
+                <div style="font-size: 15px; font-weight: 600; line-height: 1.15; color: var(--text-primary);">{{ csGame.name }}</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">{{ csGame.genre }}</div>
+                <div style="font-size: 11px; color: #8A787C; margin-top: 3px;">{{ csGame.hrs }}</div>
+              </div>
+              <button onClick="{{ onDemo }}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: transparent; border: 1.5px dashed var(--border-strong); border-radius: 16px; padding: 16px 8px; font-family: inherit; cursor: pointer;" style-hover="background: #2B2023; border-color: var(--border-accent);">
+                <span style="width: 40px; height: 40px; border-radius: 50%; border: 1.5px dashed var(--border-accent); display: flex; align-items: center; justify-content: center; color: var(--accent-300); margin-bottom: 11px;">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 4v12M4 10h12"></path></svg>
+                </span>
+                <span style="font-size: 12px; color: var(--text-muted);">Add a game</span>
+              </button>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 42px; height: 42px; border-radius: 50%; background: var(--surface-2); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; z-index: 2; border: 1px solid var(--border-strong); box-shadow: 0 0 0 6px var(--surface-0);">OR</div>
+            </div>
+            <div style="text-align: center; font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 22px 6px 0;">Only one Backlog game fits <span style="color: var(--text-primary); font-weight: 600;">{{ intentLabel }}</span> right now. Try a different mood, or add more games to compare.</div>
+            <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 20px;">
+              <button onClick="{{ onChangeIntent }}" style="width: 100%; box-sizing: border-box; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">Change your mood</button>
+              <button onClick="{{ onH2HBack }}" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; box-sizing: border-box; background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">Browse Discover <span>→</span></button>
+            </div>
+          </div>
+          <div style="flex: 1;"></div>
+        </div>
+        </sc-if>
+
+      </div>
+      </sc-if>
+
+      <!-- shared toast -->
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div key="{{ toastKey }}" style="position: absolute; left: 50%; bottom: 82px; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text-primary); font-size: 12.5px; font-weight: 500; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); white-space: nowrap; animation: toastUp 200ms cubic-bezier(0.2,0,0,1); z-index: 50;">{{ toast }}</div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:472,&quot;height&quot;:908},&quot;jumpToScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Onboarding: intro 1&quot;,&quot;options&quot;:[&quot;— pick a screen —&quot;,&quot;Onboarding: intro 1&quot;,&quot;Onboarding: intro 2&quot;,&quot;Onboarding: intro 3&quot;,&quot;Onboarding: intro 4&quot;,&quot;Onboarding: played games&quot;,&quot;Onboarding: reading&quot;,&quot;Onboarding: result&quot;,&quot;Onboarding: done&quot;,&quot;Home: discover&quot;,&quot;Home: discover — after head-to-head&quot;,&quot;Head-to-head: intent&quot;,&quot;Head-to-head: duel&quot;,&quot;Head-to-head: outcome&quot;,&quot;Head-to-head: cold start&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;startFlow&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;onboarding&quot;,&quot;options&quot;:[&quot;onboarding&quot;,&quot;home&quot;,&quot;h2h&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Preview&quot;},&quot;playerName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Kevin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;archetype&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;The Completionist&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;friendsConnected&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;},&quot;showRecommendedCard&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = {
+    flow: 'onboarding',
+    obStep: 'intro1', played: {}, playedQuery: '', playedFocus: false,
+    backlog: { hollow: true, outer: true, tunic: true, celeste: true, totk: true, ds3: true },
+    tab: 'discover', pickIdx: 0, pickFading: false, time: 1,
+    sheet: null, sheetClosing: false, timeSheet: false, timeClosing: false,
+    spotDismissed: false, spotDismissing: false,
+    upNext: null, playingItem: null, toast: null, itemStatus: {}, pickIntro: false,
+    intent: 'fast',
+    h2hScreen: 'intent',
+    champion: null, challenger: null, queue: [],
+    streak: 0, compareCount: 0, turn: 0, history: [], picking: null,
+    winner: null, winReason: 'streak',
+  };
+
+  GAMES = {
+    hades:   { k: 'hades',   name: 'Hades II',          genre: 'Roguelike',    hrs: '~21h', plat: 'PC / Switch', intents: ['fast', 'big'] },
+    outer:   { k: 'outer',   name: 'Outer Wilds',       genre: 'Mystery',      hrs: '~15h', plat: 'PC / Xbox',   intents: ['story', 'fast'] },
+    hollow:  { k: 'hollow',  name: 'Hollow Knight',     genre: 'Metroidvania', hrs: '~27h', plat: 'PC / Switch', intents: ['big', 'story'] },
+    tunic:   { k: 'tunic',   name: 'Tunic',             genre: 'Adventure',    hrs: '~12h', plat: 'PC / PS5',    intents: ['fast', 'story'] },
+    celeste: { k: 'celeste', name: 'Celeste',           genre: 'Platformer',   hrs: '~8h',  plat: 'PC / Switch', intents: ['fast', 'chill'] },
+    citizen: { k: 'citizen', name: 'Citizen Sleeper',   genre: 'RPG',          hrs: '~9h',  plat: 'PC / Switch', intents: ['story', 'chill'] },
+    sts:     { k: 'sts',     name: 'Slay the Spire',    genre: 'Deckbuilder',  hrs: '~24h', plat: 'PC / Switch', intents: ['fast', 'big'] },
+    disco:   { k: 'disco',   name: 'Disco Elysium',     genre: 'RPG',          hrs: '~33h', plat: 'PC / PS5',    intents: ['big', 'story'] },
+    stray:   { k: 'stray',   name: 'Stray',             genre: 'Adventure',    hrs: '~7h',  plat: 'PC / PS5',    intents: ['chill', 'story'] },
+    bg3:     { k: 'bg3',     name: "Baldur's Gate 3",   genre: 'CRPG',         hrs: '~90h', plat: 'PC / PS5',    intents: ['big'] },
+    totk:    { k: 'totk',    name: 'The Legend of Zelda: Tears of the Kingdom', genre: 'Action-Adventure', hrs: '~50h', plat: 'Switch',      intents: ['big', 'story'] },
+    ds3:     { k: 'ds3',     name: 'Dark Souls III',    genre: 'Action RPG',   hrs: '~45h', plat: 'PC / PS5 / Xbox', intents: ['big', 'fast'] },
+  };
+  SEED = ['hollow', 'outer', 'tunic', 'celeste', 'totk', 'ds3'];
+  INTENT_LABELS = { fast: 'Fast & fun', big: 'Long haul', story: 'Story', chill: 'Chill' };
+
+  arche() { return this.props.archetype ?? 'The Completionist'; }
+  archePlural() { const a = this.arche().replace(/^The\s+/i, ''); return a.endsWith('s') ? a : a + 's'; }
+  backlogGames() { return Object.keys(this.state.backlog).filter(k => this.state.backlog[k]).map(k => this.GAMES[k]).filter(Boolean); }
+
+  flash(msg) { if (this._t) clearTimeout(this._t); this._toastN = (this._toastN || 0) + 1; this.setState({ toast: msg, toastKey: this._toastN }); this._t = setTimeout(() => this.setState({ toast: null }), 1900); }
+  demo() { this.flash('Not available in this demo'); }
+
+  // onboarding
+  PLAYED_DB = [
+    { k: 'gamble', n: 'Gamble With Your Friends', p: 'PC' },
+    { k: 'sekiro', n: 'Sekiro: Shadows Die Twice', p: 'PC · PS5' },
+    { k: 'zelda', n: 'Legend of Zelda: Tears of the Kingdom', p: 'Switch' },
+    { k: 'acbf', n: "Assassin's Creed Black Flag: Resynched", p: 'PC · PS5 · Xbox' },
+    { k: 'hades2', n: 'Hades II', p: 'PC · Switch' },
+    { k: 'outerwilds', n: 'Outer Wilds', p: 'PC · Xbox' },
+    { k: 'celeste', n: 'Celeste', p: 'PC · Switch' },
+    { k: 'meccha', n: 'Meccha Chameleon', p: 'PC · PS5 · Xbox' },
+    { k: 'bg3', n: "Baldur's Gate 3", p: 'PC · PS5' },
+    { k: 'elden', n: 'Elden Ring', p: 'PC · PS5 · Xbox' },
+    { k: 'hollow', n: 'Hollow Knight', p: 'PC · Switch' },
+    { k: 'mina', n: 'Mina the Hollower', p: 'PC · Switch · PS5' },
+    { k: 'tunic', n: 'Tunic', p: 'PC · PS5' },
+    { k: 'disco', n: 'Disco Elysium', p: 'PC · PS5' },
+    { k: 'citizen', n: 'Citizen Sleeper', p: 'PC · Switch' },
+    { k: 'stray', n: 'Stray', p: 'PC · PS5' },
+    { k: 'firstlight', n: '007 First Light', p: 'PC · PS5' },
+    { k: 'subnautica', n: 'Subnautica 2', p: 'PC · Xbox' },
+    { k: 'forza', n: 'Forza Horizon 6', p: 'PC · Xbox' },
+    { k: 'pragmata', n: 'PRAGMATA', p: 'PC · PS5' },
+  ];
+  blankCard(id) {
+    const on = !!this.state.played[id];
+    return {
+      selected: on, notSelected: !on,
+      borderColor: on ? 'var(--accent-500)' : 'var(--border)',
+      onToggle: () => this.togglePlayed(id),
+    };
+  }
+  togglePlayed(id) { this.setState(s => { const p = { ...s.played }; if (p[id]) delete p[id]; else p[id] = true; return { played: p }; }); }
+  goReading() { if (this._r) clearTimeout(this._r); this.setState({ obStep: 'reading' }); this._r = setTimeout(() => this.setState({ obStep: 'result' }), 2400); }
+  toggleSeed(k) { this.setState(s => ({ backlog: { ...s.backlog, [k]: !s.backlog[k] } })); }
+  retake() { if (this._r) clearTimeout(this._r); this.setState({ obStep: 'played', played: {}, playedQuery: '' }); }
+  enterLudos() { this.setState({ flow: 'home', tab: 'discover' }); }
+  introNext() { const order = ['intro1', 'intro2', 'intro3', 'intro4']; const i = order.indexOf(this.state.obStep); if (i < 0 || i >= 3) this.setState({ obStep: 'played' }); else this.setState({ obStep: order[i + 1] }); }
+  introBack() { const order = ['intro1', 'intro2', 'intro3', 'intro4']; const i = order.indexOf(this.state.obStep); if (i > 0) this.setState({ obStep: order[i - 1] }); }
+
+  // home
+  currentPick() { const arr = this.backlogGames(); if (!arr.length) return null; return arr[this.state.pickIdx % arr.length]; }
+  cyclePick() { const n = this.backlogGames().length || 1; if (this._pa) clearTimeout(this._pa); this.setState({ pickFading: true }); this._pa = setTimeout(() => this.setState(s => ({ pickIdx: (s.pickIdx + 1) % n, pickFading: false })), 180); }
+  openTimeSheet() { if (this._ts) clearTimeout(this._ts); this.setState({ timeSheet: true, timeClosing: false }); }
+  closeTimeSheet() { if (!this.state.timeSheet) return; if (this._ts) clearTimeout(this._ts); this.setState({ timeClosing: true }); this._ts = setTimeout(() => this.setState({ timeSheet: false, timeClosing: false }), 280); }
+  pickTime(i) { this.setState({ time: i, pickIdx: 0 }); this.closeTimeSheet(); }
+  openSheet(name, info) { if (this._s) clearTimeout(this._s); this.setState({ sheet: { name, meta: info && info.meta, slotId: info && info.slotId }, sheetClosing: false }); }
+  homeScroll = React.createRef();
+  scrollHomeTop() { setTimeout(() => { const el = this.homeScroll.current; if (el && el.scrollTo) el.scrollTo({ top: 0, behavior: 'smooth' }); }, 60); }
+  closeSheet() { if (!this.state.sheet) return; if (this._s) clearTimeout(this._s); this.setState({ sheetClosing: true }); this._s = setTimeout(() => this.setState({ sheet: null, sheetClosing: false }), 280); }
+  startPlayingPick() { const g = this.currentPick(); if (!g) return; this.setState({ upNext: g.k, playingItem: null }); this.flash('Now playing ' + g.name); }
+  moveToBacklog() { const s = this.state; const name = (s.playingItem && s.playingItem.name) || (s.upNext && this.GAMES[s.upNext] || {}).name || 'Game'; this.setState(st => ({ statusMenu: false, upNext: null, playingItem: null, itemStatus: { ...st.itemStatus, [name]: 'backlog' } })); this.flash('Moved ' + name + ' to backlog'); }
+  goCompare() { this.setState({ flow: 'h2h', h2hScreen: 'intent', statusMenu: false }); }
+  markPickFinished() { const s = this.state; const name = (s.playingItem && s.playingItem.name) || (s.upNext && this.GAMES[s.upNext] || {}).name || 'Game'; this.setState(st => ({ statusMenu: false, upNext: null, playingItem: null, itemStatus: { ...st.itemStatus, [name]: 'finished' } })); this.flash('Marked ' + name + ' as finished'); }
+
+  // h2h
+  poolFor(intent) { return this.backlogGames().filter(g => g.intents.indexOf(intent) >= 0); }
+  startDuel(intent) {
+    const pool = this.poolFor(intent);
+    if (pool.length < 2) { this.setState({ h2hScreen: 'coldstart', intent }); return; }
+    this.setState({ h2hScreen: 'duel', intent, champion: pool[0], challenger: pool[1], queue: pool.slice(2), streak: 0, compareCount: 0, turn: 0, history: [], picking: null });
+  }
+  snapshot() { const s = this.state; return { champion: s.champion, challenger: s.challenger, queue: s.queue, streak: s.streak, compareCount: s.compareCount, turn: s.turn }; }
+  pick(side) { if (this.state.picking) return; this.setState({ picking: side }); if (this._p) clearTimeout(this._p); this._p = setTimeout(() => this.resolvePick(side === 'champ'), 380); }
+  resolvePick(isChamp) {
+    const s = this.state; const snap = this.snapshot();
+    const champion = isChamp ? s.champion : s.challenger;
+    const streak = isChamp ? s.streak + 1 : 1;
+    const compareCount = s.compareCount + 1;
+    const queue = s.queue.slice();
+    if (streak >= 3) return this.finish(champion, 'streak', snap, compareCount);
+    if (compareCount >= 5) return this.finish(champion, 'cap', snap, compareCount);
+    if (queue.length === 0) return this.finish(champion, 'exhausted', snap, compareCount);
+    const nextChall = queue.shift();
+    this.setState(st => ({ champion, challenger: nextChall, queue, streak, compareCount, turn: st.turn + 1, picking: null, history: [...st.history, snap] }));
+  }
+  finish(champion, reason, snap, compareCount) { this.setState(st => ({ h2hScreen: 'outcome', winner: champion, winReason: reason, compareCount, picking: null, history: [...st.history, snap] })); }
+  undo() { const s = this.state; if (!s.history.length) return; const hist = s.history.slice(); const snap = hist.pop(); this.setState({ ...snap, history: hist, h2hScreen: 'duel', picking: null }); }
+  skip() { const s = this.state; if (s.picking) return; const snap = this.snapshot(); const queue = s.queue.slice(); if (queue.length === 0) return this.finish(s.champion, 'exhausted', snap, s.compareCount); const nextChall = queue.shift(); this.setState(st => ({ challenger: nextChall, queue, turn: st.turn + 1, history: [...st.history, snap] })); }
+  keepComparing() { const wk = this.state.winner && this.state.winner.k; const pool = this.poolFor(this.state.intent).filter(g => g.k !== wk); if (pool.length < 2) { this.setState({ h2hScreen: 'coldstart' }); return; } this.setState({ h2hScreen: 'duel', champion: pool[0], challenger: pool[1], queue: pool.slice(2), streak: 0, compareCount: 0, turn: 0, history: [], picking: null }); }
+  commitPlaying() { const w = this.state.winner; if (!w) return; if (this._pf) clearTimeout(this._pf); this.setState({ upNext: w.k, playingItem: null, flow: 'home', tab: 'discover', pickIntro: true }); this.scrollHomeTop(); this._pf = setTimeout(() => this.setState({ pickIntro: false }), 1000); this.flash('Marked ' + w.name + ' as playing'); }
+  sheetAction(status, msg) { const sheet = this.state.sheet; const name = sheet && sheet.name; this.closeSheet(); if (status === 'playing' && name) {
+      this.flash('Now playing ' + name);
+      this.setState(s => ({ itemStatus: { ...s.itemStatus, [name]: status }, playingItem: { name, meta: sheet.meta || '', slotId: sheet.slotId || '' }, upNext: null, statusMenu: false, pickIntro: true }));
+      if (this._pf) clearTimeout(this._pf); this._pf = setTimeout(() => this.setState({ pickIntro: false }), 700);
+      this.scrollHomeTop();
+      return;
+    }
+    this.flash(msg); if (name) this.setState(s => ({ itemStatus: { ...s.itemStatus, [name]: status }, playingItem: s.playingItem && s.playingItem.name === name ? null : s.playingItem })); }
+
+  // temporary preview jump — lets you land on any screen without replaying onboarding
+  applyJump(v) {
+    if (!v || v.indexOf('—') === 0) return;
+    if (this._r) clearTimeout(this._r);
+    const [group, name] = v.split(': ');
+    if (group === 'Onboarding') {
+      const steps = { 'intro 1': 'intro1', 'intro 2': 'intro2', 'intro 3': 'intro3', 'intro 4': 'intro4', 'played games': 'played', 'reading': 'reading', 'result': 'result', 'done': 'done' };
+      const step = steps[name] || 'intro1';
+      this.setState({ flow: 'onboarding', obStep: step });
+      return;
+    }
+    if (group === 'Home') {
+      if (name === 'discover — after head-to-head') { const g = this.backlogGames()[0]; this.setState({ flow: 'home', tab: 'discover', upNext: g && g.k, playingItem: null }); return; }
+      this.setState({ flow: 'home', tab: name === 'discover' ? 'discover' : name, upNext: null, playingItem: null });
+      return;
+    }
+    if (group === 'Head-to-head') {
+      const intent = ['big', 'story', 'fast', 'chill'].find(k => this.poolFor(k).length >= 2) || 'fast';
+      if (name === 'intent') { this.setState({ flow: 'h2h', h2hScreen: 'intent' }); return; }
+      if (name === 'cold start') { this.setState({ flow: 'h2h', h2hScreen: 'coldstart', intent }); return; }
+      const pool = this.backlogGames();
+      this.setState({ flow: 'h2h' });
+      if (name === 'duel') {
+        this.startDuel(intent);
+      } else {
+        const list = this.poolFor(intent);
+        this.setState({ h2hScreen: 'outcome', intent, winner: (list[0] || pool[0]), winReason: 'streak', compareCount: 3, picking: null, history: [] });
+      }
+    }
+  }
+
+  componentDidMount() { const sf = this.props.startFlow; if (sf && sf !== 'onboarding') this.setState({ flow: sf }); this.applyJump(this.props.jumpToScreen); }
+  componentDidUpdate(prev) { if (prev.jumpToScreen !== this.props.jumpToScreen) this.applyJump(this.props.jumpToScreen); }
+  componentWillUnmount() { ['_r', '_t', '_p', '_pa', '_s', '_ts', '_pf'].forEach(k => this[k] && clearTimeout(this[k])); }
+
+  renderVals() {
+    const s = this.state;
+    const flow = s.flow;
+    const label = flow === 'onboarding' ? 'Onboarding' : flow === 'home' ? 'Discover' : 'Head-to-head';
+
+    const introOrder = ['intro1', 'intro2', 'intro3', 'intro4'];
+    const introIdx = introOrder.indexOf(s.obStep);
+    const isIntro = introIdx >= 0;
+    const introDots = [0, 1, 2, 3].map(i => ({ w: i === introIdx ? '20px' : '6px', bg: i === introIdx ? 'var(--accent-500)' : 'var(--border-strong)' }));
+    const row1 = [1, 2, 3, 4, 5, 6].map(n => ({ id: 'disc-r1-' + n }));
+    const row2 = [1, 2, 3, 4, 5, 6].map(n => ({ id: 'disc-r2-' + n }));
+    const row3 = [1, 2, 3, 4, 5, 6].map(n => ({ id: 'disc-r3-' + n }));
+    const reviews = [
+      { initials: 'CV', slotId: 'cv-review-1', name: 'ColinVolt', archetype: 'The Completionist', meta: 'Finished · Dec 2024', verdict: 'Really liked it', pillClass: 'ds-sentiment-pill--really-liked', text: 'Punishing but fair. Every death teaches you something, and the open world genuinely rewards curiosity — I 100%-ed it and never felt padded.' },
+      { initials: 'ZF', slotId: 'cv-review-2', name: 'ZenithForce', archetype: 'The Completionist', meta: 'Finished · Dec 2024', verdict: 'Really liked it', pillClass: 'ds-sentiment-pill--really-liked', text: 'Every catacomb and hidden boss adds up. 130 hours in and I still found new things. Completionist heaven.' },
+      { initials: 'MA', slotId: 'cv-review-3', name: 'Marcus1994', archetype: 'The Explorer', meta: 'Finished · Nov 2024', verdict: 'Liked it', pillClass: 'ds-sentiment-pill--liked', text: 'Dense and rewarding, though the late game drags. Worth it for the sense of discovery alone.' },
+    ];
+
+    // ---- onboarding ----
+    const pq = s.playedQuery.trim().toLowerCase();
+    const pickedCount = Object.keys(s.played).length;
+    const playedGames = this.PLAYED_DB
+      .filter(g => !pq || g.n.toLowerCase().includes(pq))
+      .map(g => {
+        const on = !!s.played[g.k];
+        return {
+          slotId: 'cv-search-' + g.k, name: g.n, platform: g.p,
+          selected: on, notSelected: !on,
+          borderColor: on ? 'var(--accent-500)' : 'var(--border)',
+          toggleLabel: on ? 'Remove ' + g.n : 'I played ' + g.n,
+          onToggle: () => this.togglePlayed(g.k),
+        };
+      });
+    const remaining = Math.max(0, 10 - pickedCount);
+    const axesData = [
+      { left: 'Depth', right: 'Breadth', pos: '16%', leftHi: true },
+      { left: 'Challenge', right: 'Comfort', pos: '24%', leftHi: true },
+      { left: 'Story', right: 'Systems', pos: '68%', leftHi: false },
+      { left: 'Solo', right: 'Social', pos: '22%', leftHi: true },
+    ];
+    const axes = axesData.map(a => ({
+      left: a.left, right: a.right, pos: a.pos,
+      leftCol: a.leftHi ? 'var(--text-primary)' : 'var(--text-muted)', leftW: a.leftHi ? '600' : '400',
+      rightCol: a.leftHi ? 'var(--text-muted)' : 'var(--text-primary)', rightW: a.leftHi ? '400' : '600',
+    }));
+    const seedItems = this.SEED.map(k => {
+      const g = this.GAMES[k]; const added = !!s.backlog[k];
+      return { slotId: 'cv-seed-' + k, name: g.name, meta: g.genre + ' · ' + g.hrs, added, notAdded: !added, border: added ? 'var(--border-accent)' : 'var(--border)', onToggle: () => this.toggleSeed(k) };
+    });
+
+    // ---- home ----
+    const pick = (s.upNext ? this.GAMES[s.upNext] : null) || this.currentPick() || this.GAMES.hades;
+    const timeFit = [
+      { lead: 'Fits a quick session', tail: ' — pick-up-put-down' },
+      { lead: 'Fits a free evening', tail: ' — a solid sitting' },
+      { lead: 'Great for a long haul', tail: ' — deep progression' },
+    ][s.time];
+    const pickReasons = [
+      { lead: 'Strong match', tail: ' for ' + this.arche() },
+      { lead: timeFit.lead, tail: timeFit.tail },
+      { lead: '2 friends', tail: ' really liked it' },
+    ];
+    const connected = this.props.friendsConnected ?? true;
+    const mapRail = (prefix, arr) => arr.map(it => { const status = s.itemStatus[it.n]; return { slotId: 'cv-' + prefix + '-' + it.k, name: it.n, platform: it.p, onView: () => this.demo(), onAdd: (e) => { if (e) e.stopPropagation(); this.openSheet(it.n, { meta: it.p, slotId: 'cv-' + prefix + '-' + it.k }); }, statusNone: !status, statusBacklog: status === 'backlog', statusPlaying: status === 'playing', statusFinished: status === 'finished' }; });
+    const rails = [
+      { title: 'What your friends are playing', sub: connected ? 'Recently logged by people you follow' : 'Connect to see friend activity', show: connected, empty: !connected,
+        items: mapRail('fr', [ { k: 'hades', n: 'Hades II', p: 'PC · Switch' }, { k: 'pizzatower', n: 'Pizza Tower', p: 'PC' }, { k: 'citizensleeper', n: 'Citizen Sleeper', p: 'PC · Switch' }, { k: 'tunic', n: 'Tunic', p: 'PC · PS5' }, { k: 'cocoon', n: 'Cocoon', p: 'PC · Switch' }, { k: 'seaofstars', n: 'Sea of Stars', p: 'PC · PS5' } ]) },
+      { title: 'Matched to your taste', sub: 'Other ' + this.archePlural() + ' really liked these', show: true, empty: false,
+        items: mapRail('ts', [ { k: 'outerwilds', n: 'Outer Wilds', p: 'PC · Xbox' }, { k: 'celeste', n: 'Celeste', p: 'PC · Switch' }, { k: 'slaythespire', n: 'Slay the Spire 2', p: 'PC · Switch' }, { k: 'tunic', n: 'Tunic', p: 'PC · PS5' }, { k: 'inscryption', n: 'Inscryption', p: 'PC' }, { k: 'tetriseffect', n: 'Tetris Effect', p: 'PC · PS5' } ]) },
+      { title: 'Widely played right now', sub: "What's popular and trending recently", show: true, empty: false,
+        items: mapRail('gl', [ { k: 'bg3', n: 'Baldur\u2019s Gate 3', p: 'PC · PS5 · Xbox' }, { k: 'firstlight', n: '007 First Light', p: 'PC · PS5' }, { k: 'subnautica', n: 'Subnautica 2', p: 'PC · Xbox' }, { k: 'forza', n: 'Forza Horizon 6', p: 'PC' }, { k: 'pragmata', n: 'PRAGMATA', p: 'PC · Switch' }, { k: 'sflegends', n: 'Silksong', p: 'PC · Switch' } ]) },
+    ];
+    const upNextGame = s.upNext ? this.GAMES[s.upNext] : null;
+
+    // ---- h2h ----
+    const intent = s.intent || 'fast';
+    const intentDefs = [
+      { key: 'fast', title: 'Something fast & fun', sub: 'Short, one-off gaming session' },
+      { key: 'big', title: 'Chip away at a larger game', sub: 'I want to commit to something big' },
+      { key: 'story', title: 'Something narrative-driven\n', sub: 'I want to get lost in a story\n' },
+      { key: 'chill', title: 'Something chill', sub: 'Flexible and cozy' },
+    ];
+    const intentOptions = intentDefs.map(o => {
+      const isSel = intent === o.key;
+      return { title: o.title, sub: o.sub, sel: isSel, unsel: !isSel, onClick: () => this.setState({ intent: o.key }), bc: isSel ? 'var(--accent-500)' : 'var(--border)', bg: isSel ? '#2B2023' : 'transparent', ic: isSel ? '#4A2126' : 'var(--surface-2)', dot: isSel ? 'var(--accent-300)' : 'var(--text-muted)' };
+    });
+    const poolSize = this.poolFor(intent).length;
+    const cardVals = (game, side) => {
+      const picking = s.picking; const isPicked = picking === side; const isLoser = picking && picking !== side;
+      return { slotId: game ? 'cv-h2h-' + game.k : 'cv-h2h-x', name: game ? game.name : '', genre: game ? game.genre : '', hrs: game ? game.hrs : '', bc: isPicked ? 'var(--accent-500)' : 'var(--border)', shadow: isPicked ? '0 0 0 3px rgba(226,62,78,0.28), 0 12px 30px rgba(0,0,0,0.4)' : 'none', scale: isPicked ? 'scale(1.035)' : 'scale(1)', op: isLoser ? '0.42' : '1' };
+    };
+    const reasons = { streak: { lead: 'Won 3 head-to-heads', tail: ' in a row' }, cap: { lead: 'Came out on top', tail: ' across 5 matchups' }, exhausted: { lead: 'Last one standing', tail: '' } };
+    const wr = reasons[s.winReason] || reasons.streak;
+    const winner = s.winner;
+    const csPool = this.poolFor(intent); const csGame = csPool[0] || this.GAMES.stray;
+
+    return {
+      screenLabel: label,
+      isOnboarding: flow === 'onboarding',
+      isHome: flow === 'home',
+      isH2H: flow === 'h2h',
+
+      playerName: this.props.playerName ?? 'Kevin',
+      archetype: this.arche(),
+      archetypePlural: this.archePlural(),
+      rarityPct: this.props.rarityPct ?? '12%',
+
+      // onboarding
+      obIntro1: s.obStep === 'intro1',
+      obIntro2: s.obStep === 'intro2',
+      obIntro3: s.obStep === 'intro3',
+      obIntro4: s.obStep === 'intro4',
+      obIntro: isIntro,
+      introDots, row1, row2, row3, reviews,
+      introShowBack: introIdx > 0,
+      introNextLabel: s.obStep === 'intro4' ? 'Get started' : 'Next',
+      onIntroNext: () => this.introNext(),
+      onIntroBack: () => this.introBack(),
+      obShowExit: false,
+      obPlayed: s.obStep === 'played',
+      obReading: s.obStep === 'reading',
+      obResult: s.obStep === 'result',
+      obDone: s.obStep === 'done',
+      playedGames,
+      b1: this.blankCard('blank1'),
+      b2: this.blankCard('blank2'),
+      b3: this.blankCard('blank3'),
+      b4: this.blankCard('blank4'),
+      b5: this.blankCard('blank5'),
+      b6: this.blankCard('blank6'),
+      b7: this.blankCard('blank7'),
+      b8: this.blankCard('blank8'),
+      b9: this.blankCard('blank9'),
+      b10: this.blankCard('blank10'),
+      showBlanks: !pq,
+      hasPlayedResults: playedGames.length > 0 || !pq,
+      noPlayedResults: playedGames.length === 0 && !!pq,
+      playedQuery: s.playedQuery,
+      hasPlayedQuery: s.playedQuery.length > 0,
+      playedUnderline: s.playedFocus ? 'var(--accent-500)' : 'var(--border-strong)',
+      onPlayedInput: (e) => this.setState({ playedQuery: e.target.value }),
+      onPlayedFocus: () => this.setState({ playedFocus: true }),
+      onPlayedBlur: () => this.setState({ playedFocus: false }),
+      onClearPlayed: () => this.setState({ playedQuery: '' }),
+      pickHint: pickedCount >= 10
+        ? pickedCount + ' games ready for your Finished list'
+        : 'Pick at least ' + remaining + (remaining === 1 ? ' more game' : ' more games') + " that you've played",
+      nextEnabled: pickedCount >= 10, nextDisabled: pickedCount < 10,
+      onPlayedNext: () => this.goReading(),
+      onSkipPlayed: () => this.setState({ obStep: 'done' }),
+      axes, seedItems, seedCount: this.backlogGames().length,
+      onResultContinue: () => this.setState({ obStep: 'done' }),
+      onRetake: () => this.retake(),
+      onEnterLudos: () => this.enterLudos(),
+
+      // home
+      hasUpNext: !!upNextGame,
+      upNextSlot: upNextGame ? 'cv-pick-' + upNextGame.k : 'cv-pick-x',
+      upNextName: upNextGame ? upNextGame.name : '',
+      upNextMeta: upNextGame ? (upNextGame.genre + ' · ' + upNextGame.plat + ' · ' + upNextGame.hrs) : '',
+      backlogCount: this.backlogGames().length,
+      spotVisible: (this.props.showRecommendedCard ?? true) && !s.spotDismissed,
+      spotAnim: s.spotDismissing ? 'spotCollapse 380ms cubic-bezier(0.4,0,0.2,1) forwards' : 'none',
+      onSpotAdd: () => this.openSheet('Elden Ring', { meta: 'Action RPG · PC / PS5 / Xbox · ~60h', slotId: 'cv-spotlight' }),
+      onSpotDismiss: () => { if (s.spotDismissing) return; this.setState({ spotDismissing: true }); setTimeout(() => this.setState({ spotDismissed: true, spotDismissing: false }), 380); },
+      timeLabel: ['A quick session', 'A free evening', 'A long haul'][s.time],
+      onOpenTime: () => this.openTimeSheet(),
+      timeSheetOpen: s.timeSheet,
+      onCloseTimeSheet: () => this.closeTimeSheet(),
+      timeScrimAnim: s.timeClosing ? 'fadeOut 180ms ease forwards' : 'fadeIn 180ms ease',
+      timePanelAnim: s.timeClosing ? 'sheetDown 280ms cubic-bezier(0.2,0,0,1) forwards' : 'sheetUp 280ms cubic-bezier(0.2,0,0,1)',
+      timeOptions: [ { label: 'A quick session', desc: '30 minutes or so' }, { label: 'A free evening', desc: 'A couple of hours' }, { label: 'A long haul', desc: 'Settle in for the weekend' } ].map((t, i) => ({ label: t.label, desc: t.desc, active: i === s.time, bg: i === s.time ? 'var(--surface-2)' : 'transparent', bd: i === s.time ? 'var(--border-accent)' : 'var(--border)', onPick: () => this.pickTime(i) })),
+      pickCardAnim: s.pickIntro ? 'cardFadeIn 420ms cubic-bezier(0.2,0,0,1) 150ms both' : 'none',
+      homeScrollRef: this.homeScroll,
+      pickSlotId: s.playingItem ? (s.playingItem.slotId || 'cv-pick-x') : 'cv-pick-' + pick.k,
+      pickName: s.playingItem ? s.playingItem.name : pick.name,
+      pickMeta: s.playingItem ? s.playingItem.meta : pick.genre + ' · ' + pick.plat + ' · ' + pick.hrs,
+      pickReasons, pickOpacity: s.pickFading ? 0 : 1,
+      isPlaying: !!s.upNext || !!s.playingItem, notPlaying: !s.upNext && !s.playingItem,
+      statusMenuOpen: !!s.statusMenu,
+      onUpdateStatus: () => this.setState(st => ({ statusMenu: !st.statusMenu })),
+      onMarkFinished: () => this.markPickFinished(),
+      onMoveToBacklog: () => this.moveToBacklog(),
+      onStartPlaying: () => this.startPlayingPick(),
+      onAnother: () => this.cyclePick(),
+      onCompare: () => this.goCompare(),
+      rails,
+      sheetOpen: !!s.sheet, sheetName: s.sheet ? s.sheet.name : '',
+      sheetScrimAnim: s.sheetClosing ? 'fadeOut 180ms ease forwards' : 'fadeIn 180ms ease',
+      sheetPanelAnim: s.sheetClosing ? 'sheetDown 280ms cubic-bezier(0.2,0,0,1) forwards' : 'sheetUp 280ms cubic-bezier(0.2,0,0,1)',
+      onCloseSheet: () => this.closeSheet(),
+      onAddBacklog: () => this.sheetAction('backlog', 'Added to backlog'),
+      onSheetMarkPlaying: () => this.sheetAction('playing', 'Marked as playing'),
+      onSheetMarkFinished: () => this.sheetAction('finished', 'Marked as finished'),
+      onDemo: () => this.demo(),
+
+      // h2h
+      h2hIntent: s.h2hScreen === 'intent',
+      h2hDuel: s.h2hScreen === 'duel',
+      h2hOutcome: s.h2hScreen === 'outcome',
+      h2hCold: s.h2hScreen === 'coldstart',
+      onH2HBack: () => this.setState({ flow: 'home', tab: 'discover' }),
+      intentOptions,
+      intentPoolNote: poolSize >= 2 ? poolSize + ' fit this mood.' : 'best-match first.',
+      onStartComparing: () => this.startDuel(intent),
+      intentLabel: this.INTENT_LABELS[intent] || 'Fast & fun',
+      onChangeIntent: () => this.setState({ h2hScreen: 'intent' }),
+      champ: cardVals(s.champion, 'champ'), chall: cardVals(s.challenger, 'chall'),
+      progressSegs: [0, 1, 2, 3, 4].map(i => ({ bg: i < s.compareCount ? 'var(--accent-500)' : 'var(--border)' })),
+      onPickChamp: () => this.pick('champ'), onPickChall: () => this.pick('chall'),
+      onUndo: () => this.undo(), onSkip: () => this.skip(),
+      undoColor: s.history.length ? 'var(--text-secondary)' : '#5A484C', undoCursor: s.history.length ? 'pointer' : 'default',
+      winner: winner ? { slotId: 'cv-h2h-' + winner.k, name: winner.name, meta: winner.genre + ' · ' + winner.plat + ' · ' + winner.hrs } : { slotId: 'cv-h2h-x', name: '', meta: '' },
+      winReasonLead: wr.lead, winReasonTail: wr.tail,
+      onKeepComparing: () => this.keepComparing(),
+      onCommitPlaying: () => this.commitPlaying(),
+      csGame: { slotId: 'cv-h2h-' + csGame.k, name: csGame.name, genre: csGame.genre, hrs: csGame.hrs },
+
+      hasToast: !!s.toast, toast: s.toast, toastKey: s.toastKey,
+    };
+  }
+}
+</script>
+</body>
+</html>

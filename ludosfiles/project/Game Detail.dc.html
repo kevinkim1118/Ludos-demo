@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/colors.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/base.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/core/button.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/sentiment-pill.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/verdict-bar.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/relate-chip.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/trust-badge.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/styles.css">
+<script src="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/_ds_bundle.js"></script>
+<script src="./image-manifest.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #120D0E; }
+  a { color: var(--text-accent); text-decoration: none; }
+  a:hover { color: var(--accent-400); }
+  [data-screen]::-webkit-scrollbar { width: 0; display: none; }
+  [data-rail]::-webkit-scrollbar { height: 0; display: none; }
+  [data-tabs]::-webkit-scrollbar { height: 0; display: none; }
+  @keyframes popIn { 0% { transform: scale(.5); } 60% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes sheetDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(120% 80% at 50% 0%, #1A1314 0%, #110C0D 70%); font-family: 'Familjen Grotesk', ui-sans-serif, system-ui, sans-serif;">
+
+  <div style="width: 430px; padding: 11px; background: #080606; border-radius: 46px; box-shadow: 0 30px 70px rgba(0,0,0,0.55), inset 0 0 0 1.5px #2A2023;">
+    <div data-screen-label="Game detail" style="position: relative; width: 100%; height: 868px; background: var(--surface-0); border-radius: 36px; overflow: hidden; display: flex; flex-direction: column; color: var(--text-primary);">
+
+      <!-- floating status bar (over hero) -->
+      <div style="position: absolute; top: 0; left: 0; right: 0; z-index: 12; height: 92px; background: linear-gradient(to bottom, rgba(8,5,6,0.72) 0%, rgba(8,5,6,0.28) 55%, transparent 100%); pointer-events: none;"></div>
+      <div style="position: absolute; top: 0; left: 0; right: 0; z-index: 14; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px 0 28px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em;">
+        <span>9:41</span>
+        <span style="display: flex; align-items: center; gap: 7px;">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="var(--text-primary)"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="var(--text-primary)" stroke-opacity="0.5"></rect><rect x="2.2" y="2.2" width="14.5" height="7.6" rx="1.6" fill="var(--text-primary)"></rect><rect x="21.6" y="4" width="2" height="4" rx="1" fill="var(--text-primary)" fill-opacity="0.5"></rect></svg>
+        </span>
+      </div>
+
+      <!-- floating back + actions -->
+      <button onClick="{{ onBack }}" title="Back" style="position: absolute; top: 50px; left: 14px; z-index: 14; width: 38px; height: 38px; border-radius: 11px; border: 1px solid rgba(240,233,233,0.16); background: rgba(18,11,13,0.5); backdrop-filter: blur(8px); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: rgba(18,11,13,0.75);">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"></path></svg>
+      </button>
+      <div style="position: absolute; top: 50px; right: 14px; z-index: 14; display: flex; gap: 8px;">
+        <button title="Share" style="width: 38px; height: 38px; border-radius: 11px; border: 1px solid rgba(240,233,233,0.16); background: rgba(18,11,13,0.5); backdrop-filter: blur(8px); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: rgba(18,11,13,0.75);">
+          <svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12V3"></path><path d="M6 6l3-3 3 3"></path><path d="M4 10v4a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-4"></path></svg>
+        </button>
+      </div>
+
+      <!-- scrollable content -->
+      <div data-screen="" style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+
+        <!-- MODULE 1 — HERO / IDENTITY -->
+        <div style="position: relative; height: 320px;">
+          <image-slot id="cv-detail-hero" shape="rect" placeholder="key art" style="display: block; width: 100%; height: 100%; background: #2B2023;"></image-slot>
+          <div style="position: absolute; inset: 0; background: linear-gradient(to top, var(--surface-0) 2%, rgba(36,27,29,0.72) 30%, rgba(36,27,29,0.05) 62%, transparent 100%); pointer-events: none;"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 0 18px 4px;">
+            <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 5px; letter-spacing: 0.01em;">FromSoftware · 2022 · Action RPG</div>
+            <div style="font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.02; margin-bottom: 11px;">Elden Ring</div>
+            <div style="display: flex; gap: 6px; margin-bottom: 11px;">
+              <span style="font-size: 10.5px; font-weight: 500; padding: 3px 9px; border-radius: 6px; background: rgba(240,233,233,0.1); border: 1px solid rgba(240,233,233,0.2); color: #E8DCDD;">PC</span>
+              <span style="font-size: 10.5px; font-weight: 500; padding: 3px 9px; border-radius: 6px; background: rgba(240,233,233,0.1); border: 1px solid rgba(240,233,233,0.2); color: #E8DCDD;">PS5</span>
+              <span style="font-size: 10.5px; font-weight: 500; padding: 3px 9px; border-radius: 6px; background: rgba(240,233,233,0.1); border: 1px solid rgba(240,233,233,0.2); color: #E8DCDD;">Xbox</span>
+              <span style="font-size: 10.5px; font-weight: 500; padding: 3px 9px; border-radius: 6px; background: rgba(240,233,233,0.1); border: 1px solid rgba(240,233,233,0.2); color: #E8DCDD;">Switch 2</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- tag strip -->
+        <div data-rail="" style="display: flex; gap: 7px; overflow-x: auto; padding: 2px 18px 6px; scrollbar-width: none;">
+          <span style="flex: none; font-size: 11.5px; padding: 5px 12px; border-radius: 999px; background: var(--surface-1); border: 1px solid var(--border); color: var(--text-secondary); white-space: nowrap;">Open world</span>
+          <span style="flex: none; font-size: 11.5px; padding: 5px 12px; border-radius: 999px; background: var(--surface-1); border: 1px solid var(--border); color: var(--text-secondary); white-space: nowrap;">High challenge</span>
+          <span style="flex: none; font-size: 11.5px; padding: 5px 12px; border-radius: 999px; background: var(--surface-1); border: 1px solid var(--border); color: var(--text-secondary); white-space: nowrap;">Solo</span>
+          <span style="flex: none; font-size: 11.5px; padding: 5px 12px; border-radius: 999px; background: var(--surface-1); border: 1px solid var(--border); color: var(--text-secondary); white-space: nowrap;">Long sessions</span>
+          <span style="flex: none; font-size: 11.5px; padding: 5px 12px; border-radius: 999px; background: var(--surface-1); border: 1px solid var(--border); color: var(--text-secondary); white-space: nowrap;">Story-rich</span>
+        </div>
+
+        <div style="padding: 12px 14px 4px;">
+
+          <!-- MODULE 1.4 — ABOUT (no card) -->
+          <div style="padding: 0 4px; margin-bottom: 16px;">
+            <div style="height: 1px; background: #3E2F33; margin-bottom: 16px;"></div>
+            <div style="font-size: 14px; font-weight: 600; letter-spacing: 0.01em; margin-bottom: 11px;">About ELDEN RING</div>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.72;">Elden Ring is an action-RPG, open-world masterpiece that blends FromSoftware's signature punishing combat with environmental exploration. The game replaces rigid structural guidance with organic discovery, rewarding players for exploring every dark corner of its vast, ruined world. Elden Ring stands as an evolution of the action-RPG genre that satisfies both veteran players and resilient newcomers alike.</div>
+            <div style="height: 1px; background: #3E2F33; margin-top: 16px;"></div>
+          </div>
+
+          <!-- MODULE 1.5 — YOUR REVIEW (prompt, appears after Finished) -->
+          <sc-if value="{{ showReviewCard }}" hint-placeholder-val="{{ true }}">
+          <div style="background: var(--surface-1); border: 1px solid var(--border-accent); border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 22px rgba(0,0,0,0.24); animation: swapIn 260ms cubic-bezier(0.2,0,0,1);">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-500);"></span>
+              <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-300);">Your review</span>
+            </div>
+            <div style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; padding-top: 4px; padding-bottom: 4px">How was it?</div>
+            
+            <div style="display: flex; gap: 6px; margin-bottom: 13px;">
+              <sc-for list="{{ ratingChoices }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.onClick }}" style="flex: 1; text-align: center; padding: 12px 4px; border-radius: 10px; font-size: 10.5px; font-family: inherit; line-height: 1.25; cursor: pointer; transition: background 120ms ease, color 120ms ease, border-color 120ms ease; background: {{ c.bg }}; color: {{ c.fg }}; border: 1px solid {{ c.bd }}; font-weight: {{ c.weight }};">{{ c.label }}</button>
+              </sc-for>
+            </div>
+            <textarea value="{{ reviewText }}" onChange="{{ onReviewText }}" placeholder="Add a few words on what worked or didn't (optional)…" rows="3" style="display: block; width: 100%; box-sizing: border-box; resize: none; background: #2B2023; border: 1px solid #3E2F33; border-radius: 10px; padding: 12px 13px; font-family: inherit; font-size: 12.5px; color: var(--text-primary); line-height: 1.55; margin-bottom: 13px; outline: none;" style-focus="border-color: var(--border-accent);"></textarea>
+            <button onClick="{{ onPostReview }}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 13px; border-radius: 11px; font-size: 13.5px; font-weight: 600; font-family: inherit; border: none; cursor: {{ postCursor }}; background: {{ postBg }}; color: {{ postFg }};">Post review</button>
+            <div style="font-size: 10.5px; color: #8A787C; margin-top: 9px; text-align: center; line-height: 1.4;">{{ postNote }}</div>
+          </div>
+          </sc-if>
+
+          <!-- MODULE 2 — THE VERDICT -->
+          <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 22px rgba(0,0,0,0.24);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 15px;">
+              <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em;">The Verdict</span>
+              <span style="flex: none; font-size: 9.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border-strong); opacity: 0">The Completionist</span>
+            </div>
+
+            <!-- Tier: Your review (after posting) -->
+            <sc-if value="{{ reviewPosted }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #2B2023; border: 1px solid var(--border-accent); border-radius: 12px; padding: 14px; margin-bottom: 9px; animation: swapIn 260ms cubic-bezier(0.2,0,0,1);">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px;">
+                <span style="display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-300);"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-500);"></span>Your review</span>
+                <button onClick="{{ onEditReview }}" style="display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; padding: 0; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer;" style-hover="color: var(--text-primary);">Edit
+                  <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 3.5l3 3L6 15l-3.6.6.6-3.6z"></path><path d="M10.4 4.6l3 3"></path></svg>
+                </button>
+              </div>
+              <div style="font-size: 26px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; color: var(--text-primary);">{{ reviewHeadline }}</div>
+              <sc-if value="{{ hasReviewText }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 12px; margin-top: 12px;">
+                <span style="width: 2px; flex: none; border-radius: 1px; background: var(--border-accent);"></span>
+                <span style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; font-style: italic; font-family: 'Newsreader', Georgia, serif">“{{ reviewTextDisplay }}”</span>
+              </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
+            <!-- Tier: Friends -->
+            <sc-if value="{{ showFriendsCard }}" hint-placeholder-val="{{ true }}">
+            <div style="background: #2B2023; border: 1px solid #3E2F33; border-radius: 12px; padding: 13px; margin-bottom: 9px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px;">
+                <span style="display: flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted);"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--trust-friends);"></span>Friends</span>
+                <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Loved</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 13px;">
+                <span style="display: inline-flex; flex: none;">
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--surface-3); border: 2px solid #2B2023; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: var(--text-secondary);">AJ</span>
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: #5A4147; border: 2px solid #2B2023; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: var(--text-secondary); margin-left: -7px;">SK</span>
+                  <span style="width: 24px; height: 24px; border-radius: 50%; background: var(--border-accent); border: 2px solid #2B2023; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #E8DCDD; margin-left: -7px;">MR</span>
+                </span>
+                <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;"><span style="color: rgb(240, 233, 233); font-weight: 600;">3 friends</span> finished Elden Ring</span>
+              </div>
+              <div style="display: flex; gap: 2px; height: 8px; margin-top: 11px; margin-bottom: 9px;">
+                <span style="width: 100%; background: var(--sent-really-liked); border-radius: 3px;"></span>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px 12px;">
+                <span style="display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-muted);"><span style="width: 7px; height: 7px; border-radius: 2px; background: var(--sent-really-liked);"></span>3 really liked</span>
+                
+              </div>
+            </div>
+            </sc-if>
+
+            <!-- Tier: Completionists (type) -->
+            <div style="background: #2B2023; border: 1px solid #3E2F33; border-radius: 12px; padding: 13px; margin-bottom: 9px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+                <span style="display: flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted);"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--trust-taste);"></span>Completionists</span>
+                <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Strongly positive</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 11px;">Most players with your taste really liked it.</div>
+              <div style="margin-bottom: 12px;">
+                <x-import component-from-global-scope="LudosDesignSystem_17bf5b.VerdictBar" distribution="{{ tasteDist }}" show-key="{{ true }}" hint-size="100%,60px"></x-import>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 9px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 10px 11px;">
+                <span style="width: 9px; height: 9px; background: var(--relate-tx); transform: rotate(45deg); border-radius: 1px; flex: none; margin-top: 4px;"></span>
+                <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;"><span style="color: var(--text-primary); font-weight: 600;">Strong match</span> — high challenge and long sessions align with your taste.</span>
+              </div>
+            </div>
+
+            <!-- Tier: Global -->
+            <div style="background: #2B2023; border: 1px solid #3E2F33; border-radius: 12px; padding: 13px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+                <span style="display: flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted);"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--trust-global);"></span>Global rating<br></span>
+                <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">Mostly positive</span>
+              </div>
+              <div style="margin-bottom: 10px;">
+                <x-import component-from-global-scope="LudosDesignSystem_17bf5b.VerdictBar" distribution="{{ globalDist }}" show-key="{{ true }}" hint-size="100%,60px"></x-import>
+              </div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.5;">Divisive on difficulty — challenge-seekers love it; casual players often don't finish.</div>
+            </div>
+          </div>
+
+          <!-- MODULE 3 — WHAT IT'LL COST YOU -->
+          <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px;">
+            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 13px;">What it'll cost you</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 13px;">
+              <div style="background: #2B2023; border: 1px solid #3E2F33; border-radius: 11px; padding: 12px; text-align: center;">
+                <span style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">60h</span>
+                <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">Main story</div>
+              </div>
+              <div style="background: #2B2023; border: 1px solid #3E2F33; border-radius: 11px; padding: 12px; text-align: center;">
+                <span style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">130h</span>
+                <div style="font-size: 10.5px; color: var(--text-muted); margin-top: 3px;">Completionist</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);"><span>Steam</span><span style="font-weight: 600; color: var(--text-primary);">$39.99</span></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);"><span>PlayStation Store</span><span style="font-weight: 600; color: var(--text-primary);">$49.99</span></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; color: var(--text-secondary);"><span>Xbox / Game Pass</span><span style="font-weight: 600; color: var(--text-primary);">Included</span></div>
+          </div>
+
+          <!-- MODULE 4 — FRIEND ACTIVITY -->
+          <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px;">
+            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Friend activity</div>
+
+            <div style="display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid #3E2F33;">
+              <span style="width: 34px; height: 34px; border-radius: 50%; background: var(--surface-3); flex: none; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-secondary);">CV</span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;"><span style="font-size: 13px; font-weight: 600;">ColinVolt</span><span style="font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 999px; background: var(--border); color: var(--text-secondary);">Finished</span></div>
+                <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; font-family: 'Newsreader', Georgia, serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">"Punishing but fair. Every death teaches you something, and the open world genuinely rewards curiosity — I 100%-ed it and never felt padded."</div>
+              </div>
+              <x-import component-from-global-scope="LudosDesignSystem_17bf5b.SentimentPill" sentiment="really-liked" hint-size="auto,24px">Loved</x-import>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid #3E2F33;">
+              <span style="width: 34px; height: 34px; border-radius: 50%; background: var(--border-accent); flex: none; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #E8DCDD;">MA</span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;"><span style="font-size: 13px; font-weight: 600;">Marcus1994</span><span style="font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 999px; background: var(--border); color: var(--text-secondary);">Finished</span></div>
+                <div style="font-size: 11.5px; color: var(--text-muted); font-style: italic; font-family: 'Newsreader', Georgia, serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">"Dense and rewarding, though the late game drags. Worth it for the sense of discovery alone."</div>
+              </div>
+              <x-import component-from-global-scope="LudosDesignSystem_17bf5b.SentimentPill" sentiment="liked" hint-size="auto,24px">Liked it</x-import>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 11px; padding: 11px 0;">
+              <span style="width: 34px; height: 34px; border-radius: 50%; background: #5A4147; flex: none; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-secondary);">AW</span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;"><span style="font-size: 13px; font-weight: 600;">AvaWinters03</span><span style="font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border);">Playing</span></div>
+                <div style="font-size: 11.5px; color: var(--text-muted);">65 hours in · no rating</div>
+              </div>
+              <span style="flex: none; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: #2B2023; color: #8A787C; border: 1px solid #3E2F33;">No rating</span>
+            </div>
+          </div>
+
+          <!-- MODULE 5 — REVIEWS -->
+          <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px;">
+            <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;">Reviews</div>
+            <div data-tabs="" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 13px; margin-bottom: 13px; border-bottom: 1px solid #3E2F33; scrollbar-width: none;">
+              <sc-for list="{{ reviewTabs }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.onClick }}" style="flex: none; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 500; font-family: inherit; white-space: nowrap; cursor: pointer; background: {{ t.bg }}; color: {{ t.fg }}; border: 1px solid {{ t.bd }};">{{ t.label }}</button>
+              </sc-for>
+            </div>
+
+            <div key="{{ reviewKey }}" style="animation: swapIn 240ms cubic-bezier(0.2,0,0,1);">
+              <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="2">
+                <div style="border: 1px solid #3E2F33; border-radius: 12px; padding: 13px; margin-bottom: 10px;">
+                  <div style="display: flex; align-items: flex-start; gap: 9px; margin-bottom: 9px;">
+                    <span style="width: 32px; height: 32px; border-radius: 50%; background: {{ r.avBg }}; flex: none; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--text-secondary);">{{ r.initials }}</span>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px;"><span style="font-size: 14px; font-weight: 600">{{ r.name }}</span><span style="font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 999px; background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border);">{{ r.type }}</span></div>
+                      <div style="font-size: 10px; color: #8A787C;">{{ r.meta }}</div>
+                    </div>
+                    <x-import component-from-global-scope="LudosDesignSystem_17bf5b.SentimentPill" sentiment="{{ r.sentKey }}" hint-size="auto,24px">{{ r.sentiment }}</x-import>
+                  </div>
+                  <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; font-style: italic; font-family: 'Newsreader', Georgia, serif">{{ r.body }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <button onClick="{{ onSeeAllReviews }}" style="display: block; width: 100%; text-align: center; padding: 12px; font-size: 12px; font-weight: 500; color: var(--text-secondary); background: transparent; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">{{ seeAllLabel }}</button>
+          </div>
+
+          <!-- MODULE 6 — DISCOVERY -->
+          <div style="margin-bottom: 14px;">
+            <div style="font-size: 15px; font-weight: 600; margin-bottom: 3px; padding: 0 2px;">Played by Completionists</div>
+            <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px; padding: 0 2px;">Others with your taste also finished these</div>
+            <div data-rail="" style="display: flex; gap: 12px; overflow-x: auto; padding: 2px 2px 4px; scrollbar-width: none;">
+              <div style="width: 116px; flex: none; cursor: pointer;">
+                <image-slot id="cv-disc-darksouls" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 100%; aspect-ratio: 3 / 4; background: var(--border); border: 1px solid var(--border); border-radius: 9px; box-sizing: border-box; margin-bottom: 8px;"></image-slot>
+                <div style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Dark Souls III</div>
+                <div style="margin-top: 8px;"><x-import component-from-global-scope="LudosDesignSystem_17bf5b.RelateChip" hint-size="auto,22px">Strong match</x-import></div>
+              </div>
+              <div style="width: 116px; flex: none; cursor: pointer;">
+                <image-slot id="cv-disc-hollow" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 100%; aspect-ratio: 3 / 4; background: var(--border); border: 1px solid var(--border); border-radius: 9px; box-sizing: border-box; margin-bottom: 8px;"></image-slot>
+                <div style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Hollow Knight</div>
+                <div style="margin-top: 8px;"><x-import component-from-global-scope="LudosDesignSystem_17bf5b.RelateChip" hint-size="auto,22px">Strong match</x-import></div>
+              </div>
+              <div style="width: 116px; flex: none; cursor: pointer;">
+                <image-slot id="cv-disc-sekiro" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 100%; aspect-ratio: 3 / 4; background: var(--border); border: 1px solid var(--border); border-radius: 9px; box-sizing: border-box; margin-bottom: 8px;"></image-slot>
+                <div style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sekiro</div>
+                <div style="margin-top: 8px;"><x-import component-from-global-scope="LudosDesignSystem_17bf5b.RelateChip" hint-size="auto,22px">Good match</x-import></div>
+              </div>
+              <div style="width: 116px; flex: none; cursor: pointer;">
+                <image-slot id="cv-disc-bg3" shape="rounded" radius="9" placeholder="cover" style="display: block; width: 100%; aspect-ratio: 3 / 4; background: var(--border); border: 1px solid var(--border); border-radius: 9px; box-sizing: border-box; margin-bottom: 8px;"></image-slot>
+                <div style="font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Baldur's Gate 3</div>
+                <div style="margin-top: 8px;"><x-import component-from-global-scope="LudosDesignSystem_17bf5b.RelateChip" hint-size="auto,22px">Good match</x-import></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODULE 7 — CONTRIBUTION (minimal) -->
+          
+
+        </div>
+
+        <div style="height: 12px;"></div>
+      </div>
+
+      <!-- STICKY BOTTOM ACTION BAR -->
+      <div style="flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 16px 16px; border-top: 1px solid var(--surface-1); background: var(--surface-0);">
+        <sc-if value="{{ isUntracked }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ onOpenSheet }}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 4v12M4 10h12"></path></svg>
+            Add to List
+          </button>
+        </sc-if>
+        <sc-if value="{{ isTracked }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onOpenSheet }}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 9px; background: transparent; color: var(--text-primary); border: 1px solid var(--border-strong); border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2);">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-500); color: var(--on-accent); flex: none;">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5l3 3 5-6"></path></svg>
+            </span>
+            {{ trackedLabel }}<span style="color: #8A787C; font-size: 11px;">▾</span>
+          </button>
+        </sc-if>
+        <button title="Add to a list" onClick="{{ onOpenLists }}" style="width: 50px; height: 50px; flex: none; border: 1px solid var(--border); border-radius: 11px; background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M4 10h9M4 14h6"></path><path d="M15.5 12v5M13 14.5h5"></path></svg>
+        </button>
+      </div>
+
+      <!-- status sheet -->
+      <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; z-index: 30;">
+        <div onClick="{{ onCloseSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: {{ sheetScrimAnim }};"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: var(--surface-1); border-top: 1px solid var(--border-strong); border-radius: 22px 22px 0 0; padding: 10px 18px 24px; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: {{ sheetPanelAnim }};">
+          <div style="width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 16px;"></div>
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Add <span>{{ gameTitle }}</span> to…</div>
+          <div style="font-size: 12.5px; color: var(--text-muted); margin: 3px 0 16px;">Set a status to start tracking it</div>
+
+          <button onClick="{{ onPickWant }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: {{ wantBg }}; color: {{ wantFg }}; border: 1px solid {{ wantBd }}; border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--accent-400);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" style="flex: none;"><path d="M5 3h10v14l-5-3.4L5 17V3z"></path></svg>
+            Add to backlog
+          </button>
+          <button onClick="{{ onPickPlaying }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: {{ playingBg }}; color: var(--text-primary); border: 1px solid {{ playingBd }}; border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--surface-2);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="flex: none;"><path d="M6 4l11 6-11 6V4z"></path></svg>
+            Mark as playing
+          </button>
+          <button onClick="{{ onPickFinished }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: {{ finishedBg }}; color: var(--text-primary); border: 1px solid {{ finishedBd }}; border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: var(--surface-2);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M4 10.5l4 4 8-9"></path></svg>
+            Mark as finished
+          </button>
+          <button onClick="{{ onAddToList }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: transparent; color: var(--accent-300); border: 1px dashed var(--border-accent); border-radius: 11px; padding: 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;" style-hover="background: var(--surface-2);">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10 4v12M4 10h12"></path></svg>
+            Add to a list
+          </button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- add-to-list sheet -->
+      <sc-if value="{{ listsSheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; z-index: 32;">
+        <div onClick="{{ onCloseSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: {{ sheetScrimAnim }};"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; height: 86%; display: flex; flex-direction: column; background: var(--surface-1); border-top: 1px solid var(--border-strong); border-radius: 22px 22px 0 0; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: {{ sheetPanelAnim }};">
+          <div style="flex: none; padding: 10px 18px 4px;">
+            <div style="width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 14px;"></div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Add to a list</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Save <span>{{ gameTitle }}</span> to one of your lists</div>
+              </div>
+              <button onClick="{{ onCloseSheet }}" title="Close" style="width: 34px; height: 34px; flex: none; border-radius: 50%; border: 1px solid var(--border); background: #2B2023; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- search -->
+          <div style="flex: none; padding: 12px 18px 6px;">
+            <div style="display: flex; align-items: center; gap: 9px; background: #2B2023; border: 1px solid var(--border); border-radius: 999px; padding: 10px 14px;">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#8A787C" stroke-width="1.7" style="flex: none;"><circle cx="7.5" cy="7.5" r="5"></circle><line x1="11.4" y1="11.4" x2="16" y2="16" stroke-linecap="round"></line></svg>
+              <input value="{{ listSearch }}" onChange="{{ onListSearch }}" placeholder="Find a list" style="flex: 1; min-width: 0; background: transparent; border: none; outline: none; color: var(--text-primary); font-family: inherit; font-size: 14px;">
+            </div>
+          </div>
+
+          <!-- scrollable list -->
+          <div data-screen="" style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 18px 24px;">
+            <button onClick="{{ onNewList }}" style="display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; background: transparent; border: none; padding: 11px 0; cursor: pointer; font-family: inherit;">
+              <span style="width: 46px; height: 46px; flex: none; border-radius: 10px; border: 1.5px dashed var(--border-accent); display: flex; align-items: center; justify-content: center; color: var(--accent-300);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 4v12M4 10h12"></path></svg>
+              </span>
+              <span style="font-size: 14px; font-weight: 600; color: var(--accent-300);">New list</span>
+            </button>
+            <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8A787C; margin: 12px 0 4px;">Your lists</div>
+
+            <sc-for list="{{ lists }}" as="l" hint-placeholder-count="5">
+              <button onClick="{{ l.onToggle }}" style="display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #3E2F33; padding: 11px 0; cursor: pointer; font-family: inherit;">
+                <span style="flex: 1; min-width: 0;">
+                  <span style="display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ l.name }}</span>
+                  <span style="display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">{{ l.sub }}</span>
+                </span>
+                <sc-if value="{{ l.notAdded }}" hint-placeholder-val="{{ true }}">
+                  <span style="width: 30px; height: 30px; flex: none; color: var(--text-secondary); display: flex; align-items: center; justify-content: center;">
+                    <svg width="19" height="19" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 4v10M4 9h10"></path></svg>
+                  </span>
+                </sc-if>
+                <sc-if value="{{ l.added }}" hint-placeholder-val="{{ false }}">
+                  <span style="width: 30px; height: 30px; flex: none; color: var(--accent-500); display: flex; align-items: center; justify-content: center; animation: popIn 240ms cubic-bezier(0.2,0,0,1);">
+                    <svg width="19" height="19" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3.2 3.2L13 4.5"></path></svg>
+                  </span>
+                </sc-if>
+              </button>
+            </sc-for>
+
+            <sc-if value="{{ noLists }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align: center; color: #8A787C; font-size: 13px; padding: 34px 0;">No lists match “<span>{{ listSearch }}</span>”</div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- toast -->
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 50%; bottom: 92px; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text-primary); font-size: 12.5px; font-weight: 500; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); white-space: nowrap; animation: toastUp 200ms cubic-bezier(0.2,0,0,1); z-index: 40;">{{ toast }}</div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:472,&quot;height&quot;:908},&quot;gameTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Elden Ring&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;initialStatus&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;none&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;want&quot;,&quot;playing&quot;,&quot;finished&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;State&quot;},&quot;showReviewCard&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;},&quot;showFriendsCard&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 'friends', status: null, sheet: null, sheetClosing: false, toast: null, listSearch: '', addedLists: {}, reviewRating: null, reviewText: '', reviewSubmitted: false };
+
+  componentDidMount() {
+    const init = this.props.initialStatus;
+    if (init && init !== 'none') this.setState({ status: init });
+  }
+
+  openSheet() {
+    if (this._s) clearTimeout(this._s);
+    this.setState({ sheet: 'status', sheetClosing: false });
+  }
+  closeSheet() {
+    if (!this.state.sheet) return;
+    if (this._s) clearTimeout(this._s);
+    this.setState({ sheetClosing: true });
+    this._s = setTimeout(() => this.setState({ sheet: null, sheetClosing: false }), 280);
+  }
+  setStatus(kind) {
+    if (this._s) clearTimeout(this._s);
+    // leaving "finished" for backlog/playing clears any personal review
+    const clearReview = (kind === 'want' || kind === 'playing')
+      ? { reviewSubmitted: false, reviewRating: null, reviewText: '' } : {};
+    this.setState({ status: kind, sheetClosing: true, ...clearReview });
+    this._s = setTimeout(() => this.setState({ sheet: null, sheetClosing: false }), 280);
+    const msg = kind === 'want' ? 'Added to your backlog'
+      : kind === 'playing' ? 'Marked as playing'
+      : 'Marked as finished';
+    this.flash(msg);
+  }
+  flash(msg) {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: null }), 1900);
+  }
+
+  toggleList(key, name) {
+    const added = !this.state.addedLists[key];
+    this.setState(s => ({ addedLists: { ...s.addedLists, [key]: added } }));
+    this.flash(added ? 'Added to ' + name : 'Removed from ' + name);
+  }
+
+  listDefs() {
+    return [
+      { k: 'cozy', name: 'Cozy night-ins', count: 8, cover: 'var(--surface-3)' },
+      { k: 'fav', name: 'Favorite Games', count: 8, cover: 'var(--border-accent)' },
+      { k: 'handheld', name: 'Handheld / travel', count: 14, cover: '#5A4147' },
+      { k: 'finishfirst', name: 'Finish these first', count: 5, cover: '#3F2F34' },
+      { k: 'soulslike', name: 'Soulslike marathon', count: 6, cover: '#7A3540' },
+      { k: 'shortsweet', name: 'Short & sweet', count: 9, cover: '#4A383D' },
+      { k: 'replay', name: 'Replay someday', count: 11, cover: '#553F45' },
+    ];
+  }
+
+  reviewData() {
+    return {
+      friends: [
+        { initials: 'CV', avBg: 'var(--surface-3)', name: 'ColinVolt', type: 'The Completionist', meta: 'Finished · Dec 2024', sentiment: 'Loved', tone: 'rl',
+          body: 'Punishing but fair. Every death teaches you something, and the open world genuinely rewards curiosity — I 100%-ed it and never felt padded.' },
+        { initials: 'MA', avBg: 'var(--border-accent)', name: 'Marcus1994', type: 'The Explorer', meta: 'Finished · Nov 2024', sentiment: 'Liked it', tone: 'l',
+          body: 'Dense and rewarding, though the late game drags. Worth it for the sense of discovery alone.' },
+      ],
+      taste: [
+        { initials: 'IK', avBg: 'var(--surface-3)', name: 'IcebergKing', type: 'The Completionist', meta: 'Finished · Jan 2025', sentiment: 'Loved', tone: 'rl',
+          body: 'The optional content is where this game truly opens up. If you like leaving no stone unturned, nothing else comes close this generation.' },
+        { initials: 'ZF', avBg: '#5A4147', name: 'ZenithForce', type: 'The Completionist', meta: 'Finished · Dec 2024', sentiment: 'Loved', tone: 'rl',
+          body: 'Every catacomb and hidden boss adds up. 130 hours in and I still found new things. Completionist heaven.' },
+      ],
+      all: [
+        { initials: 'SL', avBg: 'var(--surface-3)', name: 'Soulless_', type: 'The Storyteller', meta: 'Finished · Feb 2025', sentiment: 'Loved', tone: 'rl',
+          body: 'A masterpiece of environmental storytelling. The lore rewards those willing to piece it together themselves.' },
+        { initials: 'MC', avBg: '#5A4147', name: 'MorningCoffee', type: 'The Casual', meta: 'Jan 2025', sentiment: "Didn't like it", tone: 'dl',
+          body: 'Bounced off it hard. The difficulty spikes and lack of direction were too much for my limited playtime.' },
+      ],
+    };
+  }
+
+  renderVals() {
+    const gameTitle = this.props.gameTitle ?? 'Elden Ring';
+    const showFriendsCard = this.props.showFriendsCard ?? true;
+    const tab = this.state.tab;
+    const status = this.state.status;
+
+    const tabDefs = [
+      { key: 'friends', label: 'Friends' },
+      { key: 'taste', label: 'Completionists' },
+      { key: 'all', label: 'All' },
+    ];
+    const reviewTabs = tabDefs.map(t => {
+      const active = t.key === tab;
+      return {
+        label: t.label,
+        onClick: () => this.setState({ tab: t.key }),
+        bg: active ? 'var(--text-primary)' : 'transparent',
+        fg: active ? 'var(--surface-0)' : 'var(--text-secondary)',
+        bd: active ? 'var(--text-primary)' : 'var(--border)',
+      };
+    });
+
+    const toneKey = { rl: 'really-liked', l: 'liked', dl: 'didnt-like', rd: 'really-disliked' };
+    const reviews = (this.reviewData()[tab] || []).map(r => ({
+      ...r,
+      sentKey: toneKey[r.tone] || 'liked',
+    }));
+    const seeAllLabel = tab === 'friends' ? 'See all friend reviews →'
+      : tab === 'taste' ? 'See all reviews from Completionists →'
+      : 'See all reviews →';
+
+    const showReviewCard = (status === 'finished') || (this.props.showReviewCard ?? false);
+    const reviewRating = this.state.reviewRating;
+    const canPost = !!reviewRating;
+    const ratingScale = [
+      { key: 'rd', label: 'Really disliked', headline: 'Really Disliked', color: '#4A3A3E', fg: 'var(--text-primary)' },
+      { key: 'dl', label: "Didn't like", headline: "Didn't Like", color: '#6E545A', fg: 'var(--text-primary)' },
+      { key: 'l', label: 'Liked', headline: 'Liked', color: '#A94E58', fg: 'var(--text-primary)' },
+      { key: 'rl', label: 'Loved', headline: 'Loved', color: 'var(--accent-500)', fg: 'var(--on-accent)' },
+    ];
+    const reviewPromptOpen = showReviewCard && !this.state.reviewSubmitted;
+    const reviewPosted = this.state.reviewSubmitted && !!reviewRating;
+    const reviewTextDisplay = (this.state.reviewText || '').trim();
+    const postedScale = ratingScale.find(c => c.key === reviewRating);
+    const ratingChoices = ratingScale.map(c => {
+      const sel = c.key === reviewRating;
+      return {
+        label: c.label,
+        onClick: () => this.setState({ reviewRating: sel ? null : c.key }),
+        bg: sel ? c.color : '#2B2023',
+        fg: sel ? c.fg : 'var(--text-muted)',
+        bd: sel ? c.color : '#3E2F33',
+        weight: sel ? 600 : 500,
+      };
+    });
+
+    const stO = k => (status === k);
+    return {
+      gameTitle,
+      showFriendsCard,
+      onBack: () => { window.location.href = 'Discover Home.dc.html'; },
+      tasteDist: { reallyLiked: 54, liked: 31, didntLike: 10, reallyDisliked: 5 },
+      globalDist: { reallyLiked: 34, liked: 30, didntLike: 21, reallyDisliked: 15 },
+
+      reviewTabs,
+      reviews,
+      reviewKey: tab,
+      seeAllLabel,
+      onSeeAllReviews: () => this.flash('Opening all reviews…'),
+      onRate: () => this.flash('Rate ' + gameTitle + ' — coming soon'),
+
+      showReviewCard: reviewPromptOpen,
+      ratingChoices,
+      reviewText: this.state.reviewText,
+      onReviewText: (e) => this.setState({ reviewText: e.target.value }),
+      postBg: canPost ? 'var(--accent-500)' : '#2B2023',
+      postFg: canPost ? 'var(--on-accent)' : '#8A787C',
+      postCursor: canPost ? 'pointer' : 'not-allowed',
+      postNote: canPost ? 'A written review is optional — post any time' : 'Pick a rating to post · a written review is optional',
+      onPostReview: () => {
+        if (!this.state.reviewRating) { this.flash('Pick a rating first'); return; }
+        this.setState({ reviewSubmitted: true });
+        this.flash('Review posted — thanks for your take');
+      },
+
+      reviewPosted,
+      reviewHeadline: postedScale ? postedScale.headline : '',
+      hasReviewText: reviewTextDisplay.length > 0,
+      reviewTextDisplay,
+      onEditReview: () => this.setState({ reviewSubmitted: false }),
+
+      isUntracked: !status,
+      isTracked: !!status,
+      trackedLabel: status === 'want' ? 'In your backlog' : status === 'playing' ? 'Playing' : status === 'finished' ? 'Finished' : '',
+
+      onOpenSheet: () => this.openSheet(),
+      onOpenLists: () => this.setState({ sheet: 'lists', sheetClosing: false, listSearch: '' }),
+      onCloseSheet: () => this.closeSheet(),
+      sheetOpen: this.state.sheet === 'status',
+      sheetScrimAnim: this.state.sheetClosing ? 'fadeOut 180ms ease forwards' : 'fadeIn 180ms ease',
+      sheetPanelAnim: this.state.sheetClosing ? 'sheetDown 280ms cubic-bezier(0.2,0,0,1) forwards' : 'sheetUp 280ms cubic-bezier(0.2,0,0,1)',
+      onPickWant: () => this.setStatus('want'),
+      onPickPlaying: () => this.setStatus('playing'),
+      onPickFinished: () => this.setStatus('finished'),
+      onAddToList: () => this.setState({ sheet: 'lists', sheetClosing: false, listSearch: '' }),
+
+      listsSheetOpen: this.state.sheet === 'lists',
+      listSearch: this.state.listSearch,
+      onListSearch: (e) => this.setState({ listSearch: e.target.value }),
+      onNewList: () => this.flash('New list — coming soon'),
+      lists: this.listDefs()
+        .filter(l => l.name.toLowerCase().includes((this.state.listSearch || '').toLowerCase().trim()))
+        .map(l => {
+          const added = !!this.state.addedLists[l.k];
+          return {
+            slotId: 'cv-lsheet-' + l.k,
+            name: l.name,
+            sub: added ? 'Added to list' : l.count + ' games',
+            cover: l.cover,
+            added, notAdded: !added,
+            onToggle: () => this.toggleList(l.k, l.name),
+          };
+        }),
+      noLists: this.listDefs().filter(l => l.name.toLowerCase().includes((this.state.listSearch || '').toLowerCase().trim())).length === 0,
+
+      wantBg: stO('want') ? 'var(--accent-600)' : 'var(--accent-500)', wantFg: 'var(--on-accent)', wantBd: stO('want') ? 'var(--accent-600)' : 'var(--accent-500)',
+      playingBg: stO('playing') ? 'var(--surface-2)' : 'transparent', playingBd: stO('playing') ? 'var(--border-accent)' : 'var(--border-strong)',
+      finishedBg: stO('finished') ? 'var(--surface-2)' : 'transparent', finishedBd: stO('finished') ? 'var(--border-accent)' : 'var(--border-strong)',
+
+      hasToast: !!this.state.toast,
+      toast: this.state.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

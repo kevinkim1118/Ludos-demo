@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/colors.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/base.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/core/button.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/sentiment-pill.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/styles.css">
+<script src="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/_ds_bundle.js"></script>
+<script src="./image-manifest.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #120D0E; }
+  a { color: var(--text-accent); text-decoration: none; }
+  a:hover { color: var(--accent-400); }
+  [data-rail]::-webkit-scrollbar { height: 0; display: none; }
+  [data-screen]::-webkit-scrollbar { width: 0; display: none; }
+  @keyframes popIn { 0% { transform: scale(.5); } 60% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes sheetDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(120% 80% at 50% 0%, #1A1314 0%, #110C0D 70%); font-family: 'Familjen Grotesk', ui-sans-serif, system-ui, sans-serif;">
+
+  <div style="width: 430px; padding: 11px; background: #080606; border-radius: 46px; box-shadow: 0 30px 70px rgba(0,0,0,0.55), inset 0 0 0 1.5px #2A2023;">
+    <div data-screen-label="Friends" style="position: relative; width: 100%; height: 868px; background: var(--surface-0); border-radius: 36px; overflow: hidden; display: flex; flex-direction: column; color: var(--text-primary)">
+
+      <!-- status bar -->
+      <div style="flex: none; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px 0 28px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em;">
+        <span>9:41</span>
+        <span style="display: flex; align-items: center; gap: 7px;">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="var(--text-primary)"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="var(--text-primary)" stroke-opacity="0.5"></rect><rect x="2.2" y="2.2" width="14.5" height="7.6" rx="1.6" fill="var(--text-primary)"></rect><rect x="21.6" y="4" width="2" height="4" rx="1" fill="var(--text-primary)" fill-opacity="0.5"></rect></svg>
+        </span>
+      </div>
+
+      <!-- top bar -->
+      <div style="flex: none; height: 54px; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-bottom: 1px solid var(--surface-1);">
+        <span style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">Friends</span>
+        <span style="flex: 1;"></span>
+        <button onClick="{{ onPeople }}" title="Friends list" style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--surface-2); color: var(--text-primary);">
+          <svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="9" r="3.4"></circle><circle cx="14.5" cy="9.5" r="2.8"></circle><path d="M3.5 17c0-2.5 2-4 5-4s5 1.5 5 4"></path><path d="M14 13.2c2.2.2 3.6 1.6 3.6 3.8"></path></svg>
+        </button>
+        <button onClick="{{ onAddFriends }}" title="Add friends" style="width: 36px; height: 36px; border-radius: 10px; border: none; background: var(--accent-500); color: var(--on-accent); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: var(--accent-400);">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 4v10"></path><path d="M4 9h10"></path></svg>
+        </button>
+      </div>
+
+      <!-- filter chips -->
+      <div data-rail="" style="flex: none; display: flex; gap: 8px; overflow-x: auto; padding: 12px 18px; border-bottom: 1px solid var(--surface-1);">
+        <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="4">
+          <button onClick="{{ chip.onPick }}" style="flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; font-family: inherit; white-space: nowrap; cursor: pointer; background: {{ chip.bg }}; color: {{ chip.fg }}; border: 1px solid {{ chip.bd }}; transition: background 140ms, color 140ms, border-color 140ms;">
+            {{ chip.label }}<span style="font-size: 11px; opacity: 0.62;">{{ chip.count }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <!-- scrollable feed -->
+      <div data-screen="" key="{{ filter }}" style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 14px 16px 6px; animation: swapIn 220ms cubic-bezier(0.2,0,0,1);">
+
+        <sc-for list="{{ groups }}" as="group" hint-placeholder-count="2">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin: 4px 2px 12px;">
+            <span>{{ group.label }}</span>
+            <span style="height: 1px; flex: 1; background: var(--surface-1);"></span>
+          </div>
+
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="2">
+            <div onClick="{{ item.onOpen }}" style="display: flex; gap: 13px; padding: 18px 2px; border-bottom: 1px solid var(--surface-1); cursor: {{ item.cursor }};">
+              <image-slot id="{{ item.slotId }}" shape="rounded" radius="8" placeholder="cover" style="display: block; width: 92px; aspect-ratio: 2 / 3; flex: none; background: var(--border); border-radius: 8px;"></image-slot>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: flex-start; gap: 8px;">
+                  <div style="flex: 1; min-width: 0; font-size: 15px; color: var(--text-secondary); line-height: 1.4;"><span style="color: var(--text-primary); font-weight: 600;">{{ item.who }}</span> {{ item.verb }} <span style="color: var(--text-primary); font-weight: 600;">{{ item.target }}</span><sc-if value="{{ item.hasList }}" hint-placeholder-val="{{ false }}"> to <span style="color: var(--text-primary); font-weight: 600;">{{ item.listName }}</span></sc-if></div>
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#6B5A5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px;"><path d="M6 3.5L10.5 8L6 12.5"></path></svg>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">{{ item.time }}</div>
+                <sc-if value="{{ item.hasMeta }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin-top: 8px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-300); flex: none;"></span>{{ item.meta }}</div>
+                </sc-if>
+                <sc-if value="{{ item.hasSentiment }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top: 10px;"><x-import component-from-global-scope="LudosDesignSystem_17bf5b.SentimentPill" sentiment="{{ item.sentKey }}" hint-size="auto,24px">{{ item.sentLabel }}</x-import></div>
+                </sc-if>
+                <sc-if value="{{ item.hasSnippet }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 14px; color: #D8CACB; line-height: 1.5; border-left: 2px solid var(--border-strong); padding-left: 11px; margin-top: 10px;">{{ item.snippet }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+
+          <!-- inline connect-steam growth lever -->
+          <sc-if value="{{ group.showConnect }}" hint-placeholder-val="{{ false }}">
+          <div style="border: 1.5px dashed var(--border-strong); border-radius: 14px; padding: 16px; background: #2B2023; margin-bottom: 12px;">
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 13px;">
+              <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--border); flex: none; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 22 22" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><circle cx="8" cy="9" r="4"></circle><circle cx="15" cy="9" r="3.4"></circle><path d="M2.5 18c0-2.6 2.4-4 5.5-4"></path></svg>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 13.5px; font-weight: 600;">Quiet feed?</div>
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.45; margin-top: 2px;">Import your Steam friends to see what they're playing and finishing.</div>
+              </div>
+            </div>
+            <button onClick="{{ onConnect }}" style="display: block; width: 100%; background: var(--accent-500); color: var(--on-accent); border: none; border-radius: 9px; padding: 11px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: var(--accent-400);" style-active="background: var(--accent-600);">Connect Steam to import friends</button>
+          </div>
+          </sc-if>
+        </sc-for>
+
+        <div style="text-align: center; font-size: 11px; color: #6B5A5E; padding: 10px 0 4px; letter-spacing: 0.02em;">You're all caught up · <span>{{ friendCount }}</span> friends</div>
+        <div style="height: 8px;"></div>
+      </div>
+
+      <!-- friends list sheet -->
+      <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; z-index: 30;">
+        <div onClick="{{ onCloseSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: {{ scrimAnim }};"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; max-height: 78%; display: flex; flex-direction: column; background: var(--surface-1); border-top: 1px solid var(--border-strong); border-radius: 22px 22px 0 0; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: {{ panelAnim }};">
+          <div style="flex: none; padding: 10px 18px 4px;">
+            <div style="width: 40px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 14px;"></div>
+            <div style="display: flex; align-items: baseline; gap: 9px; margin-bottom: 4px;">
+              <span style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em;">Friends</span>
+              <span style="font-size: 12px; color: var(--text-muted);"><span>8 Friends</span> · <span>{{ onlineCount }}</span> online</span>
+            </div>
+          </div>
+          <div data-screen="" style="flex: 1; overflow-y: auto; padding: 8px 12px 22px;">
+            <sc-for list="{{ friends }}" as="f" hint-placeholder-count="6">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 12px;" style-hover="background: var(--surface-2);">
+                <div style="position: relative; flex: none;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #E8DCDD; background: {{ f.bg }};">{{ f.initials }}</div>
+                  <sc-if value="{{ f.online }}" hint-placeholder-val="{{ true }}">
+                    <span style="position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-500); border: 2.5px solid var(--surface-1);"></span>
+                  </sc-if>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 600;">{{ f.name }}</div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 1px;">{{ f.status }}</div>
+                </div>
+                <sc-if value="{{ f.sameTaste }}" hint-placeholder-val="{{ false }}">
+                  
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- toast -->
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 50%; bottom: 80px; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text-primary); font-size: 12.5px; font-weight: 500; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); white-space: nowrap; animation: toastUp 200ms cubic-bezier(0.2,0,0,1); z-index: 40;">{{ toast }}</div>
+      </sc-if>
+
+      <!-- bottom tab bar -->
+      <div style="flex: none; height: 64px; display: flex; align-items: center; padding: 0 4px 6px; border-top: 1px solid var(--surface-1); background: var(--surface-0);">
+        <button onClick="{{ onTabDiscover }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"></circle><circle cx="11" cy="11" r="1.7" fill="currentColor" stroke="none"></circle></svg>
+          <span style="font-size: 10px; font-weight: 500;">Discover</span>
+        </button>
+        <button onClick="{{ onTabLibrary }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><rect x="4" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="9.3" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="14.6" y="5" width="3.4" height="12" rx="1.2"></rect></svg>
+          <span style="font-size: 10px; font-weight: 500;">Library</span>
+        </button>
+        <button style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--accent-300);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8.5" cy="9" r="3.4"></circle><circle cx="14.5" cy="9.5" r="2.8"></circle><path d="M3.5 17c0-2.5 2-4 5-4s5 1.5 5 4"></path><path d="M14 13.2c2.2.2 3.6 1.6 3.6 3.8"></path></svg>
+          <span style="font-size: 10px; font-weight: 600;">Friends</span>
+        </button>
+        <button onClick="{{ onTabSearch }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9.5" cy="9.5" r="6"></circle><line x1="14" y1="14" x2="19" y2="19" stroke-linecap="round"></line></svg>
+          <span style="font-size: 10px; font-weight: 500;">Search</span>
+        </button>
+        <button onClick="{{ onTabProfile }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="7.5" r="3.6"></circle><path d="M4 18.5c0-3.4 3.1-5.2 7-5.2s7 1.8 7 5.2"></path></svg>
+          <span style="font-size: 10px; font-weight: 500;">Profile</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:472,&quot;height&quot;:908},&quot;friendCount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:24,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Content&quot;,&quot;min&quot;:0,&quot;max&quot;:999},&quot;showConnectPrompt&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;},&quot;highlightSameTaste&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { filter: 'all', toast: null, sheet: false, sheetClosing: false };
+
+  flash(msg) {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: null }), 1900);
+  }
+
+  openSheet() { if (this._s) clearTimeout(this._s); this.setState({ sheet: true, sheetClosing: false }); }
+  closeSheet() {
+    if (!this.state.sheet) return;
+    if (this._s) clearTimeout(this._s);
+    this.setState({ sheetClosing: true });
+    this._s = setTimeout(() => this.setState({ sheet: false, sheetClosing: false }), 280);
+  }
+
+  go(href) { window.location.href = href; }
+
+  renderVals() {
+    const same = this.props.highlightSameTaste ?? true;
+    const showConnect = this.props.showConnectPrompt ?? true;
+    const friendCount = this.props.friendCount ?? 24;
+    const filter = this.state.filter;
+
+    const raw = [
+      { g: 'today', key: 'alex', who: 'DuskRunner', initials: 'DR', avBg: '#5A4147', verb: 'just finished', type: 'finish', target: 'Elden Ring', time: '2 hours ago', sameTaste: true, snippet: 'Absolutely worth the grind \u2014 every death taught me something.', sentiment: 'rl' },
+      { g: 'today', key: 'dana', who: 'PaleOrbit', initials: 'PO', avBg: '#4A3A40', verb: 'rated', type: 'rating', target: 'Outer Wilds', time: '3 hours ago', sameTaste: false, sentiment: 'rl' },
+      { g: 'today', key: 'maya', who: 'GlassCannon', initials: 'GC', avBg: '#63474C', verb: 'left a review for', type: 'review', target: 'Hades', time: '5 hours ago', sameTaste: false, snippet: 'Tight runs and a killer soundtrack. Ran out of steam before the true ending, but no regrets.', sentiment: 'l' },
+      { g: 'today', key: 'chris', who: 'NoScope99', initials: 'NS', avBg: '#514049', verb: 'started playing', type: 'playing', target: 'Baldur\u2019s Gate 3', time: '6 hours ago', sameTaste: false, meta: 'Now playing on PC · 4.2h' },
+      { g: 'week', key: 'sam', who: 'QuietVoid', initials: 'QV', avBg: '#5E4A44', verb: 'just finished', type: 'finish', target: 'Hollow Knight', time: 'Yesterday', sameTaste: true, snippet: 'One of the best metroidvanias, full stop. The map design alone is worth it.', sentiment: 'rl' },
+      { g: 'week', key: 'jordan', who: 'MapPin', initials: 'MP', avBg: '#4A3A40', verb: 'added', type: 'list', target: 'Citizen Sleeper', listName: 'Cozy night-ins', listBy: 'MapPin', time: '2 days ago', sameTaste: false },
+      { g: 'week', key: 'priya', who: 'NeonViper', initials: 'NV', avBg: '#5A4147', verb: 'rated', type: 'rating', target: 'Balatro', time: '3 days ago', sameTaste: false, sentiment: 'l' },
+    ];
+
+    const pass = (t) => filter === 'all'
+      || (filter === 'finishes' && (t === 'finish' || t === 'review'))
+      || (filter === 'ratings' && t === 'rating')
+      || (filter === 'playing' && t === 'playing');
+
+    const decorate = (it) => ({
+      slotId: 'ff-' + it.key,
+      initials: it.initials, avBg: it.avBg, who: it.who, verb: it.verb, target: it.target,
+      time: it.time,
+      hasList: it.type === 'list', listName: it.listName || '', listBy: it.listBy || '',
+      isList: it.type === 'list',
+      showThumb: it.type !== 'list',
+      hasSnippet: !!it.snippet, snippet: it.snippet || '',
+      hasMeta: !!it.meta, meta: it.meta || '',
+      hasSentiment: !!it.sentiment, sentRl: it.sentiment === 'rl', sentL: it.sentiment === 'l',
+      sentKey: it.sentiment === 'rl' ? 'really-liked' : it.sentiment === 'l' ? 'liked' : '',
+      sentLabel: it.sentiment === 'rl' ? 'Really liked it' : it.sentiment === 'l' ? 'Liked it' : '',
+      sameTaste: !!it.sameTaste && same,
+      hasChevron: !!it.snippet,
+      onOpen: null,
+      cursor: 'default',
+    });
+
+    const mkGroup = (g, label) => {
+      const items = raw.filter(it => it.g === g && pass(it.type)).map(decorate);
+      return { g, label, items,
+        showConnect: g === 'today' && filter === 'all' && showConnect,
+        _n: items.length };
+    };
+
+    const groups = [mkGroup('today', 'Today'), mkGroup('week', 'This week')]
+      .filter(gr => gr._n > 0 || gr.showConnect);
+
+    const count = (f) => raw.filter(it => f === 'all' ? true
+      : f === 'finishes' ? (it.type === 'finish' || it.type === 'review')
+      : f === 'ratings' ? it.type === 'rating'
+      : it.type === 'playing').length;
+
+    const chipDefs = [
+      { key: 'all', label: 'All activity' },
+      { key: 'finishes', label: 'Finishes & reviews' },
+      { key: 'ratings', label: 'Ratings' },
+      { key: 'playing', label: 'Playing' },
+    ];
+    const chips = chipDefs.map(c => {
+      const active = filter === c.key;
+      return {
+        label: c.label, count: count(c.key),
+        bg: active ? 'var(--text-primary)' : 'transparent',
+        fg: active ? 'var(--surface-0)' : 'var(--text-secondary)',
+        bd: active ? 'var(--text-primary)' : 'var(--border)',
+        onPick: () => this.setState({ filter: c.key }),
+      };
+    });
+
+    const friends = [
+      { name: 'DuskRunner', initials: 'DR', bg: '#5A4147', status: 'Playing Elden Ring', online: true, sameTaste: true },
+      { name: 'QuietVoid', initials: 'QV', bg: '#5E4A44', status: 'Playing Hollow Knight', online: true, sameTaste: true },
+      { name: 'GlassCannon', initials: 'GC', bg: '#63474C', status: 'Online', online: true, sameTaste: false },
+      { name: 'PaleOrbit', initials: 'PO', bg: '#4A3A40', status: 'Online', online: true, sameTaste: false },
+      { name: 'NoScope99', initials: 'NS', bg: '#514049', status: 'Playing Baldur\u2019s Gate 3', online: true, sameTaste: false },
+      { name: 'MapPin', initials: 'MP', bg: '#4A3A40', status: 'Last seen 2h ago', online: false, sameTaste: false },
+      { name: 'NeonViper', initials: 'NV', bg: '#5A4147', status: 'Last seen 1d ago', online: false, sameTaste: false },
+      { name: 'SlowClap', initials: 'SC', bg: '#63474C', status: 'Last seen 3d ago', online: false, sameTaste: false },
+    ];
+
+    return {
+      filter, chips, groups, friendCount,
+      friends, onlineCount: friends.filter(f => f.online).length,
+
+      onPeople: () => this.openSheet(),
+      onAddFriends: () => this.flash('Find friends to add\u2026'),
+      onConnect: () => this.flash('Connecting to Steam\u2026'),
+
+      sheetOpen: this.state.sheet,
+      scrimAnim: this.state.sheetClosing ? 'fadeOut 180ms ease forwards' : 'fadeIn 180ms ease',
+      panelAnim: this.state.sheetClosing ? 'sheetDown 280ms cubic-bezier(0.2,0,0,1) forwards' : 'sheetUp 280ms cubic-bezier(0.2,0,0,1)',
+      onCloseSheet: () => this.closeSheet(),
+
+      hasToast: !!this.state.toast, toast: this.state.toast,
+
+      onTabDiscover: () => this.go('Discover Home.dc.html'),
+      onTabProfile: () => this.go('Profile.dc.html'),
+      onTabLibrary: () => this.go('Library.dc.html'),
+      onTabSearch: () => this.flash('Search \u2014 not built in this prototype'),
+    };
+  }
+}
+</script>
+</body>
+</html>

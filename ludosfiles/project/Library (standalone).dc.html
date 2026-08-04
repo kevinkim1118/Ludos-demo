@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#241B1D">
+  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <rect x="34" y="30" width="14" height="60" rx="4" fill="#E23E4E"></rect>
+    <rect x="53" y="30" width="14" height="60" rx="4" fill="#E23E4E"></rect>
+    <rect x="72" y="30" width="14" height="60" rx="4" fill="#E23E4E"></rect>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet">
+<script src="./image-manifest.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #120D0E; }
+  [data-rail]::-webkit-scrollbar { height: 0; display: none; }
+  [data-screen]::-webkit-scrollbar { width: 0; display: none; }
+  [data-segs]::-webkit-scrollbar { height: 0; display: none; }
+  @keyframes popIn { 0% { transform: scale(.5); } 60% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(120% 80% at 50% 0%, #1A1314 0%, #110C0D 70%); font-family: 'Familjen Grotesk', ui-sans-serif, system-ui, sans-serif;">
+
+  <div style="width: 430px; padding: 11px; background: #080606; border-radius: 46px; box-shadow: 0 30px 70px rgba(0,0,0,0.55), inset 0 0 0 1.5px #2A2023;">
+    <div data-screen-label="Library" style="position: relative; width: 100%; height: 868px; background: #241B1D; border-radius: 36px; overflow: hidden; display: flex; flex-direction: column; color: #F0E9E9">
+
+      <!-- status bar -->
+      <div style="flex: none; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px 0 28px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em;">
+        <span>9:41</span>
+        <span style="display: flex; align-items: center; gap: 7px;">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="#F0E9E9"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="#F0E9E9" stroke-opacity="0.5"></rect><rect x="2.2" y="2.2" width="14.5" height="7.6" rx="1.6" fill="#F0E9E9"></rect><rect x="21.6" y="4" width="2" height="4" rx="1" fill="#F0E9E9" fill-opacity="0.5"></rect></svg>
+        </span>
+      </div>
+
+      <!-- top bar -->
+      <div style="flex: none; height: 54px; display: flex; align-items: center; gap: 12px; padding: 0 18px; border-bottom: 1px solid #322528;">
+        <span style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">Your library</span>
+        <span style="flex: 1;"></span>
+        <button style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid #45353A; background: transparent; color: #C2B2B4; display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: #3D2D31; color: #F0E9E9;">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7.5" cy="7.5" r="5"></circle><line x1="11.4" y1="11.4" x2="16" y2="16" stroke-linecap="round"></line></svg>
+        </button>
+        
+      </div>
+
+      <!-- view switcher -->
+      <div style="flex: none; display: flex; padding: 0 18px; border-bottom: 1px solid #322528">
+        <button onClick="{{ onViewLibrary }}" style="flex: 1; background: none; border: none; padding: 13px 0; font-family: inherit; font-size: 14px; font-weight: 600; text-align: center; cursor: pointer; color: {{ libCol }}; border-bottom: 2px solid {{ libBd }}; margin-bottom: -1px;">Library</button>
+        <button onClick="{{ onViewLists }}" style="flex: 1; background: none; border: none; padding: 13px 0; font-family: inherit; font-size: 14px; font-weight: 600; text-align: center; cursor: pointer; color: {{ listsCol }}; border-bottom: 2px solid {{ listsBd }}; margin-bottom: -1px;">Lists</button>
+      </div>
+
+      <!-- scrollable content -->
+      <div data-screen="" style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+
+        <sc-if value="{{ isLibraryView }}" hint-placeholder-val="{{ true }}">
+        <!-- What to play next -->
+        <div style="margin: 16px 14px 6px; background: #322528; border: 1.5px solid #6E3540; border-radius: 16px; padding: 16px; box-shadow: 0 8px 26px rgba(0,0,0,0.32);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px;">
+            <span style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">What to play next</span>
+            <button onClick="{{ onOpenTime }}" style="display: inline-flex; align-items: center; gap: 6px; border: 1px solid #57434A; border-radius: 999px; padding: 6px 11px; font-size: 11.5px; color: #C2B2B4; background: #2B2023; font-family: inherit; cursor: pointer;" style-hover="border-color: #6E3540;">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.6"></circle><path d="M7 4v3.2l2 1.3" stroke-linecap="round"></path></svg>
+              <span style="color: #F0E9E9; font-weight: 500;">{{ timeLabel }}</span>
+              <span style="color: #8A787C; font-size: 9px;">▾</span>
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 14px;">
+            <image-slot id="cv-pick" shape="rounded" radius="10" placeholder="cover" style="display: block; width: 96px; height: 128px; flex: none"></image-slot>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 11px; color: #9C8A8E; margin-bottom: 3px;">From your Backlog</div>
+              <div style="font-size: 22px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.06;">{{ pickName }}</div>
+              <div style="font-size: 11.5px; color: #9C8A8E; margin: 5px 0 11px;">{{ pickMeta }}</div>
+              <sc-for list="{{ pickReasons }}" as="r" hint-placeholder-count="3">
+                <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px;">
+                  <span style="width: 8px; height: 8px; background: #E23E4E; transform: rotate(45deg); border-radius: 1px; flex: none; margin-top: 4px;"></span>
+                  <span style="font-size: 12px; color: #C2B2B4; line-height: 1.4;"><span style="color: #F08C95; font-weight: 600;">{{ r.lead }}</span>{{ r.tail }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 9px; margin-top: 15px;">
+            <button onClick="{{ onStart }}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #E23E4E; color: #2A0A0E; border: none; border-radius: 10px; padding: 12px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 120ms cubic-bezier(0.2,0,0,1);" style-hover="background: #EC6571;" style-active="background: #C62E3D;">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M4 3l9 5-9 5V3z"></path></svg>
+              Start playing
+            </button>
+            <button onClick="{{ onAnother }}" style="display: inline-flex; align-items: center; gap: 7px; background: transparent; color: #C2B2B4; border: 1px solid #45353A; border-radius: 10px; padding: 12px 15px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;" style-hover="background: #3D2D31; color: #F0E9E9;">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13 8a5 5 0 1 1-1.5-3.5"></path><path d="M13 2.5V5h-2.5"></path></svg>
+              Another
+            </button>
+          </div>
+
+          <!-- head-to-head bar -->
+          <sc-if value="{{ h2hActive }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ onCompare }}" style="display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; margin-top: 11px; padding: 11px 12px; border: 1px solid #45353A; border-radius: 11px; background: #2B2023; font-family: inherit; cursor: pointer;" style-hover="border-color: #57434A; background: #33272A;">
+            <span style="display: flex; gap: 4px; flex: none;">
+              <span style="width: 22px; height: 28px; border-radius: 4px; background: #4A383D; border: 1px solid #57434A;"></span>
+              <span style="width: 22px; height: 28px; border-radius: 4px; background: #4A383D; border: 1px solid #57434A;"></span>
+            </span>
+            <span style="flex: 1; font-size: 12px; color: #C2B2B4; line-height: 1.35;"><span style="color: #F0E9E9; font-weight: 600;">Still can't decide?</span> Compare two and let a quick pick choose.</span>
+            <span style="font-size: 17px; color: #8A787C; flex: none;">›</span>
+          </button>
+          </sc-if>
+          <sc-if value="{{ h2hGated }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; gap: 11px; width: 100%; margin-top: 11px; padding: 11px 12px; border: 1px dashed #45353A; border-radius: 11px; background: #2B2023; opacity: 0.75;">
+            <span style="display: flex; gap: 4px; flex: none;">
+              <span style="width: 22px; height: 28px; border-radius: 4px; background: #3A2C30; border: 1px dashed #4A383D;"></span>
+              <span style="width: 22px; height: 28px; border-radius: 4px; background: #3A2C30; border: 1px dashed #4A383D;"></span>
+            </span>
+            <span style="flex: 1; font-size: 12px; color: #8A787C; line-height: 1.35;">Add 2+ games to your Backlog to compare.</span>
+          </div>
+          </sc-if>
+        </div>
+
+        <!-- status segments -->
+        <div data-segs="" style="display: flex; gap: 7px; overflow-x: auto; padding: 14px 14px 12px; scrollbar-width: none;">
+          <sc-for list="{{ segments }}" as="s" hint-placeholder-count="4">
+            <button onClick="{{ s.onClick }}" style="flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; font-family: inherit; white-space: nowrap; cursor: pointer; background: {{ s.bg }}; color: {{ s.fg }}; border: 1px solid {{ s.bd }};">
+              {{ s.label }}<span style="font-size: 11px; opacity: 0.62;">{{ s.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <!-- sub-toolbar -->
+        <div style="display: flex; align-items: center; gap: 10px; padding: 0 16px 12px; padding-top: 14px; padding-left: 16px">
+          <span style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">{{ segTitle }}</span>
+          <span style="flex: 1;"></span>
+          
+        </div>
+
+        <!-- grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 14px 4px;">
+          <sc-for list="{{ games }}" as="g" hint-placeholder-count="6">
+            <div style="background: #3D2D31; border: 1px solid #45353A; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 160ms cubic-bezier(0.2,0,0,1), border-color 160ms;" style-hover="transform: translateY(-3px); border-color: #57434A;">
+              <div style="position: relative;">
+                <image-slot id="{{ g.slotId }}" shape="rect" placeholder="cover" style="display: block; width: 100%; height: 164px; background: #45353A;"></image-slot>
+                <span style="position: absolute; top: 8px; left: 8px; font-size: 12px; font-weight: 400; letter-spacing: 0.02em; padding: 3px 8px; border-radius: 999px; background: {{ g.badgeBg }}; color: {{ g.badgeFg }}; border: 1px solid {{ g.badgeBd }}; backdrop-filter: blur(4px); padding-top: 4px; padding-bottom: 4px; display: block; justify-content: flex-start; align-items: stretch; flex-direction: row; flex-wrap: wrap">{{ g.status }}</span>
+              </div>
+              <div style="padding: 9px 11px 11px;">
+                <div style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ g.name }}</div>
+                <div style="font-size: 10.5px; color: #9C8A8E; margin: 2px 0 9px;">{{ g.platform }}</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 18px;">
+                  <sc-if value="{{ g.isWant }}" hint-placeholder-val="{{ true }}">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; color: #E8DCDD;">
+                      <span style="width: 7px; height: 7px; background: {{ g.matchColor }}; transform: rotate(45deg); border-radius: 1px;"></span>{{ g.match }}
+                    </span>
+                    <span style="font-size: 10.5px; color: #9C8A8E;">{{ g.time }}</span>
+                  </sc-if>
+                  <sc-if value="{{ g.isPlaying }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 10.5px; color: #C2B2B4;">{{ g.played }}</span>
+                  </sc-if>
+                  <sc-if value="{{ g.isFinished }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 10.5px; color: #9C8A8E;">{{ g.finishedDate }}</span>
+                    <span style="font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: {{ g.sentBg }}; color: {{ g.sentFg }}">{{ g.sentiment }}</span>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        </sc-if>
+
+        <!-- Lists view -->
+        <sc-if value="{{ isListsView }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 16px 14px 4px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px;">
+            <span style="font-size: 12.5px; color: #9C8A8E;">Your personal lists</span>
+            <button onClick="{{ onCreateList }}" style="background: none; border: none; padding: 0; font-family: inherit; font-size: 15px; font-weight: 600; color: #F08C95; cursor: pointer" style-hover="color: #F0E9E9;">+ Create new List</button>
+          </div>
+          <sc-for list="{{ collections }}" as="c" hint-placeholder-count="3">
+            <div style="background: #322528; border: 1px solid #45353A; border-radius: 14px; padding: 12px; margin-bottom: 12px; cursor: pointer; transition: border-color 160ms;" style-hover="border-color: #57434A;">
+              <div style="display: flex; gap: 6px; margin-bottom: 11px; position: relative;">
+                <span style="flex: 1; height: 58px; border-radius: 7px; background: #45353A; border: 1px solid #57434A;"></span>
+                <span style="flex: 1; height: 58px; border-radius: 7px; background: #402F34; border: 1px solid #57434A;"></span>
+                <span style="flex: 1; height: 58px; border-radius: 7px; background: #3B2C30; border: 1px solid #57434A;"></span>
+                <span style="position: absolute; right: -8px; bottom: -8px; width: 32px; height: 32px; border-radius: 8px; background: #241B1D; border: 2px solid #45353A; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #F0E9E9;">+{{ c.more }}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 15px; font-weight: 600; letter-spacing: -0.01em;">{{ c.name }}</div>
+                  <div style="font-size: 11.5px; color: #9C8A8E; margin-top: 2px;">{{ c.count }} games · updated {{ c.updated }}</div>
+                </div>
+                <span style="font-size: 18px; color: #8A787C; flex: none;">›</span>
+              </div>
+            </div>
+          </sc-for>
+          <button style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: transparent; color: #F08C95; border: 1px dashed #6E3540; border-radius: 14px; padding: 14px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;" style-hover="background: #3D2D31;">+ New list</button>
+        </div>
+        </sc-if>
+
+        <div style="height: 18px;"></div>
+      </div>
+
+      <!-- time sheet -->
+      <sc-if value="{{ timeSheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; z-index: 30;">
+        <div onClick="{{ onCloseSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: fadeIn 180ms ease;"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: #322528; border-top: 1px solid #57434A; border-radius: 22px 22px 0 0; padding: 10px 18px 24px; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: sheetUp 280ms cubic-bezier(0.2,0,0,1);">
+          <div style="width: 40px; height: 4px; border-radius: 2px; background: #57434A; margin: 0 auto 16px;"></div>
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">How much time have you got?</div>
+          <div style="font-size: 12.5px; color: #9C8A8E; margin: 3px 0 16px;">We'll tune the pick to fit your session</div>
+          <sc-for list="{{ timeOptions }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.onPick }}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: {{ t.bg }}; color: #F0E9E9; border: 1px solid {{ t.bd }}; border-radius: 11px; padding: 13px 14px; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: #3D2D31;">
+              <span style="flex: 1;"><span style="font-size: 14px; font-weight: 600; display: block;">{{ t.label }}</span><span style="font-size: 11.5px; color: #9C8A8E;">{{ t.desc }}</span></span>
+              <sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><span style="color: #F08C95; font-size: 15px; flex: none;">✓</span></sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- lists sheet -->
+      <sc-if value="{{ listsSheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; z-index: 30;">
+        <div onClick="{{ onCloseSheet }}" style="position: absolute; inset: 0; background: rgba(8,5,6,0.62); animation: fadeIn 180ms ease;"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; background: #322528; border-top: 1px solid #57434A; border-radius: 22px 22px 0 0; padding: 10px 18px 24px; box-shadow: 0 -14px 44px rgba(0,0,0,0.55); animation: sheetUp 280ms cubic-bezier(0.2,0,0,1);">
+          <div style="width: 40px; height: 4px; border-radius: 2px; background: #57434A; margin: 0 auto 16px;"></div>
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Your lists</div>
+          <div style="font-size: 12.5px; color: #9C8A8E; margin: 3px 0 16px;">Jump to a custom collection</div>
+          <sc-for list="{{ userLists }}" as="l" hint-placeholder-count="3">
+            <button style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: transparent; border: 1px solid #45353A; border-radius: 11px; padding: 13px 14px; font-family: inherit; cursor: pointer; margin-bottom: 9px;" style-hover="background: #3D2D31;">
+              <span style="width: 34px; height: 34px; border-radius: 9px; background: #3D2D31; border: 1px solid #57434A; flex: none; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #F08C95; font-family: 'Newsreader', Georgia, serif;">{{ l.icon }}</span>
+              <span style="flex: 1;"><span style="font-size: 14px; font-weight: 600; color: #F0E9E9; display: block;">{{ l.name }}</span><span style="font-size: 11.5px; color: #9C8A8E;">{{ l.count }} games</span></span>
+              <span style="font-size: 16px; color: #8A787C; flex: none;">›</span>
+            </button>
+          </sc-for>
+          <button style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: transparent; color: #F08C95; border: 1px dashed #6E3540; border-radius: 11px; padding: 13px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: 3px;" style-hover="background: #3D2D31;">+ New list</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- toast -->
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 50%; bottom: 80px; transform: translateX(-50%); background: #3D2D31; border: 1px solid #57434A; color: #F0E9E9; font-size: 12.5px; font-weight: 500; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); white-space: nowrap; animation: toastUp 200ms cubic-bezier(0.2,0,0,1); z-index: 20;">{{ toast }}</div>
+      </sc-if>
+
+      <!-- bottom tab bar -->
+      <div style="flex: none; height: 64px; display: flex; align-items: center; padding: 0 6px 6px; border-top: 1px solid #322528; background: #241B1D;">
+        <button onClick="{{ onGoDiscover }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: #9C8A8E;" style-hover="color: #C2B2B4;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"></circle><circle cx="11" cy="11" r="1.7" fill="currentColor" stroke="none"></circle></svg>
+          <span style="font-size: 10px; font-weight: 500;">Discover</span>
+        </button>
+        <button style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: #F08C95;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><rect x="4" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="9.3" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="14.6" y="5" width="3.4" height="12" rx="1.2"></rect></svg>
+          <span style="font-size: 10px; font-weight: 600;">Library</span>
+        </button>
+        <button style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: #9C8A8E;" style-hover="color: #C2B2B4;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="9" r="3.4"></circle><circle cx="14.5" cy="9.5" r="2.8"></circle><path d="M3.5 17c0-2.5 2-4 5-4s5 1.5 5 4"></path></svg>
+          <span style="font-size: 10px; font-weight: 500;">Friends</span>
+        </button>
+        <button style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: #9C8A8E;" style-hover="color: #C2B2B4;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9.5" cy="9.5" r="6"></circle><line x1="14" y1="14" x2="19" y2="19" stroke-linecap="round"></line></svg>
+          <span style="font-size: 10px; font-weight: 500;">Search</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:472,&quot;height&quot;:908},&quot;archetype&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;The Completionist&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;defaultSegment&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;want&quot;,&quot;options&quot;:[&quot;want&quot;,&quot;playing&quot;,&quot;finished&quot;,&quot;all&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;State&quot;},&quot;gateHeadToHead&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'library', seg: null, pickIdx: 0, time: 0, sheet: null, toast: null };
+
+  flash(msg) {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: null }), 1900);
+  }
+
+  games() {
+    return [
+      { k: 'hades', n: 'Hades II', p: 'PC · Switch', status: 'want', match: 'Strong', time: '~21h' },
+      { k: 'hollow', n: 'Hollow Knight', p: 'PC · Switch', status: 'want', match: 'Strong', time: '~27h' },
+      { k: 'outerwilds', n: 'Outer Wilds', p: 'PC · Xbox', status: 'want', match: 'Strong', time: '~15h' },
+      { k: 'disco', n: 'Disco Elysium', p: 'PC · PS5', status: 'want', match: 'Good', time: '~33h' },
+      { k: 'tunic', n: 'Tunic', p: 'PC · Switch', status: 'want', match: 'Good', time: '~12h' },
+      { k: 'citizen', n: 'Citizen Sleeper', p: 'PC · Switch', status: 'want', match: 'Good', time: '~9h' },
+      { k: 'elden', n: 'Elden Ring', p: 'Steam', status: 'playing', played: '40h', progressW: '58%' },
+      { k: 'bg3', n: "Baldur's Gate 3", p: 'PC', status: 'playing', played: '62h', progressW: '74%' },
+      { k: 'dave', n: 'Dave the Diver', p: 'Switch', status: 'playing', played: '11h', progressW: '30%' },
+      { k: 'sekiro', n: 'Sekiro', p: 'PS5', status: 'finished', finishedDate: "Aug '24", sentiment: 'Liked it', loved: false },
+      { k: 'celeste', n: 'Celeste', p: 'Switch', status: 'finished', finishedDate: "Jun '24", sentiment: 'Loved it', loved: true },
+      { k: 'inside', n: 'Inside', p: 'PC', status: 'finished', finishedDate: "May '24", sentiment: 'Liked it', loved: false },
+      { k: 'portal2', n: 'Portal 2', p: 'PC', status: 'finished', finishedDate: "Apr '24", sentiment: 'Loved it', loved: true },
+    ];
+  }
+
+  picks() {
+    const t = this.state.time;
+    // reasons vary a touch by time context (0 quick, 1 evening, 2 long haul)
+    const fit = ['Fits a quick session — pick-up-put-down', 'Fits a free evening — pick-up-put-down', 'Great for a long haul — deep progression'][t];
+    return [
+      { k: 'hades', name: 'Hades II', meta: 'Roguelike · PC / Switch · ~21h', reasons: [
+        { lead: 'Strong match', tail: ' for ' + this.arche() },
+        { lead: fitLead(fit), tail: fitTail(fit) },
+        { lead: '2 friends', tail: ' really liked it' },
+      ] },
+      { k: 'outerwilds', name: 'Outer Wilds', meta: 'Mystery · PC / Xbox · ~15h', reasons: [
+        { lead: 'Strong match', tail: ' for ' + this.arche() },
+        { lead: 'One unforgettable', tail: ' mystery-driven playthrough' },
+        { lead: 'Top rated', tail: ' by Completionists like you' },
+      ] },
+      { k: 'hollow', name: 'Hollow Knight', meta: 'Metroidvania · PC / Switch · ~27h', reasons: [
+        { lead: 'Strong match', tail: ' for ' + this.arche() },
+        { lead: 'Deep and atmospheric', tail: ' — rewards exploration' },
+        { lead: '2 friends', tail: ' have 100%-ed it' },
+      ] },
+    ];
+    function fitLead(s){ return s.split(' — ')[0]; }
+    function fitTail(s){ const p = s.split(' — '); return p[1] ? ' — ' + p[1] : ''; }
+  }
+
+  arche() { return this.props.archetype ?? 'The Completionist'; }
+
+  renderVals() {
+    const seg = this.state.seg ?? (this.props.defaultSegment ?? 'want');
+    const all = this.games();
+    const counts = { want: 12, playing: 3, finished: 47, all: 62 };
+    const segDefs = [
+      { key: 'want', label: 'Backlog', count: counts.want },
+      { key: 'playing', label: 'Playing', count: counts.playing },
+      { key: 'finished', label: 'Finished', count: counts.finished },
+      { key: 'all', label: 'All', count: counts.all },
+    ];
+    const segments = segDefs.map(s => {
+      const active = s.key === seg;
+      return {
+        label: s.label, count: s.count,
+        bg: active ? '#F0E9E9' : 'transparent',
+        fg: active ? '#241B1D' : '#C2B2B4',
+        bd: active ? '#F0E9E9' : '#45353A',
+        onClick: () => this.setState({ seg: s.key }),
+      };
+    });
+
+    const filtered = seg === 'all' ? all : all.filter(g => g.status === seg);
+    const statusLabels = { want: 'Backlog', playing: 'Playing', finished: 'Finished' };
+    const games = filtered.map(g => {
+      const statusLabel = statusLabels[g.status];
+      const loved = g.sentiment === 'Loved it';
+      return {
+        slotId: 'cv-lib-' + g.k, name: g.n, platform: g.p, status: statusLabel,
+        badgeBg: 'rgba(18,11,13,0.66)', badgeFg: '#E8DCDD', badgeBd: 'rgba(240,233,233,0.16)',
+        isWant: g.status === 'want', isPlaying: g.status === 'playing', isFinished: g.status === 'finished',
+        match: g.match, time: g.time, matchColor: g.match === 'Strong' ? '#E23E4E' : '#8A6A70',
+        played: g.played + ' played', progressW: g.progressW,
+        finishedDate: g.finishedDate, sentiment: g.sentiment,
+        sentBg: loved ? '#E23E4E' : '#45353A', sentFg: loved ? '#2A0A0E' : '#C2B2B4',
+      };
+    });
+
+    const segTitle = { want: 'Backlog', playing: 'Playing now', finished: 'Finished', all: 'All games' }[seg];
+    const sortLabel = { want: 'Best match', playing: 'Recently played', finished: 'Recently finished', all: 'Recently added' }[seg];
+
+    const picks = this.picks();
+    const pick = picks[this.state.pickIdx % picks.length];
+
+    const timeDefs = [
+      { label: 'A quick session', desc: '30 minutes or so' },
+      { label: 'A free evening', desc: 'A couple of hours' },
+      { label: 'A long haul', desc: 'Settle in for the weekend' },
+    ];
+    const timeOptions = timeDefs.map((t, i) => ({
+      label: t.label, desc: t.desc, active: i === this.state.time,
+      bg: i === this.state.time ? '#3D2D31' : 'transparent',
+      bd: i === this.state.time ? '#6E3540' : '#45353A',
+      onPick: () => this.setState({ time: i, sheet: null, pickIdx: 0 }),
+    }));
+
+    const gate = this.props.gateHeadToHead ?? false;
+    const view = this.state.view;
+
+    return {
+      isLibraryView: view === 'library',
+      isListsView: view === 'lists',
+      onViewLibrary: () => this.setState({ view: 'library' }),
+      onViewLists: () => this.setState({ view: 'lists' }),
+      libCol: view === 'library' ? '#F0E9E9' : '#9C8A8E',
+      libBd: view === 'library' ? '#E23E4E' : 'transparent',
+      listsCol: view === 'lists' ? '#F0E9E9' : '#9C8A8E',
+      listsBd: view === 'lists' ? '#E23E4E' : 'transparent',
+      collectionCount: 3,
+      onCreateList: () => this.flash('New list created'),
+      collections: [
+        { name: 'Cozy night-ins', count: 8, updated: '2d ago', more: 5 },
+        { name: 'Backlog bosses', count: 5, updated: '1w ago', more: 2 },
+        { name: 'Handheld / travel', count: 14, updated: '3w ago', more: 11 },
+      ],
+
+      timeLabel: timeDefs[this.state.time].label,
+      onOpenTime: () => this.setState({ sheet: 'time' }),
+      onOpenLists: () => this.setState({ sheet: 'lists' }),
+      onCloseSheet: () => this.setState({ sheet: null }),
+      timeSheetOpen: this.state.sheet === 'time',
+      listsSheetOpen: this.state.sheet === 'lists',
+      timeOptions,
+
+      pickKey: pick.k + '-' + this.state.time,
+      pickName: pick.name, pickMeta: pick.meta, pickReasons: pick.reasons,
+      onStart: () => this.flash('Now playing ' + pick.name),
+      onAnother: () => this.setState(s => ({ pickIdx: (s.pickIdx + 1) % 3 })),
+      onCompare: () => this.flash('Opening compare-two…'),
+      h2hActive: !gate, h2hGated: gate,
+
+      segments, segTitle, sortLabel, games,
+
+      hasToast: !!this.state.toast, toast: this.state.toast,
+      onGoDiscover: () => { window.location.href = 'Discover Home.dc.html'; },
+
+      userLists: [
+        { icon: 'C', name: 'Cozy night-ins', count: 8 },
+        { icon: 'B', name: 'Backlog bosses', count: 5 },
+        { icon: 'H', name: 'Handheld / travel', count: 14 },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

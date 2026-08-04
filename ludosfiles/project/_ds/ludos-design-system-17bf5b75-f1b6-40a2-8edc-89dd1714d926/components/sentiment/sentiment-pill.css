@@ -1,0 +1,13 @@
+.ds-sentiment-pill {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+}
+.ds-sentiment-pill--really-liked { background: var(--pill-rl-bg); color: var(--pill-rl-tx); }
+.ds-sentiment-pill--liked { background: var(--pill-l-bg); color: var(--pill-l-tx); }
+.ds-sentiment-pill--didnt-like { background: var(--pill-dl-bg); color: var(--pill-dl-tx); }
+.ds-sentiment-pill--really-disliked { background: var(--pill-rd-bg); color: var(--pill-rd-tx); }

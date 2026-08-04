@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Detail Page — Wireframe (Deciding State · Cold Start)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #F0F0F0;
+    color: #111;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Annotation markers ── */
+  .ann {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    background: #E8640A;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 7px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  /* ── Page meta label ── */
+  .page-meta {
+    text-align: center;
+    padding: 24px 0 6px;
+    font-size: 11px;
+    color: #AAAAAA;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .page-sub {
+    text-align: center;
+    padding: 0 24px 14px;
+    font-size: 12px;
+    color: #999;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* ── Annotation legend ── */
+  .legend-wrap { max-width: 1200px; margin: 0 auto 20px; padding: 0 40px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Nav ── */
+  .nav { background: white; border-bottom: 1px solid #E0E0E0; height: 52px; display: flex; align-items: center; padding: 0 40px; gap: 32px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-size: 14px; font-weight: 700; color: #111; letter-spacing: 0.04em; }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; color: #888; }
+  .nav-right { margin-left: auto; }
+  .avatar-sm { width: 30px; height: 30px; border-radius: 50%; background: #D8D8D8; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; font-weight: 600; }
+
+  /* ── Hero: Module 1 ── */
+  .hero { background: #C4C4C4; height: 380px; position: relative; overflow: hidden; }
+  .hero-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); font-size: 12px; color: #AAAAAA; text-align: center; pointer-events: none; border: 1.5px dashed #AAAAAA; padding: 10px 20px; border-radius: 6px; }
+  .hero-gradient { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%); }
+  .hero-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px 40px; color: white; }
+  .hero-eyebrow { font-size: 12px; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
+  .hero-title { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 10px; display: flex; align-items: center; }
+  .platform-badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28); border-radius: 4px; padding: 2px 8px; font-size: 11px; margin-right: 5px; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .hero-tag { background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 3px 10px; font-size: 11px; color: rgba(255,255,255,0.88); }
+
+  /* ── Page layout ── */
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 40px 80px; display: flex; gap: 28px; align-items: flex-start; }
+
+  /* ── Sidebar ── */
+  .sidebar { width: 296px; flex-shrink: 0; position: sticky; top: 68px; }
+  .cover-placeholder { width: 100%; aspect-ratio: 3 / 4; background: #D4D4D4; border: 2px dashed #AAAAAA; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #AAAAAA; margin-bottom: 16px; text-align: center; line-height: 1.5; }
+
+  /* ── Module shell ── */
+  .module { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .module-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; display: flex; align-items: center; }
+
+  /* ── Tracking actions ── */
+  .tracking-btn { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1.5px solid #E0E0E0; border-radius: 8px; font-size: 13px; font-weight: 500; color: #444; background: #FAFAFA; margin-bottom: 8px; cursor: pointer; }
+  .tracking-btn:last-of-type { margin-bottom: 0; }
+  .tracking-btn.primary { background: #111; color: white; border-color: #111; }
+  .btn-icon { width: 20px; height: 20px; background: #E4E4E4; border-radius: 4px; flex-shrink: 0; }
+  .tracking-btn.primary .btn-icon { background: rgba(255,255,255,0.2); }
+  .add-list-link { text-align: center; font-size: 12px; color: #999; padding: 8px 0 0; cursor: pointer; }
+
+  /* ── Purchase confidence ── */
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .stat-box { background: #F5F5F5; border-radius: 8px; padding: 10px; text-align: center; }
+  .stat-value { font-size: 18px; font-weight: 700; color: #111; display: block; }
+  .stat-desc { font-size: 11px; color: #888; margin-top: 2px; }
+  .store-btn { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border: 1px solid #E4E4E4; border-radius: 8px; font-size: 13px; color: #444; background: white; margin-bottom: 6px; cursor: pointer; }
+  .store-btn:last-child { margin-bottom: 0; }
+  .store-price { font-weight: 600; color: #111; }
+
+  /* ── Main content ── */
+  .main { flex: 1; min-width: 0; }
+
+  /* ── Taste verdict ── */
+  .verdict-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .verdict-title { font-size: 17px; font-weight: 600; color: #111; display: flex; align-items: center; }
+  .type-badge { background: #111; color: white; border-radius: 20px; padding: 4px 13px; font-size: 11px; font-weight: 500; }
+
+  .trust-tier { border: 1px solid #E8E8E8; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .trust-tier:last-child { margin-bottom: 0; }
+  .trust-tier.empty { background: #FAFAFA; border-style: dashed; border-color: #D8D8D8; }
+  .tier-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .tier-label { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #999; display: flex; align-items: center; gap: 6px; }
+  .tier-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tier-dot.friends { background: #111; }
+  .tier-dot.taste   { background: #666; }
+  .tier-dot.global  { background: #BBB; }
+  .tier-verdict { font-size: 14px; font-weight: 600; color: #111; }
+  .tier-verdict.muted { color: #B0B0B0; font-weight: 500; font-style: italic; }
+  .tier-detail { font-size: 13px; color: #555; line-height: 1.5; margin-top: 4px; }
+  .tier-detail.muted { color: #999; }
+
+  /* editorial badge — distinct from peer type-chip */
+  .editorial-badge { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: white; color: #888; font-weight: 600; border: 1px dashed #C8C8C8; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* friends-tier invitation (the growth lever) */
+  .invite { text-align: center; padding: 6px 4px 2px; }
+  .invite-text { font-size: 13px; color: #777; margin-bottom: 11px; line-height: 1.5; }
+  .invite-cta { display: inline-flex; align-items: center; gap: 9px; background: #111; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .invite-cta .btn-icon { background: rgba(255,255,255,0.22); }
+  .invite-secondary { display: block; font-size: 11px; color: #AAA; margin-top: 9px; }
+
+  /* 4-bucket sentiment distribution */
+  .dist-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; gap: 2px; margin-top: 8px; }
+  .dseg { height: 100%; border-radius: 3px; }
+  .dseg.rl { background: #2B2B2B; }
+  .dseg.l  { background: #777; }
+  .dseg.dl { background: #B5B5B5; }
+  .dseg.rd { background: #E0E0E0; }
+  .dist-key { display: flex; gap: 14px; margin-top: 7px; flex-wrap: wrap; }
+  .dk-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #888; }
+  .dk-dot { width: 7px; height: 7px; border-radius: 2px; }
+  .dk-dot.rl { background: #2B2B2B; }
+  .dk-dot.l  { background: #777; }
+  .dk-dot.dl { background: #B5B5B5; }
+  .dk-dot.rd { background: #E0E0E0; }
+  .sent-pill { font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 20px; flex-shrink: 0; }
+  .sent-pill.rl { background: #2B2B2B; color: white; }
+  .sent-pill.l  { background: #E4E4E4; color: #444; }
+
+  /* ── Friend signal (empty) ── */
+  .empty-block { border: 1.5px dashed #D8D8D8; border-radius: 10px; padding: 22px 16px; text-align: center; }
+  .empty-block-text { font-size: 13px; color: #999; line-height: 1.55; }
+  .empty-block-text strong { color: #777; }
+
+  /* ── Reviews ── */
+  .review-tabs { display: flex; gap: 4px; border-bottom: 1px solid #E8E8E8; padding-bottom: 12px; margin-bottom: 14px; }
+  .review-tab { padding: 5px 14px; border-radius: 20px; font-size: 13px; color: #888; cursor: pointer; border: 1px solid transparent; display: flex; align-items: center; gap: 6px; }
+  .review-tab.active { background: #111; color: white; }
+  .tab-count { font-size: 10px; opacity: 0.6; }
+  .tab-count.zero { color: #C0C0C0; }
+  .review-card { border: 1px solid #E8E8E8; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .review-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .reviewer-av { width: 34px; height: 34px; border-radius: 50%; background: #D0D0D0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #666; flex-shrink: 0; }
+  .reviewer-av.editorial { background: #ECECEC; border: 1px dashed #C8C8C8; color: #999; }
+  .reviewer-meta { flex: 1; }
+  .reviewer-name-row { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #111; margin-bottom: 3px; }
+  .reviewer-date { font-size: 11px; color: #BBBBBB; }
+  .review-score { font-size: 14px; font-weight: 700; color: #111; flex-shrink: 0; }
+  .review-body { font-size: 13px; color: #444; line-height: 1.65; }
+  .see-all-btn { display: block; text-align: center; padding: 12px; font-size: 13px; color: #777; border: 1px solid #E8E8E8; border-radius: 8px; cursor: pointer; margin-top: 4px; }
+
+  /* ── Discovery ── */
+  .disc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .disc-card { cursor: pointer; }
+  .disc-art { width: 100%; aspect-ratio: 3 / 4; background: #D8D8D8; border: 1.5px dashed #BBBBBB; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #AAAAAA; margin-bottom: 7px; }
+  .disc-title { font-size: 12px; font-weight: 500; color: #333; line-height: 1.3; margin-bottom: 2px; }
+  .disc-match { font-size: 11px; color: #999; }
+
+  /* ── Contribution (minimal) ── */
+  .contribution-minimal { border: 1.5px dashed #D8D8D8; border-radius: 10px; padding: 16px; text-align: center; color: #C0C0C0; font-size: 13px; margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Game detail page — Deciding state · COLD START (empty) — Desktop (1200px)</div>
+<div class="page-sub">Launch-day reality for a new user: friends-only platform with no connections yet, no taste-matched reviews for this title yet, only seeded editorial/critic data available. Same page, same modules as the populated deciding state — this shows how each one behaves when the personal signal is empty.</div>
+
+<!-- Annotation legend -->
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — what changes when the page is empty</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span>Identity is unaffected — title, developer, platforms, and tags are always available. Same hero as the populated state.</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>The key cold-start move.</strong> The trust ladder inverts: the tiers you trust most (friends, then your type) are empty, and the only populated one is the tier you trust least (global, seeded from editorial data). Rather than apologize, the empty Friends rung becomes the strongest CTA on the page — "connect Steam" — turning the cold-start gap into the growth lever that fills it.</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span>Tracking is fully functional — you can want / play / finish a game on day one regardless of social data. Unchanged from the populated state.</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span>Purchase confidence carries disproportionate weight at cold start — time-to-beat is utility data, not social, so it's one of the few modules with real signal. (Cost-per-hour line removed per latest decision.)</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span>Friend signal is empty, but it does <strong>not</strong> repeat the Connect-Steam CTA — the verdict's Friends rung (2) owns that single primary action. This module shows a lighter "will appear here" state to avoid a competing double-CTA.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span>Reviews default tab adapts to available data. Friends and People-like-you are empty (count shown as 0), so the page opens on the only tab with content — seeded editorial reviews, badged "Editorial," never disguised as peer reviews. Recognition over recall: don't open on an empty tab.</span></div>
+      <div class="legend-item"><span class="legend-num">7</span><span>Discovery survives cold start because it's content/tag-based, not social. Relabeled "Similar games" (driven by tags) rather than "Played by Completionists," which would need population to be honest.</span></div>
+      <div class="legend-item"><span class="legend-num">8</span><span>Contribution stays minimal — this is the deciding state, so the user hasn't played yet and can't review. Note: in cold start this module is where seeding begins, so its copy nods to "be among the first," but it does not rise until the finished state.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <span class="nav-logo">LEVELUP</span>
+  <div class="nav-links">
+    <span>Discover</span>
+    <span>Library</span>
+    <span>Friends</span>
+    <span>Search</span>
+  </div>
+  <div class="nav-right">
+    <div class="avatar-sm">KM</div>
+  </div>
+</nav>
+
+<!-- Module 1 — Identity & Essentials -->
+<div class="hero">
+  <div class="hero-placeholder">Key art / hero image<br>Full-width background</div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">FromSoftware · 2022 · Action RPG</div>
+    <div class="hero-title">Elden Ring <span class="ann" style="margin-left:10px;">1</span></div>
+    <div style="margin-bottom:8px;">
+      <span class="platform-badge">PC</span>
+      <span class="platform-badge">PS5</span>
+      <span class="platform-badge">Xbox</span>
+      <span class="platform-badge">Switch 2</span>
+    </div>
+    <div class="hero-tags">
+      <span class="hero-tag">Open world</span>
+      <span class="hero-tag">High challenge</span>
+      <span class="hero-tag">Solo</span>
+      <span class="hero-tag">Long sessions</span>
+      <span class="hero-tag">Story-rich</span>
+      <span class="hero-tag">Mechanics-first</span>
+    </div>
+  </div>
+</div>
+
+<!-- Page layout -->
+<div class="page-wrap">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+
+    <div class="cover-placeholder">Cover art<br>placeholder</div>
+
+    <!-- Module 3 — Tracking actions -->
+    <div class="module">
+      <div class="module-label">Your status <span class="ann">3</span></div>
+      <div class="tracking-btn primary"><div class="btn-icon"></div>Add to want list</div>
+      <div class="tracking-btn"><div class="btn-icon"></div>Mark as playing</div>
+      <div class="tracking-btn"><div class="btn-icon"></div>Mark as finished</div>
+      <div class="add-list-link">+ Add to a list</div>
+    </div>
+
+    <!-- Module 4 — Purchase confidence -->
+    <div class="module">
+      <div class="module-label">What it'll cost you <span class="ann">4</span></div>
+      <div class="stat-row">
+        <div class="stat-box"><span class="stat-value">60h</span><div class="stat-desc">Main story</div></div>
+        <div class="stat-box"><span class="stat-value">130h</span><div class="stat-desc">Completionist</div></div>
+      </div>
+      <div class="store-btn"><span>Steam</span><span class="store-price">$39.99</span></div>
+      <div class="store-btn"><span>PlayStation Store</span><span class="store-price">$49.99</span></div>
+      <div class="store-btn"><span>Xbox / Game Pass</span><span class="store-price">Included</span></div>
+    </div>
+
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="main">
+
+    <!-- Module 2 — Taste verdict (cold start) -->
+    <div class="module" style="margin-bottom:20px;">
+      <div class="verdict-header">
+        <div class="verdict-title">The verdict <span class="ann">2</span></div>
+        <div class="type-badge">The Completionist</div>
+      </div>
+
+      <!-- Tier 1: Friends — EMPTY, carries the primary CTA -->
+      <div class="trust-tier empty">
+        <div class="tier-header">
+          <div class="tier-label"><span class="tier-dot friends"></span>Friends</div>
+          <div class="tier-verdict muted">No friends yet</div>
+        </div>
+        <div class="invite">
+          <div class="invite-text">None of your friends are on LevelUp yet. Connect Steam to see which of them have played Elden Ring — your friends' takes lead the verdict.</div>
+          <div class="invite-cta"><div class="btn-icon"></div>Connect Steam to import friends</div>
+          <span class="invite-secondary">61% of players already track friends through Steam</span>
+        </div>
+      </div>
+
+      <!-- Tier 2: Taste-matched — THIN / not enough data yet -->
+      <div class="trust-tier empty">
+        <div class="tier-header">
+          <div class="tier-label"><span class="tier-dot taste"></span>Completionists</div>
+          <div class="tier-verdict muted">Not enough data yet</div>
+        </div>
+        <div class="tier-detail muted">You're one of the first Completionists here. As more players with your profile rate this, you'll see how it lands for your type — and the verdict gets more personal.</div>
+      </div>
+
+      <!-- Tier 3: Global — SEEDED editorial, the only populated tier -->
+      <div class="trust-tier">
+        <div class="tier-header">
+          <div class="tier-label"><span class="tier-dot global"></span>Global <span class="editorial-badge">Editorial</span></div>
+          <div class="tier-verdict">Mostly positive</div>
+        </div>
+        <div class="dist-bar">
+          <div class="dseg rl" style="width:34%;"></div><div class="dseg l" style="width:30%;"></div><div class="dseg dl" style="width:21%;"></div><div class="dseg rd" style="width:15%;"></div>
+        </div>
+        <div class="dist-key">
+          <div class="dk-item"><div class="dk-dot rl"></div>34% really liked</div>
+          <div class="dk-item"><div class="dk-dot l"></div>30% liked</div>
+          <div class="dk-item"><div class="dk-dot dl"></div>21% didn't</div>
+          <div class="dk-item"><div class="dk-dot rd"></div>15% really didn't</div>
+        </div>
+        <div class="tier-detail muted" style="margin-top:8px;">Based on critic &amp; editorial data while the community grows. The "people like you" divergence signal — the thing this verdict is built to surface — switches on once your type and friends fill in.</div>
+      </div>
+
+    </div>
+
+    <!-- Module 5 — Friend signal (empty, no competing CTA) -->
+    <div class="module" style="margin-bottom:20px;">
+      <div class="module-label">Friend activity <span class="ann">5</span></div>
+      <div class="empty-block">
+        <div class="empty-block-text">Once you connect friends, you'll see <strong>who owns it, who's playing, and who finished it</strong> here — with their ratings inline.</div>
+      </div>
+    </div>
+
+    <!-- Module 6 — Reviews (seeded editorial, adaptive default tab) -->
+    <div class="module" style="margin-bottom:20px;">
+      <div class="module-label">Reviews <span class="ann">6</span></div>
+      <div class="review-tabs">
+        <div class="review-tab">Friends <span class="tab-count zero">0</span></div>
+        <div class="review-tab">People like you <span class="tab-count zero">0</span></div>
+        <div class="review-tab active">Editorial <span class="tab-count">6</span></div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-top">
+          <div class="reviewer-av editorial">ED</div>
+          <div class="reviewer-meta">
+            <div class="reviewer-name-row">Curated review <span class="editorial-badge">Editorial</span></div>
+            <div class="reviewer-date">Seeded at launch · 2022</div>
+          </div>
+          <div class="sent-pill rl">Really liked it</div>
+        </div>
+        <div class="review-body">A sprawling, punishing open world that rewards curiosity over hand-holding. Stand-in editorial copy shown until friend and taste-matched reviews populate.</div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-top">
+          <div class="reviewer-av editorial">ED</div>
+          <div class="reviewer-meta">
+            <div class="reviewer-name-row">Curated review <span class="editorial-badge">Editorial</span></div>
+            <div class="reviewer-date">Seeded at launch · 2022</div>
+          </div>
+          <div class="sent-pill l">Liked it</div>
+        </div>
+        <div class="review-body">Dense and demanding; difficulty is the defining feature, for better or worse. Placeholder editorial sentiment, clearly marked as not-a-peer.</div>
+      </div>
+
+      <div class="see-all-btn">Be the first of your friends — or your type — to review this →</div>
+    </div>
+
+    <!-- Module 7 — Discovery continuation (content-based, survives) -->
+    <div class="module" style="margin-bottom:20px;">
+      <div class="module-label">Similar games <span class="ann">7</span></div>
+      <div class="disc-grid">
+        <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Dark Souls III</div><div class="disc-match">Similar tags</div></div>
+        <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Hollow Knight</div><div class="disc-match">Similar tags</div></div>
+        <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Sekiro</div><div class="disc-match">Similar tags</div></div>
+        <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Nioh 2</div><div class="disc-match">Similar tags</div></div>
+      </div>
+    </div>
+
+    <!-- Module 8 — Contribution (minimal) -->
+    <div class="contribution-minimal">
+      <span class="ann">8</span>&nbsp;&nbsp;Played Elden Ring? Be among the first Completionists to rate it and help the next person decide.
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+.ds-button {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--r-control);
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.ds-button--primary { background: var(--accent-500); color: var(--on-accent); }
+.ds-button--primary:hover { background: var(--accent-400); }
+.ds-button--primary:active { background: var(--accent-600); }
+.ds-button--secondary { background: transparent; color: var(--text-primary); border-color: var(--border-strong); }
+.ds-button--secondary:hover { background: var(--surface-2); }
+.ds-button--ghost { background: transparent; color: var(--text-secondary); }
+.ds-button--ghost:hover { background: var(--surface-2); color: var(--text-primary); }
+.ds-button--danger { background: transparent; color: var(--text-danger); border-color: var(--bg-danger); }
+.ds-button--danger:hover { background: var(--bg-danger); }
+.ds-button:disabled { color: var(--text-disabled); cursor: not-allowed; }

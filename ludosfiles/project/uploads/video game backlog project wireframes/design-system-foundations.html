@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design system — foundations (Crimson noir)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap');
+/* ============================================================
+   CRIMSON NOIR — design system foundations (dark-first)
+   Base: wine-graphite #241B1D · Accent: crimson #E23E4E
+   Dark mode is the primary, locked theme. Light = future port.
+
+   THE CRIMSON RESTRAINT RULE (load-bearing):
+   crimson means SENTIMENT or PRIMARY ACTION — nothing else.
+   Alignment, status-current, and structural accents stay neutral.
+   This keeps the red meaningful instead of decorative, and keeps
+   the three encodings on three independent axes:
+     action    = crimson  (hue, reserved)
+     sentiment = warm↔cool (hue, diverging)
+     trust     = brightness (neutral)
+   ============================================================ */
+:root {
+  /* ── Wine-graphite elevation ladder (page → raised) ── */
+  --surface-0: #241B1D;   /* page background (the locked base) */
+  --surface-1: #322528;   /* card / module surface */
+  --surface-2: #3D2D31;   /* raised card / popover / neutral chip */
+  --surface-3: #48363B;   /* hover / nested elevation */
+
+  /* ── Borders (wine-tinted, low-chroma) ── */
+  --border:        #45353A;   /* default hairline */
+  --border-strong: #57434A;   /* hover / emphasis divider */
+
+  /* ── Text (warm off-white ramp) ── */
+  --text-primary:   #F0E9E9;
+  --text-secondary: #C2B2B4;
+  --text-muted:     #9C8A8E;
+  --text-disabled:  #6E5A60;
+
+  /* ── Crimson accent (brand · CTA · selection · links · positive sentiment) ── */
+  --accent-300: #F08C95;  /* accent text on dark */
+  --accent-400: #EC6571;  /* hover fill */
+  --accent-500: #E23E4E;  /* the brand color — solid CTA + "really liked" */
+  --accent-600: #C62E3D;  /* pressed / active */
+  --on-accent:  #2A0A0E;  /* text on a solid crimson fill */
+  --bg-accent:     #3A1E24;  /* crimson tint (sentiment pill, focus) */
+  --border-accent: #6E3540;
+  --text-accent:   #F08C95;
+
+  /* ── Sentiment (diverging warm↔cool) ──
+     positive pole = crimson family · negative pole = cool slate. */
+  --sent-really-liked:    #E23E4E;  /* warm, strong */
+  --sent-liked:           #EC8290;  /* warm, light */
+  --sent-didnt-like:      #7C8AA0;  /* cool slate, light */
+  --sent-really-disliked: #49566B;  /* cool slate, deep */
+
+  /* sentiment pills (individual lean = tinted chip + matching text) */
+  --pill-rl-bg: #3A1E24; --pill-rl-tx: #F08C95;
+  --pill-l-bg:  #34232A; --pill-l-tx:  #EC97A2;
+  --pill-dl-bg: #2C333D; --pill-dl-tx: #9DAAB8;
+  --pill-rd-bg: #28303A; --pill-rd-tx: #8593A2;
+
+  /* ── Trust ladder (NEUTRAL brightness axis — off hue on purpose) ── */
+  --trust-friends: #F0E9E9;
+  --trust-taste:   #A9989C;
+  --trust-global:  #6E5A60;
+
+  /* ── Relate chip (alignment: Agreed / Diverged — deliberately NEUTRAL,
+        never sentiment color, so "aligned" isn't misread as a rating) ── */
+  --relate-bg: #3D2D31; --relate-border: #4A3940; --relate-tx: #BCAEB1;
+
+  /* ── Semantic (kept minimal) ──
+     NOTE: in a crimson house, destructive must NOT lean on red alone —
+     it leans on iconography + confirmation. The danger hue is a muted
+     brick, held distinct from the brand crimson. */
+  --text-danger: #EE8A7E; --bg-danger: #3A211F; --fill-danger: #CF4636; --on-danger: #2A0B09;
+  --text-warning:#E3B341; --bg-warning:#3A2E16;
+  --text-success:#86B79A; --bg-success:#1F2E26;  /* system confirmations / "agreed" check */
+
+  /* ── Typography ── */
+  --font-sans:  "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-voice: "Newsreader", Georgia, "Times New Roman", serif; /* editorial: reviews, archetype */
+  --font-mono:  ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  /* ── Spacing (4px base) ── */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px;
+  --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:48px;
+
+  /* ── Radius ── */
+  --r-seg:3px; --r-control:8px; --r-card:12px; --r-pill:999px;
+
+  /* ── Motion ── */
+  --dur-fast:120ms; --dur-base:200ms; --dur-slow:320ms;
+  --ease:cubic-bezier(0.2,0,0,1);
+
+  --shadow-popover: 0 8px 28px rgba(0,0,0,0.5);
+}
+
+/* ============================================================
+   LIGHT THEME (port) — same token NAMES, remapped to cream paper.
+   Two things flip vs. dark:
+     1. TRUST LADDER inverts — most-trusted is now the DARKEST
+        neutral (on paper, contrast comes from darkness, not light).
+     2. CRIMSON DEEPENS — fills carry white text, so --accent-500
+        drops to a deeper crimson and --text-accent goes deeper still
+        to stay legible on cream. Sentiment-bar hues are unchanged.
+   Fonts are shared across both themes (set above the theme layer).
+   ============================================================ */
+[data-theme="light"] {
+  --surface-0: #F6F1E7;   /* cozy-paper page */
+  --surface-1: #FCF9F1;   /* card */
+  --surface-2: #FFFFFF;   /* raised / popover */
+  --surface-3: #EFE7D7;   /* hover tint */
+  --border:        #E7DECB;
+  --border-strong: #D8CBB0;
+  --text-primary:   #2B2722;
+  --text-secondary: #6E6358;
+  --text-muted:     #8C8478;
+  --text-disabled:  #B3A893;
+
+  /* crimson — deepened for white-on-fill + legible text on cream */
+  --accent-500: #D62C3D;  /* CTA fill */
+  --accent-400: #C0273A;  /* hover = darker */
+  --accent-600: #A82232;  /* pressed */
+  --on-accent:  #FFFFFF;
+  --bg-accent:     #F7E4E0;
+  --border-accent: #EFCFC9;
+  --text-accent:   #BE2A3A;
+
+  /* sentiment pills — light tints (bar hues unchanged) */
+  --pill-rl-bg: #F7E4E0; --pill-rl-tx: #A8293A;
+  --pill-l-bg:  #FAEAE6; --pill-l-tx:  #B85563;
+  --pill-dl-bg: #E8EAEC; --pill-dl-tx: #4F6178;
+  --pill-rd-bg: #E2E5E9; --pill-rd-tx: #3D4A5C;
+
+  /* trust ladder — INVERTED (dark = most trusted) */
+  --trust-friends: #2B2722;
+  --trust-taste:   #897C72;
+  --trust-global:  #C3B6A4;
+
+  --relate-bg: #EFE7D7; --relate-border: #DFD3BE; --relate-tx: #6E6358;
+
+  --text-danger: #B23322; --bg-danger: #FBE8E4; --fill-danger: #C8392B; --on-danger: #FFFFFF;
+  --text-warning:#9A6B12; --bg-warning:#FAEFD6;
+  --text-success:#4E876A; --bg-success:#E6F1EA;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--surface-0); color: var(--text-primary);
+  font-family: var(--font-sans); font-size: 15px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 940px; margin: 0 auto; padding: 48px 28px 96px; }
+
+.doc-title { font-size: 30px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 6px; }
+.doc-sub { color: var(--text-secondary); font-size: 15px; margin: 0 0 8px; }
+.doc-meta { color: var(--text-muted); font-size: 13px; margin: 0; }
+
+.section { margin-top: 56px; }
+.section > h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 4px; }
+.section > .lead { color: var(--text-secondary); font-size: 14px; margin: 0 0 20px; max-width: 64ch; }
+h3.block { font-size: 16px; font-weight: 600; margin: 28px 0 12px; color: var(--text-primary); }
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 12px; }
+.sw { border-radius: var(--r-card); overflow: hidden; border: 1px solid var(--border); }
+.sw .chip { height: 72px; }
+.sw .meta { padding: 9px 11px; background: var(--surface-1); }
+.sw .nm { font-size: 13px; font-weight: 500; }
+.sw .hx { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px; }
+.sw .role { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+.demo { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-card); padding: 22px; }
+.demo + .demo { margin-top: 16px; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+.btn { font-family: inherit; font-size: 14px; font-weight: 500; border-radius: var(--r-control); padding: 9px 16px; border: 1px solid transparent; cursor: pointer; transition: background var(--dur-fast) var(--ease); }
+.btn-primary { background: var(--accent-500); color: var(--on-accent); }
+.btn-primary:hover { background: var(--accent-400); }
+.btn-primary:active { background: var(--accent-600); }
+.btn-secondary { background: transparent; color: var(--text-primary); border-color: var(--border-strong); }
+.btn-secondary:hover { background: var(--surface-2); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--surface-2); color: var(--text-primary); }
+.btn-danger { background: transparent; color: var(--text-danger); border-color: var(--bg-danger); }
+.btn-danger:hover { background: var(--bg-danger); }
+
+.dist { display: flex; height: 26px; border-radius: var(--r-seg); overflow: hidden; gap: 2px; }
+.dseg.rl { background: var(--sent-really-liked); }
+.dseg.l  { background: var(--sent-liked); }
+.dseg.dl { background: var(--sent-didnt-like); }
+.dseg.rd { background: var(--sent-really-disliked); }
+.dist-key { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12px; color: var(--text-secondary); }
+.dk { display: inline-flex; align-items: center; gap: 6px; }
+.dk i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+.pill { font-size: 12px; font-weight: 500; padding: 5px 11px; border-radius: var(--r-pill); display: inline-flex; }
+.pill.rl { background: var(--pill-rl-bg); color: var(--pill-rl-tx); }
+.pill.l  { background: var(--pill-l-bg);  color: var(--pill-l-tx); }
+.pill.dl { background: var(--pill-dl-bg); color: var(--pill-dl-tx); }
+.pill.rd { background: var(--pill-rd-bg); color: var(--pill-rd-tx); }
+
+.relate { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: var(--r-pill); background: var(--relate-bg); color: var(--relate-tx); border: 1px solid var(--relate-border); display: inline-flex; align-items: center; gap: 5px; }
+.relate .ok { color: var(--text-success); }
+
+.trust { display: flex; flex-direction: column; gap: 10px; }
+.trow { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.tdot { width: 10px; height: 10px; border-radius: 3px; }
+.tdot.f { background: var(--trust-friends); }
+.tdot.t { background: var(--trust-taste); }
+.tdot.g { background: var(--trust-global); }
+.trow .lab { color: var(--text-primary); }
+.trow .sub { color: var(--text-muted); font-size: 13px; }
+.tbadge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: var(--r-pill); background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
+
+.type-row { display: flex; align-items: baseline; gap: 16px; padding: 12px 0; border-top: 1px solid var(--border); }
+.type-row:first-child { border-top: 0; }
+.type-row .tag { width: 120px; flex: none; color: var(--text-muted); font-size: 12px; font-family: var(--font-mono); }
+.voice { font-family: var(--font-voice); }
+
+.gcard { width: 180px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; }
+.gcard .cover { height: 110px; background: #4A2730; display:flex; align-items:flex-end; }
+.gcard .cover .plat { font-size: 11px; color: #E0BEC4; padding: 6px 8px; }
+.gcard .body { padding: 10px 11px 12px; }
+.gcard .nm { font-size: 14px; font-weight: 500; }
+.gcard .foot { margin-top: 8px; }
+
+.tiles { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+.tile { text-align: center; }
+.tile .bar { background: var(--accent-500); border-radius: 2px; }
+.tile .cap { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 6px; }
+.radii { display: flex; gap: 16px; flex-wrap: wrap; }
+.radbox { width: 64px; height: 64px; background: var(--surface-3); border: 1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; font-size:11px; color: var(--text-muted); }
+
+.note { font-size: 13px; color: var(--text-muted); margin-top: 12px; line-height: 1.6; }
+.callout { background: var(--bg-accent); border: 1px solid var(--border-accent); color: var(--text-accent); border-radius: var(--r-control); padding: 12px 14px; font-size: 13px; line-height: 1.6; margin-top: 16px; }
+.callout.neutral { background: var(--surface-2); border-color: var(--border); color: var(--text-secondary); }
+code { font-family: var(--font-mono); font-size: 12px; background: var(--surface-2); padding: 1px 6px; border-radius: 5px; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="doc-meta">Video game backlog · design system</p>
+  <h1 class="doc-title">Foundations — Crimson noir</h1>
+  <p class="doc-sub">Dark-first. Wine-graphite base, crimson accent, warm↔cool diverging sentiment. The canonical token reference the hi-fi screens build on.</p>
+  <p class="doc-meta">v1 · dark theme primary · light theme ported · type: Familjen Grotesk + Newsreader</p>
+
+  <div class="callout" style="margin-top:24px;"><strong>The crimson restraint rule.</strong> Crimson means <strong>sentiment</strong> or <strong>primary action</strong> — nothing else. Alignment, status-current, and structural accents stay neutral. Proven on the dense finished/cold-start states: when crimson did extra duty (alignment chips, callout frames) the page got loud and "aligned" risked reading as a rating. Reserve it, and the red stays the loudest, most meaningful thing on screen.</div>
+
+  <!-- ============ COLOR ============ -->
+  <div class="section">
+    <h2>Color · neutrals &amp; elevation</h2>
+    <p class="lead">One wine-graphite ramp does the structural work — warm, but tinted distinctly off a neutral graphite so the dark reads as its own world. Surfaces step up by lightness (page → card → popover); the eye reads elevation, not borders.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--surface-0)"></div><div class="meta"><div class="nm">surface-0</div><div class="hx">#241B1D</div><div class="role">Page background (locked base)</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface-1)"></div><div class="meta"><div class="nm">surface-1</div><div class="hx">#322528</div><div class="role">Card / module</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface-2)"></div><div class="meta"><div class="nm">surface-2</div><div class="hx">#3D2D31</div><div class="role">Raised / popover / neutral chip</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface-3)"></div><div class="meta"><div class="nm">surface-3</div><div class="hx">#48363B</div><div class="role">Hover / nested</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--border)"></div><div class="meta"><div class="nm">border</div><div class="hx">#45353A</div><div class="role">Default hairline</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--border-strong)"></div><div class="meta"><div class="nm">border-strong</div><div class="hx">#57434A</div><div class="role">Hover / emphasis</div></div></div>
+    </div>
+
+    <h3 class="block">Text</h3>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--text-primary)"></div><div class="meta"><div class="nm">text-primary</div><div class="hx">#F0E9E9</div><div class="role">Body, headings</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--text-secondary)"></div><div class="meta"><div class="nm">text-secondary</div><div class="hx">#C2B2B4</div><div class="role">Supporting copy</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--text-muted)"></div><div class="meta"><div class="nm">text-muted</div><div class="hx">#9C8A8E</div><div class="role">Hints, captions</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--text-disabled)"></div><div class="meta"><div class="nm">text-disabled</div><div class="hx">#6E5A60</div><div class="role">Disabled</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Color · crimson accent</h2>
+    <p class="lead">The single brand color — every primary CTA, selected state, link, and focus. It also anchors the positive end of sentiment, so the brand literally <em>is</em> “your taste, and what it likes.” Governed by the restraint rule above: spend it on sentiment or the one primary action per view, never on decoration.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--accent-300)"></div><div class="meta"><div class="nm">accent-300</div><div class="hx">#F08C95</div><div class="role">Accent text on dark</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--accent-400)"></div><div class="meta"><div class="nm">accent-400</div><div class="hx">#EC6571</div><div class="role">Hover fill</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--accent-500)"></div><div class="meta"><div class="nm">accent-500</div><div class="hx">#E23E4E</div><div class="role">Brand · CTA · “really liked”</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--accent-600)"></div><div class="meta"><div class="nm">accent-600</div><div class="hx">#C62E3D</div><div class="role">Pressed / active</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--bg-accent)"></div><div class="meta"><div class="nm">bg-accent</div><div class="hx">#3A1E24</div><div class="role">Crimson tint</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--on-accent)"></div><div class="meta"><div class="nm">on-accent</div><div class="hx">#2A0A0E</div><div class="role">Text on solid crimson</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Color · sentiment (diverging)</h2>
+    <p class="lead">Four buckets, two poles. Positive glows crimson; negative recedes into cool slate. No red/green traffic-light, no single score — it reads as a <em>take</em>, not a verdict stamp. Sentiment lives on the hue axis, leaving brightness free for trust.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--sent-really-liked)"></div><div class="meta"><div class="nm">really liked</div><div class="hx">#E23E4E</div><div class="role">Warm · strong</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--sent-liked)"></div><div class="meta"><div class="nm">liked</div><div class="hx">#EC8290</div><div class="role">Warm · light</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--sent-didnt-like)"></div><div class="meta"><div class="nm">didn’t like</div><div class="hx">#7C8AA0</div><div class="role">Cool slate · light</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--sent-really-disliked)"></div><div class="meta"><div class="nm">really disliked</div><div class="hx">#49566B</div><div class="role">Cool slate · deep</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Color · trust ladder</h2>
+    <p class="lead">Friends → taste-matched → global, encoded purely as neutral <em>brightness</em> (bright = most trusted) — no hue, so it can never be confused with sentiment or action.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--trust-friends)"></div><div class="meta"><div class="nm">friends</div><div class="hx">#F0E9E9</div><div class="role">Most trusted · brightest</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--trust-taste)"></div><div class="meta"><div class="nm">taste-matched</div><div class="hx">#A9989C</div><div class="role">Mid</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--trust-global)"></div><div class="meta"><div class="nm">global</div><div class="hx">#6E5A60</div><div class="role">Least trusted · faint</div></div></div>
+    </div>
+    <div class="callout">Three meanings, three axes: <strong>action</strong> = crimson (hue, reserved) · <strong>sentiment</strong> = warm↔cool (hue, diverging) · <strong>trust</strong> = brightness (neutral). No axis does double duty.</div>
+  </div>
+
+  <div class="section">
+    <h2>Color · semantic</h2>
+    <p class="lead">Kept small — warm/cool sentiment already carries “good/bad.” In a crimson house, destructive must not lean on red alone (it would echo the brand); danger is a muted brick paired with iconography + confirmation. Success is low-chroma sage, also used for the “agreed” check on relate chips.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--fill-danger)"></div><div class="meta"><div class="nm">danger</div><div class="hx">#CF4636</div><div class="role">Destructive — with icon + confirm</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--text-warning)"></div><div class="meta"><div class="nm">warning</div><div class="hx">#E3B341</div><div class="role">Caution, sparingly</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--text-success)"></div><div class="meta"><div class="nm">success</div><div class="hx">#86B79A</div><div class="role">Confirmations · “agreed” check</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============ TYPOGRAPHY ============ -->
+  <div class="section">
+    <h2>Typography</h2>
+    <p class="lead">Two families. <strong>Familjen Grotesk</strong> (sans) does all UI work; <strong>Newsreader</strong> (serif, <code>--font-voice</code>) is reserved for the publication moments — the personality archetype and review excerpts. Weights: 400 / 500 / 600 only.</p>
+    <div class="demo">
+      <div class="type-row"><span class="tag">display · voice · 33/600</span><span style="font-family:var(--font-voice);font-size:33px;font-weight:600;letter-spacing:-0.005em;">The Completionist</span></div>
+      <div class="type-row"><span class="tag">title · 22/600</span><span style="font-size:22px;font-weight:600;">The verdict</span></div>
+      <div class="type-row"><span class="tag">heading · 18/600</span><span style="font-size:18px;font-weight:600;">What to play next</span></div>
+      <div class="type-row"><span class="tag">subhead · 16/500</span><span style="font-size:16px;font-weight:500;">Matched to your taste</span></div>
+      <div class="type-row"><span class="tag">body · 15/400</span><span style="font-size:15px;">Most players with your profile really liked it.</span></div>
+      <div class="type-row"><span class="tag">body-sm · 13/400</span><span style="font-size:13px;color:var(--text-secondary);">Playing on Steam · 40h played</span></div>
+      <div class="type-row"><span class="tag">caption · 12/500</span><span style="font-size:12px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-muted);">Friends · most trusted</span></div>
+      <div class="type-row"><span class="tag">voice · 20/serif</span><span class="voice" style="font-size:20px;line-height:1.5;color:#E8DCDD;">“You backed the right read — your friends and your type agreed.”</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SPACE / RADIUS / MOTION ============ -->
+  <div class="section">
+    <h2>Spacing, radius &amp; motion</h2>
+    <p class="lead">4px base grid. Radius separates pills (full) from cards (12) from controls (8) from data segments (3). Motion is quick and confident — nothing slower than 320ms.</p>
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Spacing scale (px)</h3>
+      <div class="tiles">
+        <div class="tile"><div class="bar" style="width:4px;height:4px"></div><div class="cap">4</div></div>
+        <div class="tile"><div class="bar" style="width:8px;height:8px"></div><div class="cap">8</div></div>
+        <div class="tile"><div class="bar" style="width:12px;height:12px"></div><div class="cap">12</div></div>
+        <div class="tile"><div class="bar" style="width:16px;height:16px"></div><div class="cap">16</div></div>
+        <div class="tile"><div class="bar" style="width:20px;height:20px"></div><div class="cap">20</div></div>
+        <div class="tile"><div class="bar" style="width:24px;height:24px"></div><div class="cap">24</div></div>
+        <div class="tile"><div class="bar" style="width:32px;height:32px"></div><div class="cap">32</div></div>
+        <div class="tile"><div class="bar" style="width:40px;height:40px"></div><div class="cap">40</div></div>
+        <div class="tile"><div class="bar" style="width:48px;height:48px"></div><div class="cap">48</div></div>
+      </div>
+      <h3 class="block">Radius</h3>
+      <div class="radii">
+        <div class="radbox" style="border-radius:3px">3 · seg</div>
+        <div class="radbox" style="border-radius:8px">8 · ctl</div>
+        <div class="radbox" style="border-radius:12px">12 · card</div>
+        <div class="radbox" style="border-radius:999px">pill</div>
+      </div>
+      <p class="note">Motion — fast <code>120ms</code> (hovers, taps) · base <code>200ms</code> (most transitions) · slow <code>320ms</code> (sheets, page-level). Easing <code>cubic-bezier(0.2,0,0,1)</code>.</p>
+    </div>
+  </div>
+
+  <!-- ============ COMPONENTS ============ -->
+  <div class="section">
+    <h2>Core components in palette</h2>
+    <p class="lead">The load-bearing pieces in real tokens. Note where crimson appears — and, just as deliberately, where it doesn’t.</p>
+
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Buttons</h3>
+      <div class="row">
+        <button class="btn btn-primary">Add to want list</button>
+        <button class="btn btn-secondary">Mark as playing</button>
+        <button class="btn btn-ghost">Show another</button>
+        <button class="btn btn-danger">Remove</button>
+      </div>
+      <p class="note">One crimson primary per view — siblings are secondary or ghost. Destructive is a quiet outline; the brick danger hue only fills on hover, and a real destructive flow adds an icon + confirmation rather than relying on color.</p>
+    </div>
+
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Verdict distribution bar</h3>
+      <div class="dist">
+        <div class="dseg rl" style="width:54%"></div>
+        <div class="dseg l"  style="width:31%"></div>
+        <div class="dseg dl" style="width:10%"></div>
+        <div class="dseg rd" style="width:5%"></div>
+      </div>
+      <div class="dist-key">
+        <span class="dk"><i style="background:var(--sent-really-liked)"></i>54% really liked</span>
+        <span class="dk"><i style="background:var(--sent-liked)"></i>31% liked</span>
+        <span class="dk"><i style="background:var(--sent-didnt-like)"></i>10% didn’t like</span>
+        <span class="dk"><i style="background:var(--sent-really-disliked)"></i>5% really disliked</span>
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Sentiment pills (individual lean)</h3>
+      <div class="row">
+        <span class="pill rl">Really liked it</span>
+        <span class="pill l">Liked it</span>
+        <span class="pill dl">Didn’t like it</span>
+        <span class="pill rd">Really disliked it</span>
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Relate chips (alignment — NOT sentiment)</h3>
+      <div class="row">
+        <span class="relate"><span class="ok">✓</span>Agreed</span>
+        <span class="relate">Diverged</span>
+      </div>
+      <p class="note">Used in the finished verdict to report how each trust tier relates to <em>your</em> rating. Deliberately neutral with a sage check — alignment is not a rating, so it must never borrow sentiment crimson.</p>
+    </div>
+
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Trust ladder</h3>
+      <div class="trust">
+        <div class="trow"><span class="tdot f"></span><span class="lab">Friends</span><span class="tbadge">Most trusted</span><span class="sub">All three really liked it</span></div>
+        <div class="trow"><span class="tdot t"></span><span class="lab">Your type</span><span class="tbadge">Taste-matched</span><span class="sub">Most leaned positive</span></div>
+        <div class="trow"><span class="tdot g"></span><span class="lab">Global</span><span class="tbadge">Everyone</span><span class="sub">More split</span></div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 class="block" style="margin-top:0">Game card (status-reweighted footer)</h3>
+      <div class="row" style="align-items:flex-start">
+        <div class="gcard">
+          <div class="cover"><span class="plat">PC · PS5</span></div>
+          <div class="body"><div class="nm">Elden Ring</div><div class="foot"><span style="font-size:12px;color:var(--text-accent)">Strong match</span> <span style="font-size:12px;color:var(--text-muted)">· 58h</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="cover" style="background:#3E2A2E"><span class="plat" style="color:#D8B6BC">PC</span></div>
+          <div class="body"><div class="nm">Hades</div><div class="foot"><span style="font-size:12px;color:var(--text-secondary)">Playing · 22h played</span></div></div>
+        </div>
+        <div class="gcard">
+          <div class="cover" style="background:#45353F"><span class="plat" style="color:#D6BEC8">Switch</span></div>
+          <div class="body"><div class="nm">Citizen Sleeper</div><div class="foot"><span class="pill rl" style="font-size:11px;padding:3px 9px">Really liked it</span></div></div>
+        </div>
+      </div>
+      <p class="note">One card component; footer varies by status — match label + time-to-beat (want), progress (playing), sentiment pill (finished). “Strong match” uses crimson <em>text</em> (taste signal), not a fill.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Light theme (port)</h2>
+    <p class="lead">The same token names remapped onto cream Cozy-paper. Two things flip: the <strong>trust ladder inverts</strong> (most-trusted = darkest on paper) and <strong>crimson deepens</strong> for legible white-on-fill. Sentiment-bar hues and both fonts carry over unchanged. Everything below is the live <code>[data-theme="light"]</code> layer.</p>
+
+    <div data-theme="light" style="background:var(--surface-0); border:1px solid var(--border); border-radius:var(--r-card); padding:24px;">
+
+      <div class="swatches" style="margin-bottom:18px;">
+        <div class="sw"><div class="chip" style="background:#F6F1E7"></div><div class="meta"><div class="nm">surface-0</div><div class="hx">#F6F1E7</div><div class="role">Cozy-paper page</div></div></div>
+        <div class="sw"><div class="chip" style="background:#FCF9F1"></div><div class="meta"><div class="nm">surface-1</div><div class="hx">#FCF9F1</div><div class="role">Card</div></div></div>
+        <div class="sw"><div class="chip" style="background:#FFFFFF"></div><div class="meta"><div class="nm">surface-2</div><div class="hx">#FFFFFF</div><div class="role">Raised / popover</div></div></div>
+        <div class="sw"><div class="chip" style="background:#E7DECB"></div><div class="meta"><div class="nm">border</div><div class="hx">#E7DECB</div><div class="role">Hairline</div></div></div>
+        <div class="sw"><div class="chip" style="background:#D62C3D"></div><div class="meta"><div class="nm">accent-500</div><div class="hx">#D62C3D</div><div class="role">CTA fill (deepened)</div></div></div>
+        <div class="sw"><div class="chip" style="background:#2B2722"></div><div class="meta"><div class="nm">text-primary</div><div class="hx">#2B2722</div><div class="role">Body / trust-friends</div></div></div>
+      </div>
+
+      <div class="demo">
+        <div style="font-family:var(--font-voice); font-size:28px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em;">The Completionist</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">12% of players share your type</div>
+        <div style="font-family:var(--font-voice); font-size:17px; line-height:1.5; color:var(--text-primary); font-style:italic; margin-top:14px;">“The world rewarded curiosity like nothing else I've played.”</div>
+
+        <h3 class="block">Buttons</h3>
+        <div class="row">
+          <button class="btn btn-primary">Add to want list</button>
+          <button class="btn btn-secondary">Mark as playing</button>
+          <button class="btn btn-ghost">Show another</button>
+          <button class="btn btn-danger">Remove</button>
+        </div>
+
+        <h3 class="block">Verdict bar &amp; sentiment</h3>
+        <div class="dist">
+          <div class="dseg rl" style="width:54%"></div><div class="dseg l" style="width:31%"></div><div class="dseg dl" style="width:10%"></div><div class="dseg rd" style="width:5%"></div>
+        </div>
+        <div class="row" style="margin-top:14px;">
+          <span class="pill rl">Really liked it</span>
+          <span class="pill l">Liked it</span>
+          <span class="pill dl">Didn’t like it</span>
+          <span class="pill rd">Really disliked it</span>
+        </div>
+
+        <h3 class="block">Trust ladder (inverted) &amp; relate chips</h3>
+        <div class="trust">
+          <div class="trow"><span class="tdot f"></span><span class="lab">Friends</span><span class="tbadge">Most trusted</span><span class="relate"><span class="ok">✓</span>Agreed</span></div>
+          <div class="trow"><span class="tdot t"></span><span class="lab">Your type</span><span class="tbadge">Taste-matched</span><span class="relate"><span class="ok">✓</span>Agreed</span></div>
+          <div class="trow"><span class="tdot g"></span><span class="lab">Global</span><span class="tbadge">Everyone</span><span class="relate">Diverged</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Next</h2>
+    <p class="lead">Foundations now cover both themes (dark primary + light port), the locked type pairing, and are stress-tested across deciding, finished, and cold-start. Open follow-ups: (1) take the <strong>verdict module</strong> to full hi-fi as the flagship; (2) settle the parked vocabulary items (Track vs. List) as components get built.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,248 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/core/**",
+              "components/icons/**",
+              "components/sentiment/**",
+              "ui_kits/app/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Familjen Grotesk|Newsreader))/i]",
+        "message": "Font not provided by the design system. Available: Familjen Grotesk, Newsreader."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Icon'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|size|strokeWidth|className|style|key|ref|className|style|children)$/]",
+        "message": "<Icon> doesn't accept that prop. Declared props: name, size, strokeWidth, className, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='RelateChip'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|dot|key|ref|className|style|children)$/]",
+        "message": "<RelateChip> doesn't accept that prop. Declared props: children, dot."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SentimentPill'] > JSXAttribute > JSXIdentifier[name!=/^(?:sentiment|children|className|key|ref|className|style|children)$/]",
+        "message": "<SentimentPill> doesn't accept that prop. Declared props: sentiment, children, className."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ThemeRoot'] > JSXAttribute > JSXIdentifier[name!=/^(?:theme|children|key|ref|className|style|children)$/]",
+        "message": "<ThemeRoot> doesn't accept that prop. Declared props: theme, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ThemeRoot'] > JSXAttribute[name.name='theme'] > Literal[value!=/^(?:dark|light)$/]",
+        "message": "<ThemeRoot> theme must be one of 'dark' | 'light'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TrustBadge'] > JSXAttribute > JSXIdentifier[name!=/^(?:level|children|className|key|ref|className|style|children)$/]",
+        "message": "<TrustBadge> doesn't accept that prop. Declared props: level, children, className."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='VerdictDistribution'] > JSXAttribute > JSXIdentifier[name!=/^(?:reallyLiked|liked|didntLike|reallyDisliked|key|ref|className|style|children)$/]",
+        "message": "<VerdictDistribution> doesn't accept that prop. Declared props: reallyLiked, liked, didntLike, reallyDisliked."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Button": {
+        "replaces": []
+      },
+      "Icon": {
+        "replaces": []
+      },
+      "RelateChip": {
+        "replaces": []
+      },
+      "SentimentPill": {
+        "replaces": []
+      },
+      "ThemeRoot": {
+        "replaces": []
+      },
+      "TrustBadge": {
+        "replaces": []
+      },
+      "VerdictDistribution": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent-300",
+      "--accent-400",
+      "--accent-500",
+      "--accent-600",
+      "--bg-accent",
+      "--bg-danger",
+      "--bg-success",
+      "--bg-warning",
+      "--border",
+      "--border-accent",
+      "--border-strong",
+      "--dur-base",
+      "--dur-fast",
+      "--dur-slow",
+      "--ease",
+      "--fill-danger",
+      "--font-mono",
+      "--font-sans",
+      "--font-voice",
+      "--on-accent",
+      "--on-danger",
+      "--pill-dl-bg",
+      "--pill-dl-tx",
+      "--pill-l-bg",
+      "--pill-l-tx",
+      "--pill-rd-bg",
+      "--pill-rd-tx",
+      "--pill-rl-bg",
+      "--pill-rl-tx",
+      "--r-card",
+      "--r-control",
+      "--r-pill",
+      "--r-seg",
+      "--relate-bg",
+      "--relate-border",
+      "--relate-tx",
+      "--sent-didnt-like",
+      "--sent-liked",
+      "--sent-really-disliked",
+      "--sent-really-liked",
+      "--sp-1",
+      "--sp-10",
+      "--sp-12",
+      "--sp-2",
+      "--sp-3",
+      "--sp-4",
+      "--sp-5",
+      "--sp-6",
+      "--sp-8",
+      "--surface-0",
+      "--surface-1",
+      "--surface-2",
+      "--surface-3",
+      "--text-accent",
+      "--text-danger",
+      "--text-disabled",
+      "--text-muted",
+      "--text-primary",
+      "--text-secondary",
+      "--text-success",
+      "--text-warning",
+      "--trust-friends",
+      "--trust-global",
+      "--trust-taste"
+    ],
+    "tokenKinds": {
+      "--surface-0": "color",
+      "--surface-1": "color",
+      "--surface-2": "color",
+      "--surface-3": "color",
+      "--border": "color",
+      "--border-strong": "color",
+      "--text-primary": "font",
+      "--text-secondary": "font",
+      "--text-muted": "font",
+      "--text-disabled": "font",
+      "--accent-300": "color",
+      "--accent-400": "color",
+      "--accent-500": "color",
+      "--accent-600": "color",
+      "--on-accent": "color",
+      "--bg-accent": "color",
+      "--border-accent": "color",
+      "--text-accent": "font",
+      "--sent-really-liked": "color",
+      "--sent-liked": "color",
+      "--sent-didnt-like": "color",
+      "--sent-really-disliked": "color",
+      "--pill-rl-bg": "color",
+      "--pill-rl-tx": "color",
+      "--pill-l-bg": "color",
+      "--pill-l-tx": "color",
+      "--pill-dl-bg": "color",
+      "--pill-dl-tx": "color",
+      "--pill-rd-bg": "color",
+      "--pill-rd-tx": "color",
+      "--trust-friends": "color",
+      "--trust-taste": "color",
+      "--trust-global": "color",
+      "--relate-bg": "color",
+      "--relate-border": "color",
+      "--relate-tx": "color",
+      "--text-danger": "font",
+      "--bg-danger": "color",
+      "--fill-danger": "color",
+      "--on-danger": "color",
+      "--text-warning": "font",
+      "--bg-warning": "color",
+      "--text-success": "font",
+      "--bg-success": "color",
+      "--font-sans": "font",
+      "--font-voice": "font",
+      "--font-mono": "font",
+      "--sp-1": "spacing",
+      "--sp-2": "spacing",
+      "--sp-3": "spacing",
+      "--sp-4": "spacing",
+      "--sp-5": "spacing",
+      "--sp-6": "spacing",
+      "--sp-8": "spacing",
+      "--sp-10": "spacing",
+      "--sp-12": "spacing",
+      "--r-seg": "spacing",
+      "--r-control": "spacing",
+      "--r-card": "spacing",
+      "--r-pill": "spacing",
+      "--dur-fast": "other",
+      "--dur-base": "other",
+      "--dur-slow": "other",
+      "--ease": "other"
+    },
+    "fontFamilies": [
+      "Familjen Grotesk",
+      "Newsreader"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+.ds-verdict-bar { width: 100%; }
+.ds-verdict-bar__track {
+  display: flex;
+  height: 26px;
+  border-radius: var(--r-seg);
+  overflow: hidden;
+  gap: 2px;
+}
+.ds-verdict-bar__seg--really-liked { background: var(--sent-really-liked); }
+.ds-verdict-bar__seg--liked { background: var(--sent-liked); }
+.ds-verdict-bar__seg--didnt-like { background: var(--sent-didnt-like); }
+.ds-verdict-bar__seg--really-disliked { background: var(--sent-really-disliked); }
+.ds-verdict-bar__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.ds-verdict-bar__key-item { display: inline-flex; align-items: center; gap: 6px; }
+.ds-verdict-bar__key-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }

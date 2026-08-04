@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Detail — Mobile (Finished · not yet reviewed)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; color: #111; font-size: 14px; line-height: 1.5; padding-bottom: 60px; }
+
+  .ann { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; min-width: 17px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 6px; vertical-align: middle; flex-shrink: 0; }
+  .page-meta { text-align: center; padding: 24px 0 12px; font-size: 11px; color: #AAAAAA; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .legend-wrap { max-width: 760px; margin: 0 auto 24px; padding: 0 24px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  @media (max-width: 680px) { .legend-grid { grid-template-columns: 1fr; } }
+
+  .phone { width: 412px; max-width: 100%; height: 820px; margin: 0 auto; background: #fff; border: 9px solid #1C1C1C; border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 12px 40px rgba(0,0,0,0.18); }
+  .phone-scroll { height: 100%; overflow-y: auto; position: relative; }
+  .scroll-hint { text-align: center; font-size: 11px; color: #BBBBBB; max-width: 412px; margin: 10px auto 0; }
+
+  .statusbar { height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 12px; font-weight: 600; color: #111; }
+  .nav { height: 46px; display: flex; align-items: center; padding: 0 16px; gap: 12px; border-bottom: 1px solid #EEEEEE; }
+  .nav-back { font-size: 18px; color: #555; }
+  .nav-logo { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+  .nav-av { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: #D8D8D8; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666; font-weight: 600; }
+
+  /* non-blocking nudge (Option B) — sits under the nav, above the hero */
+  .nudge-inner { background: #111; color: white; padding: 11px 14px; display: flex; align-items: center; gap: 10px; }
+  .nudge-text { font-size: 12px; font-weight: 500; flex: 1; line-height: 1.4; }
+  .nudge-text strong { font-weight: 700; }
+  .nudge-cta { font-size: 11px; font-weight: 600; background: white; color: #111; border-radius: 7px; padding: 7px 12px; flex-shrink: 0; }
+  .nudge-x { font-size: 16px; color: rgba(255,255,255,0.6); flex-shrink: 0; }
+
+  .hero { height: 240px; background: #C4C4C4; position: relative; overflow: hidden; }
+  .hero-ph { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; color: #AAAAAA; text-align: center; border: 1.5px dashed #AAAAAA; padding: 8px 16px; border-radius: 6px; }
+  .hero-grad { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); }
+  .hero-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 16px; color: white; }
+  .hero-eyebrow { font-size: 11px; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+  .hero-title { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .hero-finished { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; }
+  .platform-badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28); border-radius: 4px; padding: 2px 7px; font-size: 10px; margin-right: 4px; }
+  .tag-scroll { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; padding-bottom: 2px; }
+  .hero-tag { background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 3px 10px; font-size: 10px; color: rgba(255,255,255,0.9); white-space: nowrap; flex-shrink: 0; }
+
+  .body { padding: 16px; }
+  .module { background: #fff; border: 1px solid #E6E6E6; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .module-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; display: flex; align-items: center; }
+
+  /* contribution HERO — prompt mode */
+  .contribution-hero { background: white; border: 1.5px solid #111; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .contribution-hero .module-label { color: #111; }
+  .prompt-head { font-size: 16px; font-weight: 600; color: #111; margin-bottom: 4px; }
+  .prompt-sub { font-size: 12px; color: #888; margin-bottom: 14px; }
+  .choice-row { display: flex; gap: 6px; margin-bottom: 13px; }
+  .choice { flex: 1; text-align: center; padding: 11px 4px; border: 1.5px solid #DADADA; border-radius: 8px; font-size: 10px; font-weight: 500; color: #777; background: #FAFAFA; line-height: 1.3; }
+  .review-field { border: 1.5px dashed #D8D8D8; border-radius: 8px; padding: 13px; font-size: 12px; color: #B8B8B8; min-height: 60px; margin-bottom: 13px; }
+  .submit-btn { background: #111; color: white; border-radius: 8px; padding: 11px 18px; font-size: 13px; font-weight: 600; display: inline-block; opacity: 0.4; }
+  .submit-note { font-size: 10px; color: #AAA; margin-top: 8px; display: block; }
+
+  .verdict-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 6px; }
+  .verdict-title { font-size: 16px; font-weight: 600; color: #111; display: flex; align-items: center; }
+  .type-badge { background: #111; color: white; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 500; }
+
+  /* empty you-anchor pulling toward the rating */
+  .you-anchor-empty { display: flex; align-items: center; gap: 11px; padding: 13px; background: #FAFAFA; border: 1.5px dashed #CFCFCF; border-radius: 10px; margin-bottom: 12px; }
+  .you-anchor-av { width: 30px; height: 30px; border-radius: 50%; background: #E2E2E2; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #999; flex-shrink: 0; }
+  .you-anchor-empty-text { font-size: 12px; color: #888; line-height: 1.4; }
+  .you-anchor-empty-text strong { color: #555; }
+  .anchor-up { margin-left: auto; font-size: 11px; font-weight: 600; color: #777; white-space: nowrap; }
+
+  .trust-tier { border: 1px solid #E8E8E8; border-radius: 10px; padding: 13px; margin-bottom: 9px; }
+  .trust-tier:last-child { margin-bottom: 0; }
+  .tier-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+  .tier-label { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #999; display: flex; align-items: center; gap: 6px; }
+  .tier-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tier-dot.friends { background: #111; }
+  .tier-dot.taste { background: #666; }
+  .tier-dot.global { background: #BBB; }
+  .tier-verdict { font-size: 14px; font-weight: 600; color: #111; }
+  .tier-detail { font-size: 12px; color: #555; line-height: 1.5; margin-top: 4px; }
+
+  .friend-pip-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .friend-pip { width: 24px; height: 24px; border-radius: 50%; background: #D0D0D0; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #666; font-weight: 600; margin-right: -6px; }
+  .pip-caption { margin-left: 14px; font-size: 12px; color: #555; }
+
+  .dist-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; gap: 2px; margin-top: 8px; }
+  .dseg { height: 100%; border-radius: 3px; }
+  .dseg.rl { background: #2B2B2B; }
+  .dseg.l { background: #777; }
+  .dseg.dl { background: #B5B5B5; }
+  .dseg.rd { background: #E0E0E0; }
+  .dist-key { display: flex; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
+  .dk-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #888; }
+  .dk-dot { width: 7px; height: 7px; border-radius: 2px; }
+  .dk-dot.rl { background: #2B2B2B; }
+  .dk-dot.l { background: #777; }
+  .dk-dot.dl { background: #B5B5B5; }
+  .dk-dot.rd { background: #E0E0E0; }
+
+  .owned-line { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #555; padding: 2px 0; }
+  .owned-pip { width: 8px; height: 8px; border-radius: 50%; background: #BBB; flex-shrink: 0; }
+  .owned-sub { font-size: 11px; color: #999; margin-top: 6px; line-height: 1.5; }
+
+  .friend-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #F2F2F2; }
+  .friend-row:last-child { border-bottom: none; }
+  .friend-av { width: 32px; height: 32px; border-radius: 50%; background: #D0D0D0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #666; flex-shrink: 0; }
+  .friend-info { flex: 1; min-width: 0; }
+  .friend-name-row { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #111; margin-bottom: 2px; }
+  .status-pill { font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 500; }
+  .status-pill.finished { background: #E0E0E0; color: #444; }
+  .status-pill.playing { background: #EBEBEB; color: #555; }
+  .friend-sub { font-size: 11px; color: #888; }
+  .sent-pill { font-size: 10px; font-weight: 600; padding: 4px 9px; border-radius: 20px; flex-shrink: 0; }
+  .sent-pill.rl { background: #2B2B2B; color: white; }
+  .sent-pill.l { background: #E4E4E4; color: #444; }
+  .sent-pill.none { background: #F2F2F2; color: #AAA; }
+
+  .review-tabs { display: flex; gap: 4px; border-bottom: 1px solid #E8E8E8; padding-bottom: 12px; margin-bottom: 14px; overflow-x: auto; }
+  .review-tab { padding: 5px 13px; border-radius: 20px; font-size: 12px; color: #888; white-space: nowrap; flex-shrink: 0; }
+  .review-tab.active { background: #111; color: white; }
+  .review-card { border: 1px solid #E8E8E8; border-radius: 10px; padding: 13px; margin-bottom: 10px; }
+  .review-top { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 9px; }
+  .reviewer-av { width: 32px; height: 32px; border-radius: 50%; background: #D0D0D0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #666; flex-shrink: 0; }
+  .reviewer-meta { flex: 1; min-width: 0; }
+  .reviewer-name-row { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #111; margin-bottom: 3px; flex-wrap: wrap; }
+  .type-chip { font-size: 9px; padding: 2px 6px; border-radius: 10px; background: #EEEEEE; color: #555; font-weight: 500; border: 1px solid #E2E2E2; }
+  .reviewer-date { font-size: 10px; color: #BBBBBB; }
+  .review-body { font-size: 12px; color: #444; line-height: 1.6; }
+  .see-all-btn { display: block; text-align: center; padding: 11px; font-size: 12px; color: #777; border: 1px solid #E8E8E8; border-radius: 8px; margin-top: 4px; line-height: 1.4; }
+
+  .disc-scroll { display: flex; gap: 11px; overflow-x: auto; padding-bottom: 4px; }
+  .disc-card { width: 110px; flex-shrink: 0; }
+  .disc-art { width: 100%; aspect-ratio: 3 / 4; background: #D8D8D8; border: 1.5px dashed #BBBBBB; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #AAAAAA; margin-bottom: 6px; }
+  .disc-title { font-size: 11px; font-weight: 500; color: #333; line-height: 1.3; margin-bottom: 2px; }
+  .disc-match { font-size: 10px; color: #999; }
+
+  .bottom-bar { position: sticky; bottom: 0; background: #fff; border-top: 1px solid #E2E2E2; padding: 12px 16px 16px; display: flex; align-items: center; gap: 10px; }
+  .bottom-cta { flex: 1; background: #111; color: white; text-align: center; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .bottom-cta .caret { font-size: 11px; opacity: 0.7; }
+  .bar-ann { position: absolute; top: -9px; right: 14px; }
+
+  .sheet-demo { width: 412px; max-width: 100%; margin: 24px auto 0; }
+  .sheet-demo-label { font-size: 11px; color: #999; text-align: center; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .sheet { background: #fff; border: 1px solid #E2E2E2; border-radius: 18px 18px 12px 12px; padding: 12px 16px 18px; box-shadow: 0 -8px 30px rgba(0,0,0,0.10); }
+  .sheet-handle { width: 38px; height: 4px; border-radius: 2px; background: #DADADA; margin: 0 auto 14px; }
+  .sheet-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 12px; }
+  .track-opt { display: flex; align-items: center; gap: 10px; padding: 12px 13px; border: 1.5px solid #E0E0E0; border-radius: 8px; font-size: 13px; font-weight: 500; color: #555; background: #FAFAFA; margin-bottom: 8px; }
+  .track-opt.primary { background: #111; color: white; border-color: #111; }
+  .track-opt .ti { width: 20px; height: 20px; background: #E4E4E4; border-radius: 4px; flex-shrink: 0; }
+  .track-opt.primary .ti { background: rgba(255,255,255,0.22); }
+  .sheet-listlink { text-align: center; font-size: 13px; color: #999; padding: 10px 0 2px; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Game detail — Finished · not yet reviewed (Option B) · mobile (412px)</div>
+
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — the post-finish moment (Option B), on mobile</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span><strong>Non-blocking nudge</strong>, not a modal. A dismissible bar under the nav points to the rating prompt below. Skipping it is one tap and leaves no dead-end.</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>Contribution hero in prompt mode</strong> — same module that holds your review once submitted, here empty: the four-choice scale unselected, an optional review field, a submit that activates once you pick a rating.</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span><strong>The pull.</strong> The verdict's "you" anchor is empty and points back up to the prompt — the comparison literally can't resolve until you rate. Incompleteness as gentle motivation, with the rating still happening in one place (the prompt above).</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span>The friend / taste / global tiers are fully populated — they don't depend on your rating, so the comparison is "ready and waiting" for your take to slot in.</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span>Playthrough, friend signal, reviews, and discovery carry over from the finished page unchanged.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span>Bottom bar shows Finished. (Submitting a rating converts this into the finished/reviewed page.)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="phone">
+  <div class="phone-scroll">
+
+    <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&nbsp;&nbsp;&#9650;</span></div>
+
+    <div class="nav">
+      <span class="nav-back">&#8592;</span>
+      <span class="nav-logo">LEVELUP</span>
+      <span class="nav-av">KM</span>
+    </div>
+
+    <!-- Non-blocking nudge -->
+    <div class="nudge-inner">
+      <span class="ann" style="margin:0;">1</span>
+      <div class="nudge-text"><strong>You finished Elden Ring.</strong> Add your take to see how you compare.</div>
+      <div class="nudge-cta">Rate it</div>
+      <span class="nudge-x">&times;</span>
+    </div>
+
+    <!-- Module 1 — Identity -->
+    <div class="hero">
+      <div class="hero-ph">Key art / hero image</div>
+      <div class="hero-grad"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">FromSoftware · 2022 · Action RPG</div>
+        <div class="hero-title">Elden Ring <span class="hero-finished">&#10003; Finished</span></div>
+        <div>
+          <span class="platform-badge">PC</span>
+          <span class="platform-badge">PS5</span>
+          <span class="platform-badge">Xbox</span>
+          <span class="platform-badge">Switch 2</span>
+        </div>
+        <div class="tag-scroll">
+          <span class="hero-tag">Open world</span>
+          <span class="hero-tag">High challenge</span>
+          <span class="hero-tag">Solo</span>
+          <span class="hero-tag">Long sessions</span>
+          <span class="hero-tag">Story-rich</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+
+      <!-- Contribution hero — PROMPT mode -->
+      <div class="contribution-hero">
+        <div class="module-label">Your review <span class="ann">2</span></div>
+        <div class="prompt-head">How was it?</div>
+        <div class="prompt-sub">95 hours in the Lands Between — where'd it land for you?</div>
+        <div class="choice-row">
+          <div class="choice">Really disliked it</div>
+          <div class="choice">Didn't like it</div>
+          <div class="choice">Liked it</div>
+          <div class="choice">Really liked it</div>
+        </div>
+        <div class="review-field">Add a few words on what worked or didn't (optional)…</div>
+        <span class="submit-btn">Post review</span>
+        <span class="submit-note">Pick a rating to post · a written review is optional</span>
+      </div>
+
+      <!-- Verdict — comparison structure, empty anchor -->
+      <div class="module">
+        <div class="verdict-header">
+          <div class="verdict-title">The verdict <span class="ann">3</span></div>
+          <div class="type-badge">The Completionist</div>
+        </div>
+
+        <div class="you-anchor-empty">
+          <div class="you-anchor-av">KM</div>
+          <div class="you-anchor-empty-text"><strong>You haven't rated this yet.</strong> Add your rating above to see where you land against your friends and your type.</div>
+          <div class="anchor-up">↑ Rate it</div>
+        </div>
+
+        <div class="trust-tier">
+          <div class="tier-header">
+            <div class="tier-label"><span class="tier-dot friends"></span>Friends</div>
+            <div class="tier-verdict">Really liked it</div>
+          </div>
+          <div class="friend-pip-row">
+            <div class="friend-pip">AJ</div>
+            <div class="friend-pip">MR</div>
+            <span class="pip-caption">2 friends finished this <span class="ann">4</span></span>
+          </div>
+          <div class="tier-detail">Alex really liked it; Maya liked it.</div>
+        </div>
+
+        <div class="trust-tier">
+          <div class="tier-header">
+            <div class="tier-label"><span class="tier-dot taste"></span>Completionists</div>
+            <div class="tier-verdict">Leans strongly positive</div>
+          </div>
+          <div class="dist-bar">
+            <div class="dseg rl" style="width:54%;"></div><div class="dseg l" style="width:31%;"></div><div class="dseg dl" style="width:10%;"></div><div class="dseg rd" style="width:5%;"></div>
+          </div>
+          <div class="dist-key">
+            <div class="dk-item"><div class="dk-dot rl"></div>54% really liked</div>
+            <div class="dk-item"><div class="dk-dot l"></div>31% liked</div>
+            <div class="dk-item"><div class="dk-dot dl"></div>10% didn't</div>
+            <div class="dk-item"><div class="dk-dot rd"></div>5% really didn't</div>
+          </div>
+        </div>
+
+        <div class="trust-tier">
+          <div class="tier-header">
+            <div class="tier-label"><span class="tier-dot global"></span>Global</div>
+            <div class="tier-verdict">More split</div>
+          </div>
+          <div class="dist-bar">
+            <div class="dseg rl" style="width:34%;"></div><div class="dseg l" style="width:30%;"></div><div class="dseg dl" style="width:21%;"></div><div class="dseg rd" style="width:15%;"></div>
+          </div>
+          <div class="dist-key">
+            <div class="dk-item"><div class="dk-dot rl"></div>34% really liked</div>
+            <div class="dk-item"><div class="dk-dot l"></div>30% liked</div>
+            <div class="dk-item"><div class="dk-dot dl"></div>21% didn't</div>
+            <div class="dk-item"><div class="dk-dot rd"></div>15% really didn't</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your playthrough -->
+      <div class="module">
+        <div class="module-label">Your playthrough <span class="ann">5</span></div>
+        <div class="owned-line"><span class="owned-pip"></span>You own this on Steam · 95h played</div>
+        <div class="owned-sub">Price, stores, and time-to-beat are hidden once finished — the buy decision is behind you.</div>
+      </div>
+
+      <!-- Friend signal -->
+      <div class="module">
+        <div class="module-label">Friend activity</div>
+        <div class="friend-row">
+          <div class="friend-av">AJ</div>
+          <div class="friend-info">
+            <div class="friend-name-row">Alex J. <span class="status-pill finished">Finished</span></div>
+            <div class="friend-sub">"Absolutely worth the grind"</div>
+          </div>
+          <div class="sent-pill rl">Really liked it</div>
+        </div>
+        <div class="friend-row">
+          <div class="friend-av">MR</div>
+          <div class="friend-info">
+            <div class="friend-name-row">Maya R. <span class="status-pill finished">Finished</span></div>
+            <div class="friend-sub">"Dense and rewarding"</div>
+          </div>
+          <div class="sent-pill l">Liked it</div>
+        </div>
+        <div class="friend-row">
+          <div class="friend-av">SK</div>
+          <div class="friend-info">
+            <div class="friend-name-row">Sam K. <span class="status-pill playing">Playing</span></div>
+            <div class="friend-sub">65 hours in · no rating yet</div>
+          </div>
+          <div class="sent-pill none">No rating</div>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="module">
+        <div class="module-label">Reviews</div>
+        <div class="review-tabs">
+          <div class="review-tab active">Friends</div>
+          <div class="review-tab">People like you</div>
+          <div class="review-tab">All</div>
+        </div>
+        <div class="review-card">
+          <div class="review-top">
+            <div class="reviewer-av">AJ</div>
+            <div class="reviewer-meta">
+              <div class="reviewer-name-row">Alex J. <span class="type-chip">The Completionist</span></div>
+              <div class="reviewer-date">Finished · Dec 2024</div>
+            </div>
+            <div class="sent-pill rl">Really liked it</div>
+          </div>
+          <div class="review-body">Punishing but fair. Every death teaches you something, and the open world genuinely rewards curiosity.</div>
+        </div>
+        <div class="see-all-btn">See all friend reviews · View 48 from Completionists →</div>
+      </div>
+
+      <!-- Discovery -->
+      <div class="module">
+        <div class="module-label">What to play next</div>
+        <div class="disc-scroll">
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Dark Souls III</div><div class="disc-match">Strong match</div></div>
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Sekiro</div><div class="disc-match">Strong match</div></div>
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Lies of P</div><div class="disc-match">Good match</div></div>
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Nioh 2</div><div class="disc-match">Good match</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar — Finished -->
+    <div class="bottom-bar">
+      <span class="ann bar-ann">6</span>
+      <div class="bottom-cta">&#10003; Finished <span class="caret">▾</span></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="sheet-demo">
+  <div class="sheet-demo-label">On tap → the status sheet opens with Finished pre-selected <span class="ann">6</span></div>
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Elden Ring · update status</div>
+    <div class="track-opt"><span class="ti"></span>Move to want list</div>
+    <div class="track-opt"><span class="ti"></span>Mark as playing</div>
+    <div class="track-opt primary"><span class="ti"></span>Finished</div>
+    <div class="sheet-listlink">+ Add to a list</div>
+  </div>
+</div>
+
+<div class="scroll-hint">↑ The nudge and the empty "you" anchor both pull toward the one rating prompt. Posting converts this into the finished/reviewed page.</div>
+
+</body>
+</html>

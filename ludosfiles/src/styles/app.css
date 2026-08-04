@@ -1,0 +1,372 @@
+/* ============================================================
+   Ludos — app shell, motion, and the responsive phone frame.
+   Tokens and DS component classes live in ludos.css.
+   ============================================================ */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #120d0e;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: var(--text-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-400);
+}
+
+/* ── Scroll containers: hide the bar, keep the scroll ───────── */
+.scroll-y {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-x {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-y::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+.scroll-x::-webkit-scrollbar {
+  height: 0;
+  display: none;
+}
+
+/* ── Phone shell ────────────────────────────────────────────────
+   Desktop keeps the 430×868 device mockup for demoing. On a real
+   phone the frame drops away and the app runs full-bleed against
+   the device's own status bar, using safe-area insets.
+   ─────────────────────────────────────────────────────────────── */
+.backdrop {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(120% 80% at 50% 0%, #1a1314 0%, #110c0d 70%);
+  font-family: var(--font-sans);
+}
+
+.phone {
+  width: 430px;
+  padding: 11px;
+  background: #080606;
+  border-radius: 46px;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1.5px #2a2023;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 868px;
+  background: var(--surface-0);
+  border-radius: 36px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary);
+}
+
+/* Simulated iOS status bar — only meaningful inside the mockup. */
+.status-bar {
+  flex: none;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px 0 28px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  z-index: 5;
+}
+
+@media (max-width: 540px) {
+  body {
+    background: var(--surface-0);
+  }
+
+  .backdrop {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    background: var(--surface-0);
+  }
+
+  .phone {
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    background: var(--surface-0);
+    box-shadow: none;
+  }
+
+  .screen {
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* The real device draws the clock and battery. */
+  .status-bar {
+    display: none;
+  }
+}
+
+/* ── Interactive states ─────────────────────────────────────────
+   The prototype expressed these as `style-hover` / `style-active`
+   attributes. Layout stays inline on each element; only the
+   pseudo-class treatments live here.
+   ─────────────────────────────────────────────────────────────── */
+.u-accent:hover {
+  background: var(--accent-400);
+}
+
+.u-accent:active {
+  background: var(--accent-600);
+}
+
+.u-outline:hover,
+.u-dashed:hover {
+  background: var(--surface-2);
+}
+
+.u-quiet:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.u-row:hover {
+  background: var(--surface-3);
+}
+
+.u-lift {
+  transition:
+    transform 160ms var(--ease),
+    border-color 160ms;
+}
+
+.u-lift:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+}
+
+.u-lift-sm {
+  transition:
+    border-color 140ms,
+    transform 160ms var(--ease);
+}
+
+.u-lift-sm:hover {
+  transform: translateY(-2px);
+}
+
+/* The + badge on a cover fills with crimson on hover. */
+.u-add-badge:hover {
+  background: var(--accent-500);
+  border-color: var(--accent-500);
+  color: var(--on-accent);
+}
+
+.u-tab:hover {
+  color: var(--text-secondary);
+}
+
+.u-underline:hover {
+  color: var(--text-secondary);
+}
+
+.u-chip:hover {
+  border-color: var(--border-accent);
+  background: #33272a;
+}
+
+.u-cold:hover {
+  background: #2b2023;
+  border-color: var(--border-accent);
+}
+
+.u-skip:hover {
+  color: var(--text-primary);
+}
+
+/* ── Motion ─────────────────────────────────────────────────── */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes introFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.5);
+  }
+  60% {
+    transform: scale(1.16);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes toastUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spotCollapse {
+  0% {
+    opacity: 1;
+    max-height: 340px;
+  }
+  40% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+  }
+}
+
+@keyframes marqueeLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* The marquee rows pause on hover so a cover can be read. */
+.marquee-strip:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

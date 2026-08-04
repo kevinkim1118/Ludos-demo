@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/colors.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/typography.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/tokens/base.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/core/button.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/components/sentiment/sentiment-pill.css">
+<link rel="stylesheet" href="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/styles.css">
+<script src="_ds/ludos-design-system-17bf5b75-f1b6-40a2-8edc-89dd1714d926/_ds_bundle.js"></script>
+<script src="./image-manifest.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #120D0E; }
+  a { color: var(--text-accent); text-decoration: none; }
+  a:hover { color: var(--accent-400); }
+  [data-screen]::-webkit-scrollbar { width: 0; display: none; }
+  @keyframes swapIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(120% 80% at 50% 0%, #1A1314 0%, #110C0D 70%); font-family: 'Familjen Grotesk', ui-sans-serif, system-ui, sans-serif;">
+
+  <div style="width: 430px; padding: 11px; background: #080606; border-radius: 46px; box-shadow: 0 30px 70px rgba(0,0,0,0.55), inset 0 0 0 1.5px #2A2023;">
+    <div data-screen-label="Profile" style="position: relative; width: 100%; height: 868px; background: var(--surface-0); border-radius: 36px; overflow: hidden; display: flex; flex-direction: column; color: var(--text-primary)">
+
+      <!-- status bar -->
+      <div style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px 0 28px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; color: var(--text-primary); text-shadow: 0 1px 6px rgba(0,0,0,0.5);">
+        <span>9:41</span>
+        <span style="display: flex; align-items: center; gap: 7px;">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="var(--text-primary)"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="4.5" y="5" width="3" height="6" rx="1"></rect><rect x="9" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="13.5" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.6" y="0.6" width="20" height="10.8" rx="3" stroke="var(--text-primary)" stroke-opacity="0.5"></rect><rect x="2.2" y="2.2" width="14.5" height="7.6" rx="1.6" fill="var(--text-primary)"></rect><rect x="21.6" y="4" width="2" height="4" rx="1" fill="var(--text-primary)" fill-opacity="0.5"></rect></svg>
+        </span>
+      </div>
+
+      <!-- scrollable content -->
+      <div data-screen="" style="flex: 1; overflow-y: auto; overflow-x: hidden;">
+
+        <!-- cover image -->
+        <div style="position: relative;">
+          <image-slot id="cv-profile-cover" shape="rect" placeholder="cover image" style="display: block; width: 100%; height: 208px; background: var(--surface-2);"></image-slot>
+          <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(36,27,29,0) 55%, rgba(36,27,29,0.85) 100%); pointer-events: none;"></div>
+          <button onClick="{{ onSettings }}" title="Settings" style="position: absolute; top: 50px; right: 16px; width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(8,5,6,0.5); backdrop-filter: blur(3px); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: rgba(8,5,6,0.75);">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </button>
+        </div>
+
+        <!-- profile header -->
+        <div style="padding: 0 18px; margin-top: -34px; position: relative;">
+          <div style="display: flex; align-items: center; gap: 14px; margin-top: 40px">
+            <image-slot id="cv-profile-avatar" shape="circle" placeholder="avatar" style="display: block; width: 84px; height: 84px; flex: none; background: var(--border); border: 3px solid var(--surface-0); border-radius: 50%; box-shadow: 0 4px 16px rgba(0,0,0,0.4);"></image-slot>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em;">{{ username }}</div>
+              <div style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 14.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 5px;">{{ bio }}</div>
+            </div>
+          </div>
+
+          <!-- stats -->
+          <div style="display: flex; margin-top: 16px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: 15px 8px;">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
+              <div style="flex: 1; text-align: center; position: relative;">
+                <div style="font-size: 24px; font-weight: 600; letter-spacing: -0.01em;">{{ s.value }}</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">{{ s.label }}</div>
+                <sc-if value="{{ s.divider }}" hint-placeholder-val="{{ true }}"><span style="position: absolute; right: 0; top: 6px; bottom: 6px; width: 1px; background: var(--border);"></span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- edit profile -->
+          <sc-if value="{{ showEditProfile }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ onEdit }}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 12px; background: transparent; color: var(--text-primary); border: 1px solid var(--border-strong); border-radius: 999px; padding: 12px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background 140ms;" style-hover="background: var(--surface-2); border-color: var(--border-accent);">
+            Edit Profile
+            <svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 2.5l3 3L6 15l-3.5.5L3 12z"></path></svg>
+          </button>
+          </sc-if>
+        </div>
+
+        <!-- tab switcher -->
+        <div style="display: flex; gap: 8px; padding: 16px 18px 4px;">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.onPick }}" style="display: inline-flex; align-items: center; padding: 8px 18px; border-radius: 999px; font-size: 13.5px; font-weight: 500; font-family: inherit; cursor: pointer; background: {{ t.bg }}; color: {{ t.fg }}; border: 1px solid {{ t.bd }}; transition: background 140ms, color 140ms;">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="height: 1px; background: var(--surface-1); margin: 8px 18px 0;"></div>
+
+        <!-- REVIEWS -->
+        <sc-if value="{{ isReviews }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 4px 18px 8px; animation: swapIn 220ms cubic-bezier(0.2,0,0,1);">
+          <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
+            <div style="display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--surface-1);">
+              <image-slot id="{{ r.slotId }}" shape="rounded" radius="8" placeholder="cover" style="display: block; width: 92px; aspect-ratio: 2 / 3; flex: none; background: var(--border); border-radius: 8px;"></image-slot>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15;">{{ r.title }}</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin: 4px 0 9px;">{{ r.date }}</div>
+                <x-import component-from-global-scope="LudosDesignSystem_17bf5b.SentimentPill" sentiment="{{ r.sentKey }}" hint-size="auto,24px">{{ r.sentiment }}</x-import>
+                <div style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 14px; color: #D8CACB; line-height: 1.5; border-left: 2px solid var(--border-strong); padding-left: 11px; margin-top: 11px;">{{ r.quote }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <!-- LISTS -->
+        <sc-if value="{{ isLists }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 14px 18px 8px; display: flex; flex-direction: column; gap: 12px; animation: swapIn 220ms cubic-bezier(0.2,0,0,1);">
+          <div style="display: flex; gap: 8px;">
+            <div style="flex: 1; display: flex; align-items: center; gap: 9px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 11px; padding: 0 12px; height: 42px;">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><circle cx="9" cy="9" r="6"></circle><path d="M17 17l-3.5-3.5"></path></svg>
+              <input value="{{ listSearch }}" onInput="{{ onListSearch }}" placeholder="Search your lists" style="flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text-primary); font-size: 14px; font-family: inherit;">
+              <sc-if value="{{ hasListSearch }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ onClearListSearch }}" title="Clear" style="flex: none; width: 20px; height: 20px; border: none; background: none; padding: 0; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center;" style-hover="color: var(--text-primary);"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"></path></svg></button>
+              </sc-if>
+            </div>
+            <button onClick="{{ onToggleListFilter }}" title="Filter" style="flex: none; width: 42px; height: 42px; border-radius: 11px; border: 1px solid {{ listFilterBorder }}; background: {{ listFilterBg }}; color: {{ listFilterColor }}; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 140ms;" style-hover="border-color: var(--border-accent);"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h14M6 10h8M8.5 15h3"></path></svg></button>
+          </div>
+          <sc-if value="{{ listFilterOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+              <sc-for list="{{ listSortOptions }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" style="font-size: 12.5px; font-weight: 500; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-family: inherit; border: 1px solid {{ o.border }}; background: {{ o.bg }}; color: {{ o.color }}; transition: all 140ms;">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noListMatches }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align: center; color: var(--text-muted); font-size: 13.5px; padding: 28px 12px;">No lists match your search</div>
+          </sc-if>
+          <sc-for list="{{ lists }}" as="l" hint-placeholder-count="3">
+            <div style="background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: 14px; transition: border-color 160ms;" style-hover="border-color: var(--border-accent);">
+              <div style="display: flex; gap: 8px; margin-bottom: 13px;">
+                <image-slot id="{{ l.s0 }}" shape="rounded" radius="8" placeholder="cover" style="flex: 1; height: 116px; background: var(--border); border: 1px solid var(--border-strong); box-sizing: border-box; border-radius: 8px;"></image-slot>
+                <image-slot id="{{ l.s1 }}" shape="rounded" radius="8" placeholder="cover" style="flex: 1; height: 116px; background: #402F34; border: 1px solid var(--border-strong); box-sizing: border-box; border-radius: 8px;"></image-slot>
+                <image-slot id="{{ l.s2 }}" shape="rounded" radius="8" placeholder="cover" style="flex: 1; height: 116px; background: #3B2C30; border: 1px solid var(--border-strong); box-sizing: border-box; border-radius: 8px;"></image-slot>
+              </div>
+              <div onClick="{{ l.onOpen }}" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.01em;">{{ l.name }}</div>
+                  <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;">{{ l.count }} games · updated {{ l.updated }}</div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#8A787C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><path d="M6 3.5L10.5 8L6 12.5"></path></svg>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <!-- ACTIVITY -->
+        <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 4px 18px 8px; animation: swapIn 220ms cubic-bezier(0.2,0,0,1);">
+          <sc-for list="{{ activity }}" as="a" hint-placeholder-count="3">
+            <div style="display: flex; gap: 13px; padding: 18px 0; border-bottom: 1px solid var(--surface-1);">
+              <image-slot id="{{ a.slotId }}" shape="rounded" radius="8" placeholder="cover" style="display: block; width: 92px; aspect-ratio: 2 / 3; flex: none; background: var(--border); border-radius: 8px;"></image-slot>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: flex-start; gap: 8px;">
+                  <div style="flex: 1; min-width: 0; font-size: 15px; color: var(--text-secondary); line-height: 1.4;">{{ a.verb }} <span style="color: var(--text-primary); font-weight: 600;">{{ a.game }}</span><sc-if value="{{ a.hasTarget }}" hint-placeholder-val="{{ false }}"> to <span style="color: var(--text-primary); font-weight: 600;">{{ a.target }}</span></sc-if></div>
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#8A787C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px;"><path d="M6 3.5L10.5 8L6 12.5"></path></svg>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">{{ a.date }}</div>
+                <sc-if value="{{ a.hasSentiment }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 10px;"><x-import component-from-global-scope="LudosDesignSystem_17bf5b.SentimentPill" sentiment="{{ a.sentKey }}" hint-size="auto,24px">{{ a.sentiment }}</x-import></div>
+                </sc-if>
+                <sc-if value="{{ a.hasQuote }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 13.5px; color: #D8CACB; line-height: 1.5; border-left: 2px solid var(--border-strong); padding-left: 11px; margin-top: 10px;">{{ a.quote }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <div style="height: 12px;"></div>
+      </div>
+
+      <!-- toast -->
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; left: 50%; bottom: 80px; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text-primary); font-size: 12.5px; font-weight: 500; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 28px rgba(0,0,0,0.5); white-space: nowrap; animation: toastUp 200ms cubic-bezier(0.2,0,0,1); z-index: 40;">{{ toast }}</div>
+      </sc-if>
+
+      <!-- edit profile sheet (full-screen, slides up) -->
+      <sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ onCancelEdit }}" style="position: absolute; inset: 0; z-index: 39; background: rgba(8,5,6,0.62); opacity: {{ editScrimOpacity }}; transition: opacity 300ms cubic-bezier(0.2,0,0,1);"></div>
+      <div style="position: absolute; top: 42px; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--surface-0); border-radius: 20px 20px 0 0; overflow: hidden; transform: translateY({{ editTop }}); transition: transform 300ms cubic-bezier(0.2,0,0,1); display: flex; flex-direction: column;">
+        <div style="flex: none; height: 54px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--surface-1);">
+          <button onClick="{{ onCancelEdit }}" style="background: none; border: none; padding: 6px 4px; font-family: inherit; font-size: 15px; font-weight: 500; color: var(--text-secondary); cursor: pointer;" style-hover="color: var(--text-primary);">Cancel</button>
+          <span style="flex: 1; text-align: center; font-size: 15px; font-weight: 600;">Edit Profile</span>
+          <button onClick="{{ onSaveEdit }}" style="background: none; border: none; padding: 6px 4px; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--accent-300); cursor: pointer;" style-hover="color: var(--accent-400);">Save</button>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 20px 16px 32px;">
+
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">Cover banner</label>
+          <image-slot id="cv-profile-cover" shape="rounded" radius="12" placeholder="cover image" style="display: block; width: 100%; height: 120px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; box-sizing: border-box; margin-bottom: 22px;"></image-slot>
+
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 22px;">
+            <image-slot id="cv-profile-avatar" shape="circle" placeholder="avatar" style="width: 72px; height: 72px; flex: none; background: var(--border); border: 2px solid var(--border-strong); border-radius: 50%;"></image-slot>
+            <div>
+              <div style="font-size: 14px; font-weight: 600;">Profile picture</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Tap to replace</div>
+            </div>
+          </div>
+
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">Username</label>
+          <input value="{{ usernameDraft }}" onChange="{{ onUsernameChange }}" style="display: block; width: 100%; background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text-primary); font-family: inherit; font-size: 16px; font-weight: 600; margin-bottom: 20px; box-sizing: border-box;">
+
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;">Bio</label>
+          <textarea value="{{ bioDraft }}" onChange="{{ onBioChange }}" rows="3" style="display: block; width: 100%; background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text-primary); font-family: inherit; font-size: 14px; line-height: 1.45; margin-bottom: 8px; box-sizing: border-box; resize: none;"></textarea>
+
+          
+
+          
+          
+          
+
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- bottom tab bar -->
+      <div style="flex: none; height: 64px; display: flex; align-items: center; padding: 0 4px 6px; border-top: 1px solid var(--surface-1); background: var(--surface-0);">
+        <button onClick="{{ onTabDiscover }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="8"></circle><circle cx="11" cy="11" r="1.7" fill="currentColor" stroke="none"></circle></svg>
+          <span style="font-size: 10px; font-weight: 500;">Discover</span>
+        </button>
+        <button onClick="{{ onTabLibrary }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><rect x="4" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="9.3" y="5" width="3.4" height="12" rx="1.2"></rect><rect x="14.6" y="5" width="3.4" height="12" rx="1.2"></rect></svg>
+          <span style="font-size: 10px; font-weight: 500;">Library</span>
+        </button>
+        <button onClick="{{ onTabFriends }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="9" r="3.4"></circle><circle cx="14.5" cy="9.5" r="2.8"></circle><path d="M3.5 17c0-2.5 2-4 5-4s5 1.5 5 4"></path><path d="M14 13.2c2.2.2 3.6 1.6 3.6 3.8"></path></svg>
+          <span style="font-size: 10px; font-weight: 500;">Friends</span>
+        </button>
+        <button onClick="{{ onTabSearch }}" style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--text-muted);" style-hover="color: var(--text-secondary);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9.5" cy="9.5" r="6"></circle><line x1="14" y1="14" x2="19" y2="19" stroke-linecap="round"></line></svg>
+          <span style="font-size: 10px; font-weight: 500;">Search</span>
+        </button>
+        <button style="flex: 1; background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; color: var(--accent-300);">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="7.5" r="3.6"></circle><path d="M4 18.5c0-3.4 3.1-5.2 7-5.2s7 1.8 7 5.2"></path></svg>
+          <span style="font-size: 10px; font-weight: 600;">Profile</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:472,&quot;height&quot;:908},&quot;defaultTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;reviews&quot;,&quot;options&quot;:[&quot;reviews&quot;,&quot;lists&quot;,&quot;activity&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;State&quot;},&quot;showEditProfile&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;},&quot;showFriendsCard&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = {
+    tab: null, toast: null,
+    listSearch: '', listFilterOpen: false, listSort: 'recent',
+    username: 'ColinVolt', bio: '"Currently obsessed with action RPGs. Looking for more JRPGs to play!"',
+    showReviews: true, showLists: true, showActivity: true,
+    editOpen: false, editTop: '100%',
+    usernameDraft: '', bioDraft: '', showReviewsDraft: true, showListsDraft: true, showActivityDraft: true,
+  };
+
+  flash(msg) {
+    if (this._t) clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: null }), 1900);
+  }
+
+  go(href) { window.location.href = href; }
+
+  openEdit() {
+    if (this._ec) clearTimeout(this._ec);
+    this.setState({
+      editOpen: true, editTop: '100%',
+      usernameDraft: this.state.username, bioDraft: this.state.bio,
+      showReviewsDraft: this.state.showReviews, showListsDraft: this.state.showLists, showActivityDraft: this.state.showActivity,
+    });
+    this._eo = setTimeout(() => { if (this.state.editOpen) this.setState({ editTop: '0%' }); }, 40);
+  }
+
+  closeEdit(save) {
+    if (save) {
+      this.setState({
+        username: this.state.usernameDraft, bio: this.state.bioDraft,
+        showReviews: this.state.showReviewsDraft, showLists: this.state.showListsDraft, showActivity: this.state.showActivityDraft,
+      });
+    }
+    this.setState({ editTop: '100%' });
+    if (this._ec) clearTimeout(this._ec);
+    this._ec = setTimeout(() => this.setState({ editOpen: false }), 300);
+  }
+
+  sentKey(kind) { return { rl: 'really-liked', l: 'liked', d: 'didnt-like' }[kind] || 'liked'; }
+
+  renderVals() {
+    const tabDefsAll = [
+      { key: 'reviews', label: 'Reviews', show: this.state.showReviews },
+      { key: 'lists', label: 'Lists', show: this.state.showLists },
+      { key: 'activity', label: 'Activity', show: this.state.showActivity },
+    ];
+    const tabDefs = tabDefsAll.filter(t => t.show);
+    let tab = this.state.tab ?? (this.props.defaultTab ?? 'reviews');
+    if (!tabDefs.find(t => t.key === tab)) tab = tabDefs[0] ? tabDefs[0].key : null;
+
+    const tabs = tabDefs.map(t => {
+      const active = t.key === tab;
+      return {
+        label: t.label,
+        bg: active ? 'var(--text-primary)' : 'transparent',
+        fg: active ? 'var(--surface-0)' : 'var(--text-secondary)',
+        bd: active ? 'var(--text-primary)' : 'var(--border)',
+        onPick: () => this.setState({ tab: t.key }),
+      };
+    });
+
+    const stats = [
+      { value: '3', label: 'Playing', divider: true },
+      { value: '42', label: 'Finished', divider: true },
+      { value: '16', label: 'Backlogged', divider: false },
+    ];
+
+    const reviewsRaw = [
+      { k: 'persona3', title: 'Persona 3 Reload', date: 'Finished Jun 2026', sent: 'rl', sentiment: 'Really Liked', quote: '\u201CEvery action I did felt meaningful and mundane activities were impactful. Great characters, voice acting, great story.\u201D' },
+      { k: 'elden', title: 'Elden Ring', date: 'Finished Mar 2026', sent: 'rl', sentiment: 'Really Liked', quote: '\u201CRich story and endless exploration really satisfied me and raised the bar for open world RPGs going forward.\u201D' },
+      { k: 'acodyssey', title: 'Assassin\u2019s Creed: Odyssey', date: 'Finished Nov 2025', sent: 'd', sentiment: 'Disliked', quote: '\u201CLove the AC franchise but this one strays from the original formula and feels more like a Greece simulator than an AC.\u201D' },
+    ];
+    const reviews = reviewsRaw.map(r => ({ ...r, slotId: 'cv-rev-' + r.k, sentKey: this.sentKey(r.sent) }));
+
+    const listsRaw = [
+      { k: 'cozy', name: 'Cozy nights in', count: 8, updated: '2 days ago', order: 0, days: 2, s0: 'cv-pl-cozy-0', s1: 'cv-pl-cozy-1', s2: 'cv-pl-cozy-2', onOpen: () => this.go('Library.dc.html?openList=' + encodeURIComponent('Cozy night-ins')) },
+      { k: 'fav', name: 'Favorite Games', count: 8, updated: '5 days ago', order: 1, days: 5, s0: 'cv-pl-fav-0', s1: 'cv-pl-fav-1', s2: 'cv-pl-fav-2', onOpen: () => this.go('Library.dc.html?openList=' + encodeURIComponent('My favorite games')) },
+      { k: 'hh', name: 'Handheld / Travel', count: 14, updated: '1 month ago', order: 2, days: 30, s0: 'cv-pl-hh-0', s1: 'cv-pl-hh-1', s2: 'cv-pl-hh-2', onOpen: () => this.go('Library.dc.html') },
+    ];
+    const listSearch = this.state.listSearch;
+    const q = listSearch.trim().toLowerCase();
+    const listSort = this.state.listSort;
+    let lists = listsRaw.filter(l => !q || l.name.toLowerCase().includes(q));
+    if (listSort === 'name') lists = lists.slice().sort((a, b) => a.name.localeCompare(b.name));
+    else if (listSort === 'games') lists = lists.slice().sort((a, b) => b.count - a.count);
+    else lists = lists.slice().sort((a, b) => a.days - b.days);
+
+    const sortDefs = [
+      { key: 'recent', label: 'Recently updated' },
+      { key: 'name', label: 'Name (A–Z)' },
+      { key: 'games', label: 'Most games' },
+    ];
+    const listSortOptions = sortDefs.map(o => {
+      const active = o.key === listSort;
+      return {
+        label: o.label,
+        onClick: () => this.setState({ listSort: o.key }),
+        border: active ? 'var(--border-accent)' : 'var(--border)',
+        bg: active ? 'rgba(140,53,64,0.22)' : 'var(--surface-1)',
+        color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+      };
+    });
+
+    const activityRaw = [
+      { k: 'a-elden', verb: 'Finished', game: 'Elden Ring', date: 'July 13, 2026', sent: 'l', sentiment: 'Liked It', quote: '\u201CGame was really hard, almost broke my controller\u2026\u201D' },
+      { k: 'a-persona4', verb: 'Started', game: 'Persona 4 Golden', date: 'June 30, 2026' },
+      { k: 'a-nier', verb: 'Added', game: 'NiER: Automata', target: 'Action RPGs', date: 'June 24, 2026' },
+      { k: 'a-hades', verb: 'Reviewed', game: 'Hades II', date: 'June 12, 2026', sent: 'rl', sentiment: 'Really Liked', quote: '\u201CEndless replayability and the writing keeps every run feeling fresh.\u201D' },
+    ];
+    const activity = activityRaw.map(a => ({
+      k: a.k, slotId: 'cv-act-' + a.k, verb: a.verb, game: a.game,
+      hasTarget: !!a.target, target: a.target || '',
+      date: a.date,
+      hasSentiment: !!a.sent, sentiment: a.sentiment || '',
+      sentKey: this.sentKey(a.sent),
+      hasQuote: !!a.quote, quote: a.quote || '',
+    }));
+
+    return {
+      tabs,
+      isReviews: tab === 'reviews', isLists: tab === 'lists', isActivity: tab === 'activity',
+      stats, reviews, lists, activity,
+
+      listSearch,
+      hasListSearch: q.length > 0,
+      noListMatches: q.length > 0 && lists.length === 0,
+      onListSearch: (e) => this.setState({ listSearch: e.target.value }),
+      onClearListSearch: () => this.setState({ listSearch: '' }),
+      listFilterOpen: this.state.listFilterOpen,
+      onToggleListFilter: () => this.setState(s => ({ listFilterOpen: !s.listFilterOpen })),
+      listSortOptions,
+      listFilterBorder: this.state.listFilterOpen ? 'var(--border-accent)' : 'var(--border)',
+      listFilterBg: this.state.listFilterOpen ? 'rgba(140,53,64,0.22)' : 'var(--surface-1)',
+      listFilterColor: this.state.listFilterOpen ? 'var(--text-primary)' : 'var(--text-secondary)',
+
+      showEditProfile: this.props.showEditProfile ?? true,
+      username: this.state.username, bio: this.state.bio,
+      onEdit: () => this.openEdit(),
+      onSettings: () => this.flash('Settings \u2014 not built in this prototype'),
+
+      editOpen: this.state.editOpen, editTop: this.state.editTop,
+      editScrimOpacity: this.state.editTop === '0%' ? 1 : 0,
+      onCancelEdit: () => this.closeEdit(false),
+      onSaveEdit: () => this.closeEdit(true),
+      usernameDraft: this.state.usernameDraft,
+      onUsernameChange: (e) => this.setState({ usernameDraft: e.target.value }),
+      bioDraft: this.state.bioDraft,
+      onBioChange: (e) => this.setState({ bioDraft: e.target.value }),
+
+      showReviewsToggleBg: this.state.showReviewsDraft ? '#8C3540' : 'var(--border)',
+      showReviewsToggleLeft: this.state.showReviewsDraft ? '20px' : '2px',
+      onToggleShowReviews: () => this.setState(s => ({ showReviewsDraft: !s.showReviewsDraft })),
+      showListsToggleBg: this.state.showListsDraft ? '#8C3540' : 'var(--border)',
+      showListsToggleLeft: this.state.showListsDraft ? '20px' : '2px',
+      onToggleShowLists: () => this.setState(s => ({ showListsDraft: !s.showListsDraft })),
+      showActivityToggleBg: this.state.showActivityDraft ? '#8C3540' : 'var(--border)',
+      showActivityToggleLeft: this.state.showActivityDraft ? '20px' : '2px',
+      onToggleShowActivity: () => this.setState(s => ({ showActivityDraft: !s.showActivityDraft })),
+
+      hasToast: !!this.state.toast, toast: this.state.toast,
+
+      onTabDiscover: () => this.go('Discover Home.dc.html'),
+      onTabLibrary: () => this.go('Library.dc.html'),
+      onTabFriends: () => this.go('Friends Feed.dc.html'),
+      onTabSearch: () => this.go('Search.dc.html'),
+    };
+  }
+}
+</script>
+</body>
+</html>

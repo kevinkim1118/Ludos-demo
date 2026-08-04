@@ -1,0 +1,9 @@
+node_modules
+dist
+.DS_Store
+*.local
+.vite
+*.tsbuildinfo
+
+# Generated preview build (npm run pack)
+preview.html

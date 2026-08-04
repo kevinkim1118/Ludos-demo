@@ -1,0 +1,10 @@
+/* LUDOS — root surface. Components must render inside a .ds-root (see
+   ThemeRoot) to be styled: it sets background, base text color, and font. */
+.ds-root {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}

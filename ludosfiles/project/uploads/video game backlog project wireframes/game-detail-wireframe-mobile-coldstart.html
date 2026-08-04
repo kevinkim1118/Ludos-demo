@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Detail — Mobile (Cold start)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; color: #111; font-size: 14px; line-height: 1.5; padding-bottom: 60px; }
+
+  .ann { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; min-width: 17px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 6px; vertical-align: middle; flex-shrink: 0; }
+  .page-meta { text-align: center; padding: 24px 0 12px; font-size: 11px; color: #AAAAAA; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .legend-wrap { max-width: 760px; margin: 0 auto 24px; padding: 0 24px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  @media (max-width: 680px) { .legend-grid { grid-template-columns: 1fr; } }
+
+  .phone { width: 412px; max-width: 100%; height: 820px; margin: 0 auto; background: #fff; border: 9px solid #1C1C1C; border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 12px 40px rgba(0,0,0,0.18); }
+  .phone-scroll { height: 100%; overflow-y: auto; position: relative; }
+  .scroll-hint { text-align: center; font-size: 11px; color: #BBBBBB; max-width: 412px; margin: 10px auto 0; }
+
+  .statusbar { height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 12px; font-weight: 600; color: #111; }
+  .nav { height: 46px; display: flex; align-items: center; padding: 0 16px; gap: 12px; border-bottom: 1px solid #EEEEEE; }
+  .nav-back { font-size: 18px; color: #555; }
+  .nav-logo { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; }
+  .nav-av { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: #D8D8D8; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666; font-weight: 600; }
+
+  .hero { height: 240px; background: #C4C4C4; position: relative; overflow: hidden; }
+  .hero-ph { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; color: #AAAAAA; text-align: center; border: 1.5px dashed #AAAAAA; padding: 8px 16px; border-radius: 6px; }
+  .hero-grad { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); }
+  .hero-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 16px; color: white; }
+  .hero-eyebrow { font-size: 11px; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+  .hero-title { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; display: flex; align-items: center; }
+  .platform-badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28); border-radius: 4px; padding: 2px 7px; font-size: 10px; margin-right: 4px; }
+  .tag-scroll { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; padding-bottom: 2px; }
+  .hero-tag { background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22); border-radius: 20px; padding: 3px 10px; font-size: 10px; color: rgba(255,255,255,0.9); white-space: nowrap; flex-shrink: 0; }
+
+  .body { padding: 16px; }
+  .module { background: #fff; border: 1px solid #E6E6E6; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .module-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; display: flex; align-items: center; }
+
+  .verdict-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 6px; }
+  .verdict-title { font-size: 16px; font-weight: 600; color: #111; display: flex; align-items: center; }
+  .type-badge { background: #111; color: white; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 500; }
+
+  .trust-tier { border: 1px solid #E8E8E8; border-radius: 10px; padding: 13px; margin-bottom: 9px; }
+  .trust-tier:last-child { margin-bottom: 0; }
+  .trust-tier.empty { background: #FAFAFA; border-style: dashed; border-color: #D8D8D8; }
+  .tier-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+  .tier-label { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #999; display: flex; align-items: center; gap: 6px; }
+  .tier-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tier-dot.friends { background: #111; }
+  .tier-dot.taste { background: #666; }
+  .tier-dot.global { background: #BBB; }
+  .tier-verdict { font-size: 14px; font-weight: 600; color: #111; }
+  .tier-verdict.muted { color: #B0B0B0; font-weight: 500; font-style: italic; font-size: 12px; }
+  .tier-detail { font-size: 12px; color: #555; line-height: 1.5; margin-top: 4px; }
+  .tier-detail.muted { color: #999; }
+
+  .editorial-badge { font-size: 9px; padding: 2px 7px; border-radius: 4px; background: white; color: #888; font-weight: 600; border: 1px dashed #C8C8C8; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* friends-tier invitation (the growth lever) */
+  .invite { text-align: center; padding: 4px 2px 2px; }
+  .invite-text { font-size: 12px; color: #777; margin-bottom: 11px; line-height: 1.5; }
+  .invite-cta { display: inline-flex; align-items: center; gap: 9px; background: #111; color: white; padding: 11px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; width: 100%; justify-content: center; }
+  .invite-cta .ci { width: 18px; height: 18px; background: rgba(255,255,255,0.22); border-radius: 4px; flex-shrink: 0; }
+  .invite-secondary { display: block; font-size: 10px; color: #AAA; margin-top: 9px; }
+
+  .dist-bar { height: 8px; border-radius: 4px; overflow: hidden; display: flex; gap: 2px; margin-top: 8px; }
+  .dseg { height: 100%; border-radius: 3px; }
+  .dseg.rl { background: #2B2B2B; }
+  .dseg.l { background: #777; }
+  .dseg.dl { background: #B5B5B5; }
+  .dseg.rd { background: #E0E0E0; }
+  .dist-key { display: flex; gap: 10px; margin-top: 7px; flex-wrap: wrap; }
+  .dk-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #888; }
+  .dk-dot { width: 7px; height: 7px; border-radius: 2px; }
+  .dk-dot.rl { background: #2B2B2B; }
+  .dk-dot.l { background: #777; }
+  .dk-dot.dl { background: #B5B5B5; }
+  .dk-dot.rd { background: #E0E0E0; }
+
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 11px; }
+  .stat-box { background: #F5F5F5; border-radius: 8px; padding: 9px; text-align: center; }
+  .stat-value { font-size: 17px; font-weight: 700; color: #111; display: block; }
+  .stat-desc { font-size: 10px; color: #888; margin-top: 2px; }
+  .store-btn { display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; border: 1px solid #E4E4E4; border-radius: 8px; font-size: 12px; color: #444; margin-bottom: 6px; }
+  .store-btn:last-child { margin-bottom: 0; }
+  .store-price { font-weight: 600; color: #111; }
+
+  /* empty friend signal */
+  .empty-block { border: 1.5px dashed #D8D8D8; border-radius: 10px; padding: 18px 14px; text-align: center; }
+  .empty-block-text { font-size: 12px; color: #999; line-height: 1.55; }
+  .empty-block-text strong { color: #777; }
+
+  .sent-pill { font-size: 10px; font-weight: 600; padding: 4px 9px; border-radius: 20px; flex-shrink: 0; }
+  .sent-pill.rl { background: #2B2B2B; color: white; }
+  .sent-pill.l { background: #E4E4E4; color: #444; }
+  .sent-pill.none { background: #F2F2F2; color: #AAA; }
+
+  .review-tabs { display: flex; gap: 4px; border-bottom: 1px solid #E8E8E8; padding-bottom: 12px; margin-bottom: 14px; overflow-x: auto; }
+  .review-tab { padding: 5px 13px; border-radius: 20px; font-size: 12px; color: #888; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 5px; }
+  .review-tab.active { background: #111; color: white; }
+  .tab-count { font-size: 9px; opacity: 0.6; }
+  .tab-count.zero { color: #C0C0C0; }
+  .review-card { border: 1px solid #E8E8E8; border-radius: 10px; padding: 13px; margin-bottom: 10px; }
+  .review-top { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 9px; }
+  .reviewer-av { width: 32px; height: 32px; border-radius: 50%; background: #D0D0D0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #666; flex-shrink: 0; }
+  .reviewer-av.editorial { background: #ECECEC; border: 1px dashed #C8C8C8; color: #999; }
+  .reviewer-meta { flex: 1; min-width: 0; }
+  .reviewer-name-row { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #111; margin-bottom: 3px; flex-wrap: wrap; }
+  .reviewer-date { font-size: 10px; color: #BBBBBB; }
+  .review-body { font-size: 12px; color: #444; line-height: 1.6; }
+  .see-all-btn { display: block; text-align: center; padding: 11px; font-size: 12px; color: #777; border: 1px solid #E8E8E8; border-radius: 8px; margin-top: 4px; line-height: 1.4; }
+
+  .disc-scroll { display: flex; gap: 11px; overflow-x: auto; padding-bottom: 4px; }
+  .disc-card { width: 110px; flex-shrink: 0; }
+  .disc-art { width: 100%; aspect-ratio: 3 / 4; background: #D8D8D8; border: 1.5px dashed #BBBBBB; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #AAAAAA; margin-bottom: 6px; }
+  .disc-title { font-size: 11px; font-weight: 500; color: #333; line-height: 1.3; margin-bottom: 2px; }
+  .disc-match { font-size: 10px; color: #999; }
+
+  .contribution-minimal { border: 1.5px dashed #D8D8D8; border-radius: 10px; padding: 14px; text-align: center; color: #B8B8B8; font-size: 12px; margin-bottom: 14px; line-height: 1.5; }
+
+  .bottom-bar { position: sticky; bottom: 0; background: #fff; border-top: 1px solid #E2E2E2; padding: 12px 16px 16px; display: flex; align-items: center; gap: 10px; }
+  .bottom-cta { flex: 1; background: #111; color: white; text-align: center; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; }
+  .bottom-icon { width: 46px; height: 46px; border: 1.5px solid #E0E0E0; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 18px; }
+  .bar-ann { position: absolute; top: -9px; right: 14px; }
+
+  .sheet-demo { width: 412px; max-width: 100%; margin: 24px auto 0; }
+  .sheet-demo-label { font-size: 11px; color: #999; text-align: center; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .sheet { background: #fff; border: 1px solid #E2E2E2; border-radius: 18px 18px 12px 12px; padding: 12px 16px 18px; box-shadow: 0 -8px 30px rgba(0,0,0,0.10); }
+  .sheet-handle { width: 38px; height: 4px; border-radius: 2px; background: #DADADA; margin: 0 auto 14px; }
+  .sheet-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 12px; }
+  .track-opt { display: flex; align-items: center; gap: 10px; padding: 12px 13px; border: 1.5px solid #E0E0E0; border-radius: 8px; font-size: 13px; font-weight: 500; color: #555; background: #FAFAFA; margin-bottom: 8px; }
+  .track-opt.primary { background: #111; color: white; border-color: #111; }
+  .track-opt .ti { width: 20px; height: 20px; background: #E4E4E4; border-radius: 4px; flex-shrink: 0; }
+  .track-opt.primary .ti { background: rgba(255,255,255,0.22); }
+  .sheet-listlink { text-align: center; font-size: 13px; color: #999; padding: 10px 0 2px; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Game detail — Cold start (empty) · mobile (412px) — ported from desktop</div>
+
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — the cold-start inversion on mobile</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span>Identity is unaffected at cold start — same hero as the populated mobile page.</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>The trust ladder inverts.</strong> Friends and your type are empty; the only populated tier is the least-trusted (global, seeded editorial). The empty Friends rung becomes the page's primary CTA — "Connect Steam." Same inversion as desktop, stacked.</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span>Purchase confidence carries disproportionate weight here — time-to-beat is utility data, not social, so it stays full while social signal is absent.</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span>Friend signal shows a light "will appear here" state and does <strong>not</strong> repeat the Connect-Steam CTA — the verdict's Friends rung owns that single action.</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span>Reviews open on <strong>Editorial</strong> — the adaptive default tab, since Friends / People-like-you are at 0. Editorial reviews are badged, never disguised as peer takes.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span>Discovery survives — it's tag-based, not social. Relabeled "Similar games" as a horizontal carousel.</span></div>
+      <div class="legend-item"><span class="legend-num">7</span><span><strong>Bottom bar is fully functional on day one.</strong> Tracking never depends on social data — "Add to List" raises the same status sheet. Untracked, so the sheet defaults to "Add to want list."</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="phone">
+  <div class="phone-scroll">
+
+    <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&nbsp;&nbsp;&#9650;</span></div>
+
+    <div class="nav">
+      <span class="nav-back">&#8592;</span>
+      <span class="nav-logo">LEVELUP</span>
+      <span class="nav-av">KM</span>
+    </div>
+
+    <!-- Module 1 — Identity -->
+    <div class="hero">
+      <div class="hero-ph">Key art / hero image</div>
+      <div class="hero-grad"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">FromSoftware · 2022 · Action RPG</div>
+        <div class="hero-title">Elden Ring <span class="ann">1</span></div>
+        <div>
+          <span class="platform-badge">PC</span>
+          <span class="platform-badge">PS5</span>
+          <span class="platform-badge">Xbox</span>
+          <span class="platform-badge">Switch 2</span>
+        </div>
+        <div class="tag-scroll">
+          <span class="hero-tag">Open world</span>
+          <span class="hero-tag">High challenge</span>
+          <span class="hero-tag">Solo</span>
+          <span class="hero-tag">Long sessions</span>
+          <span class="hero-tag">Story-rich</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="body">
+
+      <!-- Module 2 — Verdict (cold start, inverted ladder) -->
+      <div class="module">
+        <div class="verdict-header">
+          <div class="verdict-title">The verdict <span class="ann">2</span></div>
+          <div class="type-badge">The Completionist</div>
+        </div>
+
+        <!-- Friends — EMPTY, carries the primary CTA -->
+        <div class="trust-tier empty">
+          <div class="tier-header">
+            <div class="tier-label"><span class="tier-dot friends"></span>Friends</div>
+            <div class="tier-verdict muted">No friends yet</div>
+          </div>
+          <div class="invite">
+            <div class="invite-text">None of your friends are on LevelUp yet. Connect Steam to see which of them played Elden Ring — your friends' takes lead the verdict.</div>
+            <div class="invite-cta"><span class="ci"></span>Connect Steam to import friends</div>
+            <span class="invite-secondary">61% of players already track friends through Steam</span>
+          </div>
+        </div>
+
+        <!-- Taste-matched — not enough data yet -->
+        <div class="trust-tier empty">
+          <div class="tier-header">
+            <div class="tier-label"><span class="tier-dot taste"></span>Completionists</div>
+            <div class="tier-verdict muted">Not enough data yet</div>
+          </div>
+          <div class="tier-detail muted">You're one of the first Completionists here. As more players with your profile rate this, you'll see how it lands for your type.</div>
+        </div>
+
+        <!-- Global — seeded editorial, only populated tier -->
+        <div class="trust-tier">
+          <div class="tier-header">
+            <div class="tier-label"><span class="tier-dot global"></span>Global <span class="editorial-badge">Editorial</span></div>
+            <div class="tier-verdict">Mostly positive</div>
+          </div>
+          <div class="dist-bar">
+            <div class="dseg rl" style="width:34%;"></div><div class="dseg l" style="width:30%;"></div><div class="dseg dl" style="width:21%;"></div><div class="dseg rd" style="width:15%;"></div>
+          </div>
+          <div class="dist-key">
+            <div class="dk-item"><div class="dk-dot rl"></div>34% really liked</div>
+            <div class="dk-item"><div class="dk-dot l"></div>30% liked</div>
+            <div class="dk-item"><div class="dk-dot dl"></div>21% didn't</div>
+            <div class="dk-item"><div class="dk-dot rd"></div>15% really didn't</div>
+          </div>
+          <div class="tier-detail muted" style="margin-top:8px;">Based on critic &amp; editorial data while the community grows. The "people like you" divergence signal switches on once your type and friends fill in.</div>
+        </div>
+      </div>
+
+      <!-- Module 3 — Purchase confidence (carries weight at cold start) -->
+      <div class="module">
+        <div class="module-label">What it'll cost you <span class="ann">3</span></div>
+        <div class="stat-row">
+          <div class="stat-box"><span class="stat-value">60h</span><div class="stat-desc">Main story</div></div>
+          <div class="stat-box"><span class="stat-value">130h</span><div class="stat-desc">Completionist</div></div>
+        </div>
+        <div class="store-btn"><span>Steam</span><span class="store-price">$39.99</span></div>
+        <div class="store-btn"><span>PlayStation Store</span><span class="store-price">$49.99</span></div>
+        <div class="store-btn"><span>Xbox / Game Pass</span><span class="store-price">Included</span></div>
+      </div>
+
+      <!-- Module 4 — Friend signal (empty, no competing CTA) -->
+      <div class="module">
+        <div class="module-label">Friend activity <span class="ann">4</span></div>
+        <div class="empty-block">
+          <div class="empty-block-text">Once you connect friends, you'll see <strong>who owns it, who's playing, and who finished it</strong> here — with their ratings inline.</div>
+        </div>
+      </div>
+
+      <!-- Module 5 — Reviews (adaptive default tab = Editorial) -->
+      <div class="module">
+        <div class="module-label">Reviews <span class="ann">5</span></div>
+        <div class="review-tabs">
+          <div class="review-tab">Friends <span class="tab-count zero">0</span></div>
+          <div class="review-tab">People like you <span class="tab-count zero">0</span></div>
+          <div class="review-tab active">Editorial <span class="tab-count">6</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-top">
+            <div class="reviewer-av editorial">ED</div>
+            <div class="reviewer-meta">
+              <div class="reviewer-name-row">Curated review <span class="editorial-badge">Editorial</span></div>
+              <div class="reviewer-date">Seeded at launch · 2022</div>
+            </div>
+            <div class="sent-pill rl">Really liked it</div>
+          </div>
+          <div class="review-body">A sprawling, punishing open world that rewards curiosity over hand-holding. Stand-in editorial copy shown until friend and taste-matched reviews populate.</div>
+        </div>
+        <div class="see-all-btn">Be the first of your friends — or your type — to review this →</div>
+      </div>
+
+      <!-- Module 6 — Discovery (content-based, survives) -->
+      <div class="module">
+        <div class="module-label">Similar games <span class="ann">6</span></div>
+        <div class="disc-scroll">
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Dark Souls III</div><div class="disc-match">Similar tags</div></div>
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Hollow Knight</div><div class="disc-match">Similar tags</div></div>
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Sekiro</div><div class="disc-match">Similar tags</div></div>
+          <div class="disc-card"><div class="disc-art">Art</div><div class="disc-title">Nioh 2</div><div class="disc-match">Similar tags</div></div>
+        </div>
+      </div>
+
+      <!-- Module 7 — Contribution (minimal, seeding nudge) -->
+      <div class="contribution-minimal">Played Elden Ring? Be among the first Completionists to rate it and help the next person decide.</div>
+
+    </div>
+
+    <!-- Sticky bottom bar — untracked, opens status sheet -->
+    <div class="bottom-bar">
+      <span class="ann bar-ann">7</span>
+      <div class="bottom-cta">Add to List</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="sheet-demo">
+  <div class="sheet-demo-label">On tap → "Add to List" raises this sheet <span class="ann">7</span></div>
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add Elden Ring to…</div>
+    <div class="track-opt primary"><span class="ti"></span>Add to want list</div>
+    <div class="track-opt"><span class="ti"></span>Mark as playing</div>
+    <div class="track-opt"><span class="ti"></span>Mark as finished</div>
+    <div class="sheet-listlink">+ Add to a list</div>
+  </div>
+</div>
+
+<div class="scroll-hint">↑ Same bar/sheet pattern as every mobile state. At cold start the social tiers are empty but tracking still works on day one.</div>
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library / Backlog — Wireframe (Desktop)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; color: #111; font-size: 14px; line-height: 1.5; }
+
+  .ann { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 7px; vertical-align: middle; flex-shrink: 0; }
+  .page-meta { text-align: center; padding: 24px 0 6px; font-size: 11px; color: #AAAAAA; letter-spacing: 0.08em; text-transform: uppercase; }
+  .page-sub { text-align: center; padding: 0 24px 14px; font-size: 12px; color: #999; max-width: 760px; margin: 0 auto; line-height: 1.5; }
+
+  .legend-wrap { max-width: 1200px; margin: 0 auto 20px; padding: 0 40px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  .nav { background: white; border-bottom: 1px solid #E0E0E0; height: 52px; display: flex; align-items: center; padding: 0 40px; gap: 32px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-size: 14px; font-weight: 700; color: #111; letter-spacing: 0.04em; }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; color: #888; }
+  .nav-links .active { color: #111; font-weight: 600; }
+  .nav-right { margin-left: auto; }
+  .avatar-sm { width: 30px; height: 30px; border-radius: 50%; background: #D8D8D8; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; font-weight: 600; }
+
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 40px 80px; }
+
+  /* page header */
+  .lib-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+  .lib-title { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .lib-count { font-size: 13px; color: #999; margin-top: 3px; }
+
+  .module { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 18px; }
+  .module-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; display: flex; align-items: center; }
+
+  /* ── What to play next (the JTBD hero) ── */
+  .whatnext { border: 1.5px solid #111; margin-bottom: 26px; }
+  .whatnext-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .whatnext-h { font-size: 19px; font-weight: 700; color: #111; display: flex; align-items: center; }
+  .time-chip { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid #E0E0E0; border-radius: 20px; padding: 6px 13px; font-size: 12px; color: #555; background: #FAFAFA; }
+  .time-chip strong { color: #111; font-weight: 600; }
+  .time-chip .caret { color: #AAA; font-size: 11px; }
+
+  .whatnext-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; align-items: stretch; }
+
+  /* the confident pick */
+  .pick { display: flex; gap: 16px; border: 1px solid #ECECEC; border-radius: 10px; padding: 16px; background: #FAFAFA; }
+  .pick-cover { width: 116px; flex-shrink: 0; aspect-ratio: 3/4; background: #D6D6D6; border: 1.5px dashed #B5B5B5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; }
+  .pick-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .pick-eyebrow { font-size: 11px; color: #999; margin-bottom: 3px; }
+  .pick-name { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .pick-meta { font-size: 12px; color: #888; margin-bottom: 12px; }
+  .reason-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #444; margin-bottom: 7px; }
+  .reason-ic { width: 16px; height: 16px; border-radius: 4px; background: #DCDCDC; flex-shrink: 0; }
+  .reason-row strong { color: #111; font-weight: 600; }
+  .pick-actions { display: flex; gap: 9px; margin-top: auto; padding-top: 14px; }
+  .btn-primary { background: #111; color: white; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; }
+  .btn-ghost { border: 1.5px solid #E0E0E0; color: #555; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 500; background: white; }
+
+  /* head-to-head refine */
+  .h2h { border: 1px solid #ECECEC; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; }
+  .h2h-label { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #AAA; margin-bottom: 4px; display: flex; align-items: center; }
+  .h2h-q { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 14px; }
+  .h2h-pair { display: flex; align-items: stretch; gap: 10px; }
+  .h2h-opt { flex: 1; border: 1.5px solid #E2E2E2; border-radius: 9px; padding: 11px; text-align: center; background: #FAFAFA; }
+  .h2h-cover { width: 100%; aspect-ratio: 3/4; background: #D6D6D6; border: 1.5px dashed #B5B5B5; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #999; margin-bottom: 8px; }
+  .h2h-name { font-size: 12px; font-weight: 600; color: #222; line-height: 1.3; }
+  .h2h-sub { font-size: 10px; color: #999; margin-top: 2px; }
+  .h2h-vs { display: flex; align-items: center; font-size: 11px; font-weight: 700; color: #BBB; }
+  .h2h-foot { font-size: 11px; color: #999; margin-top: 12px; line-height: 1.45; }
+
+  /* ── Backlog browser ── */
+  .browser { display: flex; gap: 24px; align-items: flex-start; }
+  .side { width: 230px; flex-shrink: 0; position: sticky; top: 70px; }
+  .side-group { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 10px; margin-bottom: 14px; }
+  .side-h { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #AAAAAA; padding: 6px 10px 8px; display: flex; align-items: center; }
+  .side-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; font-size: 13px; color: #555; cursor: pointer; }
+  .side-item .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot.want { background: #BBB; } .dot.playing { background: #666; } .dot.finished { background: #111; }
+  .side-item .ct { margin-left: auto; font-size: 12px; color: #AAA; font-weight: 500; }
+  .side-item.active { background: #111; color: white; font-weight: 600; }
+  .side-item.active .ct { color: rgba(255,255,255,0.65); }
+  .side-item.active .dot.want { background: white; }
+  .side-list-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; font-size: 13px; color: #555; cursor: pointer; }
+  .side-list-item .li { width: 16px; height: 16px; border-radius: 4px; background: #E2E2E2; flex-shrink: 0; }
+  .side-newlist { padding: 9px 10px; font-size: 12px; color: #999; cursor: pointer; }
+
+  .main { flex: 1; min-width: 0; }
+  .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toolbar-title { font-size: 16px; font-weight: 700; color: #111; }
+  .toolbar-title .tt-ct { color: #AAA; font-weight: 500; font-size: 14px; margin-left: 4px; }
+  .toolbar-spacer { flex: 1; }
+  .control { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid #E2E2E2; border-radius: 8px; padding: 7px 12px; font-size: 12px; color: #555; background: white; }
+  .control .caret { color: #AAA; font-size: 10px; }
+  .view-toggle { display: inline-flex; border: 1.5px solid #E2E2E2; border-radius: 8px; overflow: hidden; }
+  .view-btn { padding: 7px 11px; font-size: 12px; color: #999; background: white; }
+  .view-btn.active { background: #111; color: white; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .chip { border: 1px solid #E2E2E2; border-radius: 20px; padding: 6px 13px; font-size: 12px; color: #777; background: white; display: inline-flex; align-items: center; gap: 6px; }
+  .chip .x { color: #BBB; }
+
+  /* game grid */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .card { background: white; border: 1px solid #E8E8E8; border-radius: 10px; overflow: hidden; cursor: pointer; }
+  .card-cover { width: 100%; aspect-ratio: 3/4; background: #D8D8D8; border-bottom: 1px dashed #C4C4C4; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #AAA; position: relative; }
+  .card-status { position: absolute; top: 8px; left: 8px; font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 20px; background: rgba(255,255,255,0.92); color: #555; border: 1px solid #E4E4E4; }
+  .card-menu { position: absolute; top: 6px; right: 8px; font-size: 15px; color: #888; background: rgba(255,255,255,0.92); border-radius: 6px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+  .card-body { padding: 10px 11px 12px; }
+  .card-name { font-size: 13px; font-weight: 600; color: #111; line-height: 1.3; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-platform { font-size: 11px; color: #AAA; margin-bottom: 9px; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .match-tag { font-size: 11px; font-weight: 600; color: #333; display: inline-flex; align-items: center; gap: 5px; }
+  .match-dot { width: 7px; height: 7px; border-radius: 50%; background: #2B2B2B; }
+  .match-dot.good { background: #888; }
+  .ttb { font-size: 11px; color: #999; }
+  .sent-pill { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .sent-pill.rl { background: #2B2B2B; color: white; }
+  .sent-pill.l { background: #E4E4E4; color: #444; }
+  .progress-line { font-size: 11px; color: #777; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Library / Backlog management — Desktop (1200px)</div>
+<div class="page-sub">Addresses JTBD 02 (backlog paralysis). The page leads with a confident "play this next" recommendation — with a head-to-head "compare two" refine path — then drops into a status-segmented backlog browser (Want / Playing / Finished primary, custom lists secondary). Grayscale lo-fi; reuses the locked game-card, status taxonomy, and sentiment-pill grammar from the game detail wireframes.</div>
+
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — how the page answers "backlog paralysis"</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span><strong>The paralysis-breaker leads the page.</strong> Per JTBD 02, a daunting library shouldn't open onto a wall of covers — it opens onto ONE confident, specific recommendation. The hero is bordered like the game detail page's hero modules to signal "this is the answer, start here."</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>Time context shapes the pick.</strong> "How much time have you got?" filters the recommendation toward something finishable in the session — directly answering the research quote about sorting by time but still not being able to choose.</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span><strong>The pick carries its reasoning</strong> — taste match, fits-your-time, and friend signal — the same three trust signals the verdict module uses, compressed. "Start playing" flips status to Playing; "Show another" re-rolls without leaving the page.</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span><strong>Head-to-head is the refine path</strong> — now fully built (see <strong>headtohead-wireframe-*</strong>). When the single pick doesn't land, this opens the compare flow: first an intent question ("what are you in the mood for?"), then quick A/B taps converge on one game. <strong>Play-only</strong> — the rating-precision angle was cut. When the Want list has fewer than 2 games, this entry is <strong>gated</strong> (disabled with an "Add 2+ games" hint — see the reference below the page).</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span><strong>Status segments are the primary organization</strong> — Want / Playing / Finished as the sidebar's main nav with live counts, mirroring the locked want→playing→finished tracking model.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span><strong>Custom lists are secondary</strong> — listed below the status nav, not competing with it. "+ New list" lives here. (Resolves the detail page's "Add to a list" as a real destination.)</span></div>
+      <div class="legend-item"><span class="legend-num">7</span><span><strong>Cards adapt to the active segment.</strong> Want cards show decision data (taste match + time-to-beat); Playing cards show progress; Finished cards show your sentiment rating. Same card, reweighted by status — the detail page's emphasis-shift principle, applied to the grid.</span></div>
+      <div class="legend-item"><span class="legend-num">8</span><span>Sort / filter / view controls. Default sort is <strong>Best match</strong> (taste-first, not date) so the backlog stays decision-oriented, not just an archive.</span></div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <span class="nav-logo">LEVELUP</span>
+  <div class="nav-links"><span>Discover</span><span class="active">Library</span><span>Friends</span><span>Search</span></div>
+  <div class="nav-right"><div class="avatar-sm">KM</div></div>
+</nav>
+
+<div class="page-wrap">
+
+  <div class="lib-head">
+    <div>
+      <div class="lib-title">Your library</div>
+      <div class="lib-count">62 games tracked · 12 waiting to play</div>
+    </div>
+  </div>
+
+  <!-- ── What to play next (JTBD hero) ── -->
+  <div class="module whatnext">
+    <div class="whatnext-top">
+      <div class="whatnext-h">What to play next <span class="ann">1</span></div>
+      <div class="time-chip">How much time? · <strong>A free evening</strong> <span class="caret">▾</span> <span class="ann">2</span></div>
+    </div>
+
+    <div class="whatnext-grid">
+      <!-- the confident pick -->
+      <div class="pick">
+        <div class="pick-cover">Cover</div>
+        <div class="pick-body">
+          <div class="pick-eyebrow">From your Want list · our pick for tonight</div>
+          <div class="pick-name">Hades</div>
+          <div class="pick-meta">Supergiant · Roguelike · PC / Switch</div>
+          <div class="reason-row"><span class="reason-ic"></span><strong>Strong match</strong> for The Completionist — tight runs, deep mastery</div>
+          <div class="reason-row"><span class="reason-ic"></span><strong>~21h to finish</strong>, and it's pick-up-put-down — fits a free evening</div>
+          <div class="reason-row"><span class="reason-ic"></span><strong>2 friends really liked it</strong> — Alex &amp; Maya</div>
+          <div class="pick-actions">
+            <span class="btn-primary">▷ Start playing</span>
+            <span class="btn-ghost">↻ Show another</span>
+            <span class="ann" style="align-self:center;">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- head-to-head refine -->
+      <div class="h2h">
+        <div class="h2h-label">Still can't decide? <span class="ann">4</span></div>
+        <div class="h2h-q">Which sounds better right now?</div>
+        <div class="h2h-pair">
+          <div class="h2h-opt">
+            <div class="h2h-cover">Cover</div>
+            <div class="h2h-name">Hollow Knight</div>
+            <div class="h2h-sub">~27h · Strong match</div>
+          </div>
+          <div class="h2h-vs">VS</div>
+          <div class="h2h-opt">
+            <div class="h2h-cover">Cover</div>
+            <div class="h2h-name">Hades</div>
+            <div class="h2h-sub">~21h · Strong match</div>
+          </div>
+        </div>
+        <div class="h2h-foot">Pick a vibe, then a few quick taps narrow your backlog down to one.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Backlog browser ── -->
+  <div class="browser">
+
+    <!-- sidebar: status (primary) + lists (secondary) -->
+    <aside class="side">
+      <div class="side-group">
+        <div class="side-h">Your status <span class="ann">5</span></div>
+        <div class="side-item active"><span class="dot want"></span>Want to play <span class="ct">12</span></div>
+        <div class="side-item"><span class="dot playing"></span>Playing <span class="ct">3</span></div>
+        <div class="side-item"><span class="dot finished"></span>Finished <span class="ct">47</span></div>
+        <div class="side-item" style="color:#999;"><span class="dot" style="background:#DADADA;"></span>All games <span class="ct">62</span></div>
+      </div>
+
+      <div class="side-group">
+        <div class="side-h">Your lists <span class="ann">6</span></div>
+        <div class="side-list-item"><span class="li"></span>Short games (&lt;10h)</div>
+        <div class="side-list-item"><span class="li"></span>Co-op with Sam</div>
+        <div class="side-list-item"><span class="li"></span>Cozy night-ins</div>
+        <div class="side-newlist">+ New list</div>
+      </div>
+    </aside>
+
+    <!-- main: toolbar + grid -->
+    <main class="main">
+      <div class="toolbar">
+        <div class="toolbar-title">Want to play <span class="tt-ct">12</span></div>
+        <div class="toolbar-spacer"></div>
+        <div class="control">Sort: <strong style="color:#111;font-weight:600;">Best match</strong> <span class="caret">▾</span> <span class="ann">8</span></div>
+        <div class="view-toggle">
+          <span class="view-btn active">▦ Grid</span>
+          <span class="view-btn">☰ List</span>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <span class="chip">Platform <span class="x">▾</span></span>
+        <span class="chip">Tag <span class="x">▾</span></span>
+        <span class="chip">Time to beat <span class="x">▾</span></span>
+      </div>
+
+      <div class="grid">
+        <!-- Want cards: decision data (match + time-to-beat) -->
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want <span class="ann" style="margin:0;">7</span></span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Hades</div>
+            <div class="card-platform">PC · Switch</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot"></span>Strong</span><span class="ttb">~21h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Hollow Knight</div>
+            <div class="card-platform">PC · PS5 · Switch</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot"></span>Strong</span><span class="ttb">~27h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Disco Elysium</div>
+            <div class="card-platform">PC · PS5</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot good"></span>Good</span><span class="ttb">~33h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Outer Wilds</div>
+            <div class="card-platform">PC · Xbox</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot"></span>Strong</span><span class="ttb">~15h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Slay the Spire</div>
+            <div class="card-platform">PC · Switch</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot"></span>Strong</span><span class="ttb">~24h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Tunic</div>
+            <div class="card-platform">PC · PS5 · Switch</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot good"></span>Good</span><span class="ttb">~12h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Pentiment</div>
+            <div class="card-platform">PC · Xbox</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot good"></span>Good</span><span class="ttb">~18h</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-cover">Cover<span class="card-status">Want</span><span class="card-menu">⋯</span></div>
+          <div class="card-body">
+            <div class="card-name">Citizen Sleeper</div>
+            <div class="card-platform">PC · Switch</div>
+            <div class="card-foot"><span class="match-tag"><span class="match-dot good"></span>Good</span><span class="ttb">~9h</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="toolbar-title" style="font-size:13px;color:#AAA;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">How other segments' cards reweight <span class="ann" style="margin:0;">7</span></div>
+        <div class="grid">
+          <div class="card">
+            <div class="card-cover">Cover<span class="card-status">Playing</span><span class="card-menu">⋯</span></div>
+            <div class="card-body">
+              <div class="card-name">Elden Ring</div>
+              <div class="card-platform">Steam</div>
+              <div class="card-foot"><span class="progress-line">40h played · in progress</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-cover">Cover<span class="card-status">Finished</span><span class="card-menu">⋯</span></div>
+            <div class="card-body">
+              <div class="card-name">Dark Souls III</div>
+              <div class="card-platform">Steam</div>
+              <div class="card-foot"><span class="progress-line">Dec 2024</span><span class="sent-pill rl">Really liked it</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-cover">Cover<span class="card-status">Finished</span><span class="card-menu">⋯</span></div>
+            <div class="card-body">
+              <div class="card-name">Sekiro</div>
+              <div class="card-platform">PS5</div>
+              <div class="card-foot"><span class="progress-line">Aug 2024</span><span class="sent-pill l">Liked it</span></div>
+            </div>
+          </div>
+          <div class="card" style="opacity:0.45;border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:120px;">
+            <span style="font-size:11px;color:#AAA;text-align:center;padding:16px;">Same card component —<br>only the footer data changes by status</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</div>
+
+<!-- compare-two entry · gated-state reference (outside the page) -->
+<div style="max-width:1200px;margin:0 auto 50px;padding:0 40px;">
+  <div style="background:#fff;border:1px solid #E0E0E0;border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:24px;">
+    <div style="flex:1;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#AAA;margin-bottom:10px;">Compare-two entry · gated state (Want list under 2)</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 13px;border:1.5px dashed #DADADA;border-radius:9px;background:#F4F4F4;max-width:440px;">
+        <span style="display:flex;gap:4px;"><span style="width:22px;height:28px;background:#E0E0E0;border:1px dashed #C4C4C4;border-radius:3px;opacity:0.6;"></span><span style="width:22px;height:28px;background:#E0E0E0;border:1px dashed #C4C4C4;border-radius:3px;opacity:0.6;"></span></span>
+        <span style="font-size:12.5px;color:#AAA;flex:1;">Add 2+ games to your Want list to compare</span>
+        <span style="font-size:15px;color:#CCC;">›</span>
+      </div>
+    </div>
+    <div style="max-width:300px;font-size:12px;color:#999;line-height:1.5;">When fewer than 2 games are in the Want list, the "Still can't decide?" entry disables with an "add games" hint — keeps the feature discoverable without a dead-end. Consistent with <strong>headtohead-wireframe-desktop.html</strong>.</div>
+  </div>
+</div>
+
+</body>
+</html>

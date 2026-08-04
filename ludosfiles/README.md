@@ -1,0 +1,153 @@
+# Ludos
+
+A video game backlog app — discover what to play, track it, and settle
+head-to-head matchups when you can't decide.
+
+Built from the Claude Design handoff in [`project/`](project/), implementing
+`Prototype.dc.html`. The bundle is kept intact as the design source of truth —
+its original instructions are at [`project/HANDOFF.md`](project/HANDOFF.md), and
+the chat transcripts behind the design decisions are in [`chats/`](chats/).
+
+## Running it
+
+```bash
+npm install
+npm run dev        # http://localhost:5173
+```
+
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server |
+| `npm run build` | Typecheck + production build to `dist/` |
+| `npm run preview` | Serve the built output |
+| `npm run typecheck` | Types only |
+| `npm run smoke` | End-to-end walkthrough (needs `npm run dev` running; set `BASE_URL` to retarget) |
+| `npm run covers` | Rebuild the cover manifest after adding art to `public/covers/` |
+| `npm run pack` | Build a single self-contained `preview.html` — opens anywhere, no server |
+| `npm run fonts` | Re-download the self-hosted webfonts |
+
+## What's implemented
+
+The three flows `Prototype.dc.html` contains:
+
+**Onboarding** — four intro screens (welcome, an auto-scrolling cover carousel,
+an add-to-list preview, sample reviews) → a played-games picker that unlocks at
+ten selections → an analysis beat → the player-type result with taste axes and a
+seeded backlog → the handoff into the app.
+
+**Discover** — a pick card that offers a backlog game with an "Another" re-roll,
+and flips to "Currently playing" with a status dropdown once something's in
+flight. Below it, the head-to-head entry point and three rails ordered by the
+trust ladder: friends → taste match → global. The `+` on any cover opens a
+status sheet.
+
+**Head-to-head** — pick a mood, then a winner-stays duel. A game wins on three
+straight, after five matchups, or by outlasting the pool; the outcome can be
+marked as playing, which takes over the Discover pick card.
+
+The Library / Friends / Search / Profile tabs are stubs that report
+"Not available in this demo", exactly as in the prototype.
+
+### Deliberately carried over
+
+- **The time sheet is unreachable.** Its markup and state exist, but nothing
+  opens it — `onOpenTime` was never wired into the template in the prototype
+  either (a leftover from the Library port). `state.time` still drives the pick
+  card's session-fit line, defaulting to "a free evening". Wiring it up is one
+  handler on a chip in `PickCard`.
+- **`CONFIG.showRecommendedCard` and `CONFIG.friendsConnected` default to
+  `false`**, matching the prototype's saved tweak state. That means the
+  "Recommended for you" spotlight is hidden and the friends rail shows its
+  cold-start prompt. Flip them in `src/config.ts`.
+
+## Layout
+
+```
+src/
+  config.ts              Values that were "Tweaks" panel props
+  state/                 The state machine (reducer + timers/effects hook)
+  data/                  Games, editorial content, generated cover manifest
+  components/            Cover, PhoneShell, BottomSheet, Toast, icons
+  screens/
+    onboarding/          Intro screens, played-games picker, result, done
+    home/                Discover, pick card, rails, spotlight, tab bar
+    h2h/                 Intent, duel, outcome, cold start
+  styles/
+    ludos.css            Design system, vendored verbatim — don't hand-edit
+    app.css              Shell, responsive frame, motion, interaction states
+```
+
+State lives in one reducer (`src/state/reducer.ts`) with pure transitions;
+anything involving a timer — toasts, sheet exit animations, the duel's
+resolve beat — is orchestrated in `src/state/useLudos.ts`.
+
+## The phone frame
+
+The designs were drawn in a 430×868 device mockup. Above 540px the app keeps
+that frame (with the simulated 9:41 status bar) so it still demos like the
+prototype; below 540px the frame and fake status bar drop away and the app runs
+full-bleed at `100dvh` against the real device chrome, with safe-area insets for
+notches. See the media query in `src/styles/app.css`.
+
+## Fonts
+
+The design's two faces — **Familjen Grotesk** (UI) and **Newsreader** (the
+editorial serif for quotes and archetype names) — are self-hosted from
+`public/fonts/` rather than pulled from the Google Fonts CDN at runtime. That
+means no third-party request, no flash of fallback text, and the correct
+typefaces even on a restricted network.
+
+`src/styles/fonts.css` is generated. Both families are variable fonts, so each
+`@font-face` carries a weight *range* (`400 700`) and one file serves every
+weight. Latin and Latin-Extended subsets only — 6 files, ~347 KB total.
+
+To change weights or add a subset, edit the `FAMILIES` / `KEEP_SUBSETS` lists in
+`scripts/fetch-fonts.mjs` and run `npm run fonts`.
+
+## Cover art
+
+`src/data/covers.ts` maps each design slot id (`cv-h2h-hades`) to an image. It's
+generated — edit `covers.config.mjs`, then run `npm run covers`.
+
+Two sources, in priority order:
+
+1. **`public/covers/<key>.webp`** — full-resolution art you supply. One file
+   fills every slot for that game. See [`public/covers/README.md`](public/covers/README.md).
+2. **`public/images/<slot>.webp`** — the art exported from the design tool, used
+   for anything without a drop-in.
+
+**The exported art is low-resolution.** It was recompressed three times inside
+the design tool to fit under a 2 MB storage cap, leaving covers ~240 px tall —
+about 2× too small for a 3× phone screen, and 2.8× short at the head-to-head
+outcome. The originals didn't survive; the editor sidecar is byte-identical.
+Replacing them means supplying new art at 600 × 900, which is what the drop-in
+folder is for. `npm run covers` reports which games are still on exported art.
+
+One drop-in replaces every slot for a game at once, which also resolves the
+duplicate-slot-id problem from the original prototype, where the same title was
+keyed differently per screen (`cv-search-hades2`, `cv-fr-hades`, `cv-pick-hades`,
+`cv-h2h-hades` are all Hades II).
+
+`<Cover>` reproduces the design tool's crop geometry for legacy art: scale to
+cover, then pan by a percentage of the box, clamped to the image's actual
+overflow so a crop never exposes background. Drop-ins are assumed correctly
+framed and carry no crop.
+
+Slots with no artwork by design: `cv-review-*` avatars render initials, and Stray
+has no cover anywhere in the handoff. `<Cover>` falls back gracefully.
+
+## Deploying
+
+Static build, no server. On Vercel: framework preset **Vite**, build
+`npm run build`, output `dist/`. `public/` is copied as-is, so cover art ships
+with it.
+
+## `?screen=` deep links
+
+Replaces the prototype's "Jump to screen" tweak — handy for review:
+
+```
+?screen=onboarding:intro1 | intro2 | intro3 | intro4 | played | reading | result | done
+?screen=home:discover | home:playing
+?screen=h2h:intent | duel | outcome | cold
+```

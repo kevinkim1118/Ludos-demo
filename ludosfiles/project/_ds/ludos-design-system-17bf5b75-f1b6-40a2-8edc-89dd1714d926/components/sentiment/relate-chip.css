@@ -1,0 +1,16 @@
+/* Relate chip — how much a viewer's taste aligns with a source. Alignment is
+   NEUTRAL: it never borrows sentiment hues, only warm-graphite neutrals. */
+.ds-relate-chip {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--relate-bg);
+  color: var(--relate-tx);
+  border: 1px solid var(--relate-border);
+}
+.ds-relate-chip__dot { width: 6px; height: 6px; border-radius: var(--r-pill); background: currentColor; opacity: 0.7; }

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friends Feed — Wireframe (Mobile)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; color: #111; font-size: 14px; line-height: 1.5; padding-bottom: 60px; }
+
+  .ann { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; min-width: 17px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 6px; vertical-align: middle; flex-shrink: 0; }
+  .page-meta { text-align: center; padding: 24px 0 12px; font-size: 11px; color: #AAAAAA; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .legend-wrap { max-width: 760px; margin: 0 auto 24px; padding: 0 24px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  @media (max-width: 680px) { .legend-grid { grid-template-columns: 1fr; } }
+
+  .phone { width: 412px; max-width: 100%; height: 860px; margin: 0 auto; background: #fff; border: 9px solid #1C1C1C; border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 12px 40px rgba(0,0,0,0.18); }
+  .phone-scroll { height: 100%; overflow-y: auto; position: relative; }
+  .scroll-hint { text-align: center; font-size: 11px; color: #BBBBBB; max-width: 412px; margin: 10px auto 0; }
+
+  .statusbar { height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 12px; font-weight: 600; color: #111; }
+  .topbar { height: 50px; display: flex; align-items: center; padding: 0 16px; gap: 10px; border-bottom: 1px solid #EEEEEE; }
+  .topbar-title { font-size: 18px; font-weight: 700; }
+  .topbar-spacer { flex: 1; }
+  .topbar-icon { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid #E4E4E4; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #888; }
+
+  /* filter chips */
+  .chip-row { display: flex; gap: 7px; overflow-x: auto; padding: 12px 14px; border-bottom: 1px solid #F0F0F0; }
+  .chip { flex-shrink: 0; padding: 7px 13px; border-radius: 20px; font-size: 12.5px; font-weight: 500; color: #666; background: white; border: 1.5px solid #E6E6E6; white-space: nowrap; }
+  .chip.active { background: #111; color: white; border-color: #111; }
+
+  .body { padding: 14px; }
+  .time-divider { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #AAA; margin: 2px 0 11px; display: flex; align-items: center; }
+
+  .digest { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 14px; margin-bottom: 13px; }
+  .digest-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .d-av { width: 36px; height: 36px; border-radius: 50%; background: #D0D0D0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #666; flex-shrink: 0; }
+  /* headline: the friend's main action, in plain language */
+  .d-headline { flex: 1; min-width: 0; }
+  .d-line { font-size: 13.5px; color: #666; line-height: 1.4; }
+  .d-line strong { color: #111; font-weight: 700; }
+  .d-sub { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #AAA; margin-top: 4px; }
+  .taste-badge { font-size: 9px; font-weight: 600; color: #444; background: #EDEDED; border-radius: 10px; padding: 2px 7px; border: 1px solid #E2E2E2; }
+
+  .act { display: flex; gap: 11px; padding: 11px; border: 1px solid #ECECEC; border-radius: 9px; margin-bottom: 8px; align-items: flex-start; }
+  .act:last-child { margin-bottom: 0; }
+  .act-thumb { width: 42px; flex-shrink: 0; aspect-ratio: 3/4; background: #D6D6D6; border: 1.5px dashed #B5B5B5; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #999; }
+  .act-body { flex: 1; min-width: 0; }
+  .act-snippet { font-size: 12px; color: #555; line-height: 1.5; font-style: italic; border-left: 2px solid #E4E4E4; padding-left: 9px; }
+  .list-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #555; background: #F2F2F2; border: 1px solid #E6E6E6; border-radius: 7px; padding: 5px 9px; }
+  .list-chip .lc { width: 12px; height: 12px; border-radius: 3px; background: #DADADA; flex-shrink: 0; }
+  .sent-pill { font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; align-self: flex-start; }
+  .sent-pill.rl { background: #2B2B2B; color: white; }
+  .sent-pill.l { background: #E4E4E4; color: #444; }
+
+  .act-low { display: flex; align-items: center; gap: 8px; padding: 8px 11px; font-size: 12px; color: #999; }
+  .act-low .dotmark { width: 6px; height: 6px; border-radius: 50%; background: #D0D0D0; flex-shrink: 0; }
+  .act-low strong { color: #777; font-weight: 600; }
+
+  .connect-card { background: white; border: 1.5px dashed #D8D8D8; border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 13px; }
+  .connect-text { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 12px; }
+  .connect-cta { display: inline-flex; align-items: center; gap: 9px; justify-content: center; background: #111; color: white; border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 600; width: 100%; }
+  .connect-cta .ci { width: 16px; height: 16px; background: rgba(255,255,255,0.22); border-radius: 4px; }
+
+  .feed-end { text-align: center; font-size: 11px; color: #BBB; padding: 14px; }
+
+  .tabbar { position: sticky; bottom: 0; background: #fff; border-top: 1px solid #E2E2E2; height: 56px; display: flex; align-items: center; padding: 0 8px 4px; }
+  .tab { flex: 1; text-align: center; font-size: 10px; color: #AAA; }
+  .tab .ti { width: 22px; height: 22px; margin: 0 auto 3px; border-radius: 6px; background: #E4E4E4; }
+  .tab.active { color: #111; font-weight: 600; }
+  .tab.active .ti { background: #111; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Friends activity feed — Mobile (412px)</div>
+
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — mobile reflows of the friend-centric digest</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span><strong>Each card is headlined by the friend's main action</strong>, in plain language — "Alex just finished Elden Ring," "Maya left a review for Hades," "Jordan added Citizen Sleeper to Cozy night-ins." The event leads, not just the name, and the card carries only what relates to that one action — so the feed reads at a glance.</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>Supporting detail sits below the headline.</strong> The headlined action shows its evidence — cover thumb + sentiment pill + review snippet (or a list chip). Nothing unrelated to the headline appears on the card.</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span><strong>Investigate path.</strong> Tapping a headline or its detail opens that game's detail page to read the full take — the JTBD-03 hook, intact on mobile.</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span><strong>Filters are a horizontal chip row</strong> under the header (the desktop sidebar's "Show" group). All activity / Finishes &amp; reviews / Ratings / Playing.</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span><strong>Recency ordering</strong>, grouped by time (Today / This week) — same as desktop. Taste-matched friends carry a "Same taste" badge but don't jump the order.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span><strong>Connect-Steam growth lever</strong> appears inline in the stream (no sidebar to host it). The friends list moves behind the header's people icon.</span></div>
+      <div class="legend-item"><span class="legend-num">7</span><span><strong>Bottom tab bar</strong> — Friends is a top-level destination, consistent with the Library page's app shell.</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="phone">
+  <div class="phone-scroll">
+
+    <div class="statusbar"><span>9:41</span><span>&#9679;&#9679;&#9679;&nbsp;&nbsp;&#9650;</span></div>
+
+    <div class="topbar">
+      <span class="topbar-title">Friends</span>
+      <span class="topbar-spacer"></span>
+      <span class="topbar-icon">&#128101;</span>
+      <span class="topbar-icon">⇅</span>
+    </div>
+
+    <!-- filter chips -->
+    <div class="chip-row">
+      <span class="chip active">All activity <span class="ann" style="margin:0 0 0 2px;">4</span></span>
+      <span class="chip">Finishes &amp; reviews</span>
+      <span class="chip">Ratings</span>
+      <span class="chip">Playing</span>
+    </div>
+
+    <div class="body">
+      <div class="time-divider">Today <span class="ann" style="margin:0 0 0 4px;">5</span></div>
+
+      <!-- Alex: headline = finished, detail = review snippet + pill, plus low-signal -->
+      <div class="digest">
+        <div class="digest-head">
+          <div class="d-av">AJ</div>
+          <div class="d-headline">
+            <div class="d-line"><strong>Alex J.</strong> just finished <strong>Elden Ring</strong> <span class="ann" style="margin:0;">1</span></div>
+            <div class="d-sub"><span class="taste-badge">Same taste</span> · 2 hours ago</div>
+          </div>
+        </div>
+
+        <div class="act">
+          <div class="act-thumb">Art</div>
+          <div class="act-body">
+            <div class="act-snippet">"Absolutely worth the grind — every death taught me something." <span class="ann" style="margin:0;">3</span></div>
+          </div>
+          <span class="sent-pill rl">Really liked it</span>
+          <span class="ann" style="margin:0;">2</span>
+        </div>
+      </div>
+
+      <!-- Maya: headline = review -->
+      <div class="digest">
+        <div class="digest-head">
+          <div class="d-av">MR</div>
+          <div class="d-headline">
+            <div class="d-line"><strong>Maya R.</strong> left a review for <strong>Hades</strong></div>
+            <div class="d-sub">5 hours ago</div>
+          </div>
+        </div>
+
+        <div class="act">
+          <div class="act-thumb">Art</div>
+          <div class="act-body">
+            <div class="act-snippet">"Tight runs and a killer soundtrack. Ran out of steam before the true ending, but no regrets."</div>
+          </div>
+          <span class="sent-pill l">Liked it</span>
+        </div>
+      </div>
+
+      <!-- Connect-Steam growth lever, inline -->
+      <div class="connect-card">
+        <div class="connect-text">Quiet feed? Import your Steam friends to see what they're playing and finishing. <span class="ann" style="margin:0;">6</span></div>
+        <div class="connect-cta"><span class="ci"></span>Connect Steam to import friends</div>
+      </div>
+
+      <div class="time-divider">This week</div>
+
+      <!-- Sam: headline = finished, plus low-signal wishlist -->
+      <div class="digest">
+        <div class="digest-head">
+          <div class="d-av">SK</div>
+          <div class="d-headline">
+            <div class="d-line"><strong>Sam K.</strong> just finished <strong>Hollow Knight</strong></div>
+            <div class="d-sub"><span class="taste-badge">Same taste</span> · Yesterday</div>
+          </div>
+        </div>
+
+        <div class="act">
+          <div class="act-thumb">Art</div>
+          <div class="act-body">
+            <div class="act-snippet">"One of the best metroidvanias, full stop. The map design alone is worth it."</div>
+          </div>
+          <span class="sent-pill rl">Really liked it</span>
+        </div>
+      </div>
+
+      <!-- Jordan: headline = added to a user-generated list -->
+      <div class="digest">
+        <div class="digest-head">
+          <div class="d-av">JP</div>
+          <div class="d-headline">
+            <div class="d-line"><strong>Jordan P.</strong> added <strong>Citizen Sleeper</strong> to <strong>Cozy night-ins</strong></div>
+            <div class="d-sub">2 days ago</div>
+          </div>
+        </div>
+
+        <div class="act">
+          <div class="act-thumb">Art</div>
+          <div class="act-body">
+            <span class="list-chip"><span class="lc"></span>Cozy night-ins · a list by Jordan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feed-end">You're all caught up · 24 friends</div>
+    </div>
+
+    <!-- bottom tab bar -->
+    <div class="tabbar">
+      <div class="tab"><div class="ti"></div>Discover</div>
+      <div class="tab"><div class="ti"></div>Library</div>
+      <div class="tab active"><div class="ti"></div>Friends <span class="ann" style="margin:0 0 0 2px;">7</span></div>
+      <div class="tab"><div class="ti"></div>Search</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="scroll-hint">↑ Each card now leads with the friend's main action; detail and lower-signal items follow. Tapping any activity opens the game; conversation happens off-platform.</div>
+
+</body>
+</html>

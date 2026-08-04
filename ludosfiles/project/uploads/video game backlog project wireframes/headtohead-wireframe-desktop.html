@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Head-to-Head "Compare Two" — Wireframe (Desktop)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; color: #111; font-size: 14px; line-height: 1.5; }
+
+  .ann { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 7px; vertical-align: middle; flex-shrink: 0; }
+  .page-meta { text-align: center; padding: 24px 0 6px; font-size: 11px; color: #AAAAAA; letter-spacing: 0.08em; text-transform: uppercase; }
+  .page-sub { text-align: center; padding: 0 24px 14px; font-size: 12px; color: #999; max-width: 820px; margin: 0 auto; line-height: 1.5; }
+
+  .legend-wrap { max-width: 1100px; margin: 0 auto 26px; padding: 0 40px; }
+  .legend-box { background: white; border: 1px solid #E0E0E0; border-radius: 10px; padding: 16px 20px; }
+  .legend-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; }
+  .legend-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; line-height: 1.5; }
+  .legend-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; background: #E8640A; color: white; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  .section-cap { max-width: 1100px; margin: 0 auto; padding: 8px 40px 14px; }
+  .section-cap .sc-k { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #888; }
+  .section-cap .sc-d { font-size: 12.5px; color: #999; margin-top: 3px; }
+
+  /* ── stage: modal over a dimmed library ── */
+  .stage { max-width: 1100px; margin: 0 auto 40px; padding: 0 40px; }
+  .viewport { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid #DCDCDC; box-shadow: 0 14px 40px rgba(0,0,0,0.10); background: #F0F0F0; }
+
+  /* dimmed library backdrop (schematic) */
+  .backdrop { padding: 0; filter: saturate(0); }
+  .bd-nav { background: #fff; height: 46px; display: flex; align-items: center; padding: 0 28px; gap: 24px; border-bottom: 1px solid #EAEAEA; }
+  .bd-logo { font-size: 12px; font-weight: 700; color: #C8C8C8; letter-spacing: 0.04em; }
+  .bd-link { font-size: 12px; color: #D2D2D2; }
+  .bd-body { padding: 22px 28px 30px; }
+  .bd-hero { border: 1.5px solid #DADADA; border-radius: 10px; height: 96px; background: #FBFBFB; margin-bottom: 18px; }
+  .bd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .bd-card { border: 1px solid #E6E6E6; border-radius: 9px; background: #fff; height: 150px; overflow: hidden; }
+  .bd-cover { height: 104px; background: #ECECEC; border-bottom: 1px solid #EEE; }
+  .bd-meta { height: 8px; background: #ECECEC; border-radius: 4px; margin: 12px 11px 0; }
+  .bd-meta.s { width: 55%; }
+
+  .scrim { position: absolute; inset: 0; background: rgba(20,20,20,0.55); }
+  .scrim-note { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,0.72); display: inline-flex; align-items: center; }
+
+  /* ── the modal ── */
+  .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 660px; max-width: calc(100% - 56px); background: #fff; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.30); overflow: hidden; }
+  .m-head { display: flex; align-items: center; gap: 12px; padding: 16px 20px 14px; border-bottom: 1px solid #EFEFEF; }
+  .m-kicker { font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #AAA; }
+  .m-title { font-size: 16px; font-weight: 700; color: #111; margin-top: 1px; }
+  .m-close { width: 28px; height: 28px; border-radius: 7px; border: 1.5px solid #E6E6E6; display: flex; align-items: center; justify-content: center; color: #999; font-size: 15px; order: -1; }
+
+  /* minimal progress cue — signals the flow is short & finite */
+  .progress { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 14px 20px 0; }
+  .progress .seg { width: 30px; height: 4px; border-radius: 2px; background: #E4E4E4; }
+  .progress .seg.done { background: #111; }
+
+  .m-body { padding: 22px 24px 20px; }
+  .duel-q { text-align: center; font-size: 20px; font-weight: 700; color: #111; margin-bottom: 22px; letter-spacing: -0.01em; }
+
+  /* Beli-style side-by-side choice — sparse, tap-the-card */
+  .duel { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; position: relative; }
+  .opt { border: 1.5px solid #D8D8D8; border-radius: 16px; padding: 20px 16px 22px; background: #fff; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
+  .opt-cover { width: 150px; max-width: 100%; aspect-ratio: 3/4; background: #D6D6D6; border: 1.5px dashed #B5B5B5; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; margin-bottom: 16px; }
+  .opt-name { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #111; }
+  .opt-genre { font-size: 13px; color: #888; margin-top: 7px; }
+  .opt-hrs { font-size: 13px; color: #888; margin-top: 5px; }
+
+  /* OR badge centered between */
+  .or-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 52px; height: 52px; border-radius: 50%; background: #1F1F1F; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; z-index: 2; box-shadow: 0 0 0 6px #fff; }
+
+  /* controls — Undo / Skip */
+  .controls { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; padding: 0 4px; }
+  .ctrl-link { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #555; }
+
+  /* intent screen (reuses the onboarding question pattern) */
+  .q-prompt { font-size: 19px; font-weight: 700; letter-spacing: -0.005em; line-height: 1.4; margin-bottom: 18px; text-align: center; }
+  .q-prompt .q-setup { font-weight: 400; color: #888; }
+  .q-opt { border: 1.5px solid #E4E4E4; border-radius: 12px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 13px; margin-bottom: 11px; cursor: pointer; }
+  .q-opt.sel { border-color: #111; border-width: 2px; padding: 13px 15px; }
+  .q-opt-ic { width: 34px; height: 34px; border-radius: 8px; background: #E6E6E6; flex-shrink: 0; }
+  .q-opt-txt .lead { font-size: 15px; font-weight: 600; color: #111; line-height: 1.3; margin-bottom: 2px; }
+  .q-opt-txt .sub { font-size: 12.5px; color: #999; line-height: 1.4; }
+  .q-axis-tag { font-size: 9.5px; color: #E8640A; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; margin-top: 5px; display: inline-block; }
+  .q-hint { font-size: 11px; color: #AAA; text-align: center; margin-top: 14px; }
+  .m-foot-cta { padding: 4px 24px 22px; display: flex; justify-content: flex-end; }
+
+  /* cold-start / empty state */
+  .opt-empty { border-style: dashed; border-color: #CFCFCF; justify-content: center; }
+  .opt-empty-ic { width: 44px; height: 44px; border-radius: 50%; border: 1.5px dashed #C4C4C4; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #BBB; margin-bottom: 12px; }
+  .opt-empty-t { font-size: 13px; color: #999; }
+  .cs-body { text-align: center; font-size: 13px; color: #888; max-width: 400px; margin: 20px auto 0; line-height: 1.5; }
+  .cs-cta { display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 20px; }
+  .cs-btn { display: inline-block; background: #111; color: #fff; border-radius: 9px; padding: 12px 22px; font-size: 13px; font-weight: 600; }
+  .cs-btn-ghost { display: inline-block; background: #fff; color: #555; border: 1.5px solid #DDD; border-radius: 9px; padding: 12px 18px; font-size: 13px; font-weight: 500; }
+
+  /* intent chip (carried from the intent screen) */
+  .time-chip { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid #E2E2E2; border-radius: 20px; padding: 6px 12px; font-size: 12px; color: #555; background: #FAFAFA; white-space: nowrap; }
+  .time-chip strong { color: #111; font-weight: 600; }
+  .time-chip .caret { color: #AAA; font-size: 10px; }
+
+  /* ── filmstrip: how the winner emerges ── */
+  .film { max-width: 1100px; margin: 0 auto 40px; padding: 0 40px; }
+  .film-box { background: #fff; border: 1px solid #E0E0E0; border-radius: 12px; padding: 20px 22px; }
+  .film-row { display: flex; align-items: stretch; gap: 12px; }
+  .film-step { flex: 1; border: 1px solid #ECECEC; border-radius: 10px; padding: 12px; background: #FBFBFB; }
+  .film-rnd { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #AAA; margin-bottom: 10px; }
+  .fs-pair { display: flex; align-items: center; gap: 8px; }
+  .fs-mini { flex: 1; text-align: center; }
+  .fs-cov { width: 100%; aspect-ratio: 3/4; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #999; margin-bottom: 5px; background: #E6E6E6; border: 1.5px dashed #C4C4C4; }
+  .fs-cov.keep { background: #111; border: 1.5px solid #111; color: #fff; }
+  .fs-cov.out { opacity: 0.4; }
+  .fs-nm { font-size: 10px; font-weight: 600; color: #333; line-height: 1.2; }
+  .fs-nm.keep { color: #111; }
+  .fs-nm.out { color: #BBB; text-decoration: line-through; }
+  .fs-vs { font-size: 9px; font-weight: 800; color: #C4C4C4; }
+  .fs-note { font-size: 10.5px; color: #999; margin-top: 9px; line-height: 1.35; }
+  .fs-note strong { color: #444; }
+  .film-arrow { display: flex; align-items: center; font-size: 18px; color: #CFCFCF; }
+  .film-result { flex: 0 0 150px; border: 1.5px solid #111; border-radius: 10px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .film-result .fr-cap { font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #999; margin-bottom: 8px; }
+  .film-result .fr-cov { width: 64px; aspect-ratio: 3/4; background: #111; border-radius: 6px; margin-bottom: 8px; }
+  .film-result .fr-nm { font-size: 13px; font-weight: 700; }
+  .film-result .fr-sub { font-size: 10px; color: #999; margin-top: 2px; }
+
+  /* ── outcome ── */
+  .outcome-wrap { max-width: 1100px; margin: 0 auto 40px; padding: 0 40px; display: flex; justify-content: center; }
+  .oc { background: #fff; border: 1px solid #E0E0E0; border-radius: 14px; overflow: hidden; width: 460px; max-width: 100%; }
+  .oc-head { padding: 12px 18px; border-bottom: 1px solid #F0F0F0; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #999; display: flex; align-items: center; }
+  .oc-body { padding: 26px 20px; }
+
+  .verdict-hero { text-align: center; }
+  .vh-cover { width: 132px; aspect-ratio: 3/4; background: #D6D6D6; border: 1.5px dashed #B5B5B5; border-radius: 10px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; }
+  .vh-title { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  .vh-meta { font-size: 12px; color: #999; margin-top: 4px; margin-bottom: 16px; }
+  .vh-reason { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: #333; background: #F4F4F4; border-radius: 20px; padding: 8px 16px; margin-bottom: 20px; }
+  .vh-reason strong { color: #111; font-weight: 700; }
+  .vh-actions { display: flex; gap: 9px; justify-content: center; }
+  .vh-btn { border-radius: 9px; padding: 11px 18px; font-size: 13px; font-weight: 500; background: #fff; color: #555; border: 1.5px solid #DDD; }
+</style>
+</head>
+<body>
+
+<div class="page-meta">Wireframe — Head-to-Head "Compare Two" flow — Desktop (1200px)</div>
+<div class="page-sub">The Library's "compare two" path for deciding <strong>what to play</strong>. First you set an <strong>intent</strong> ("what are you in the mood for?"), which scopes the pool; then two sparse, name-forward cards face off with an <strong>OR</strong> badge — tap the one you prefer and the next pairing loads. The winner stays; the unchosen card is replaced by the next game in line. Opens as a <strong>modal over a dimmed Library</strong>. Grayscale lo-fi.</div>
+
+<div class="legend-wrap">
+  <div class="legend-box">
+    <div class="legend-title">Annotations — how the compare flow works</div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">1</span><span><strong>Modal over a dimmed Library.</strong> The flow is a focused aside, not a separate destination — Library stays visible behind the scrim so the user never loses their place. Closing returns them exactly where they were.</span></div>
+      <div class="legend-item"><span class="legend-num">2</span><span><strong>Tap the card you prefer — the card is the choice</strong> (no buttons inside it). The winner stays put; the unchosen game is replaced by the next in line, so the running winner keeps facing fresh challengers until one game is left standing.</span></div>
+      <div class="legend-item"><span class="legend-num">3</span><span><strong>Cards are deliberately sparse</strong> — cover, name, genre, time-to-finish, nothing else. The trust signals (match · fits-time · friends) were removed: head-to-head is a half-second gut pick, not a research task, and reading kills the speed Beli's pattern depends on.</span></div>
+      <div class="legend-item"><span class="legend-num">4</span><span><strong>Undo / Skip — minimal controls.</strong> Undo steps back a pairing; Skip passes on this matchup. No scores or stars anywhere.</span></div>
+      <div class="legend-item"><span class="legend-num">5</span><span><strong>The winner reveals as your pick</strong>, with a one-line "why it won." This is the payoff — a single confident answer pulled out of a stalled backlog.</span></div>
+      <div class="legend-item"><span class="legend-num">6</span><span><strong>Short by design.</strong> The flow auto-stops the moment a game wins <strong>3 in a row</strong> (or after a <strong>5-compare cap</strong>), seeded best-match-first with the just-rejected hero pick excluded. The progress ticks up top show how short it is — no endless gauntlet.</span></div>
+      <div class="legend-item"><span class="legend-num">7</span><span><strong>The chip = your chosen intent.</strong> Carried in from the intent screen ("Fast &amp; fun"), it scopes the pool and is tappable to switch. It replaces a raw duration filter — intent already encompasses how much time you want to spend.</span></div>
+      <div class="legend-item"><span class="legend-num">8</span><span><strong>Intent leads the flow.</strong> Before any pairing, "What are you in the mood for?" scopes the pool by genre + time-commitment (a fast loop vs. progress in a big game), so the cards face off on like terms. Orange tags show each option's internal filter (wireframe-only).</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ARTIFACT 1 — set your intent ════════ -->
+<div class="section-cap">
+  <div class="sc-k">1 · Set your intent</div>
+  <div class="sc-d">A single intent question opens the flow (reuses the onboarding question pattern). It scopes the pool by genre + time-commitment, so the duel compares games of the same kind. Then "Start comparing."</div>
+</div>
+
+<div class="stage">
+  <div class="viewport">
+    <div class="backdrop">
+      <div class="bd-nav"><span class="bd-logo">LEVELUP</span><span class="bd-link">Discover</span><span class="bd-link">Library</span><span class="bd-link">Friends</span><span class="bd-link">Search</span></div>
+      <div class="bd-body">
+        <div class="bd-hero"></div>
+        <div class="bd-grid">
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="scrim"></div>
+
+    <div class="modal">
+      <div class="m-head">
+        <div class="m-close">✕</div>
+        <div>
+          <div class="m-kicker">Compare two · step 1 of 2</div>
+          <div class="m-title">Set your intent</div>
+        </div>
+      </div>
+
+      <div class="m-body">
+        <div class="q-prompt"><span class="q-setup">Before we compare —</span> what are you in the mood for right now? <span class="ann">8</span></div>
+
+        <div class="q-opt sel">
+          <span class="q-opt-ic"></span>
+          <div class="q-opt-txt">
+            <div class="lead">Something fast &amp; fun</div>
+            <span class="q-axis-tag">→ One session · short bursts</span>
+          </div>
+        </div>
+        <div class="q-opt">
+          <span class="q-opt-ic"></span>
+          <div class="q-opt-txt">
+            <div class="lead">Chip away at a big game</div>
+            <span class="q-axis-tag">→ Ongoing · long haul</span>
+          </div>
+        </div>
+        <div class="q-opt">
+          <span class="q-opt-ic"></span>
+          <div class="q-opt-txt">
+            <div class="lead">Get lost in a story</div>
+            <span class="q-axis-tag">→ Focused · narrative</span>
+          </div>
+        </div>
+        <div class="q-opt">
+          <span class="q-opt-ic"></span>
+          <div class="q-opt-txt">
+            <div class="lead">Something chill</div>
+            <span class="q-axis-tag">→ Flexible · cozy</span>
+          </div>
+        </div>
+
+        <div class="q-hint">Orange tags = the genre + time filter each choice applies (wireframe-only)</div>
+      </div>
+
+      <div class="m-foot-cta"><span class="cs-btn">Start comparing →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ARTIFACT 2 — the live duel ════════ -->
+<div class="section-cap">
+  <div class="sc-k">2 · The live duel</div>
+  <div class="sc-d">Pairs run off your Want list — within your chosen intent, best-match first, minus the pick you just passed on.</div>
+</div>
+
+<div class="stage">
+  <div class="viewport">
+    <!-- dimmed library backdrop -->
+    <div class="backdrop">
+      <div class="bd-nav"><span class="bd-logo">LEVELUP</span><span class="bd-link">Discover</span><span class="bd-link">Library</span><span class="bd-link">Friends</span><span class="bd-link">Search</span></div>
+      <div class="bd-body">
+        <div class="bd-hero"></div>
+        <div class="bd-grid">
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="scrim"></div>
+    <div class="scrim-note">Library stays behind the scrim — closing returns you here <span class="ann">1</span></div>
+
+    <!-- the modal -->
+    <div class="modal">
+      <div class="m-head">
+        <div class="m-close">✕</div>
+        <div>
+          <div class="m-kicker">Compare two</div>
+          <div class="m-title">Narrow to one</div>
+        </div>
+        <span class="time-chip" style="margin-left:auto;"><strong>Fast &amp; fun</strong> <span class="caret">▾</span> <span class="ann">7</span></span>
+      </div>
+
+      <div class="progress">
+        <span class="seg done"></span><span class="seg done"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
+        <span class="ann">6</span>
+      </div>
+
+      <div class="m-body">
+        <div class="duel-q">Which would you rather play right now?</div>
+
+        <div class="duel">
+          <div class="opt">
+            <div class="opt-cover">Cover</div>
+            <div class="opt-name">Hades</div>
+            <div class="opt-genre">Roguelike <span class="ann">3</span></div>
+            <div class="opt-hrs">~21 hrs</div>
+          </div>
+          <div class="or-badge">OR<span class="ann" style="position:absolute;top:-6px;right:-22px;">2</span></div>
+          <div class="opt">
+            <div class="opt-cover">Cover</div>
+            <div class="opt-name">Slay the Spire</div>
+            <div class="opt-genre">Deckbuilder</div>
+            <div class="opt-hrs">~24 hrs</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <span class="ctrl-link">↩ Undo</span>
+          <span class="ctrl-link">Skip → <span class="ann">4</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ FILMSTRIP — how the winner emerges ════════ -->
+<div class="section-cap">
+  <div class="sc-k">Mechanic · how the winner emerges</div>
+  <div class="sc-d">A static frame can't animate the loop, so here it is unrolled: the winner stays and faces the next game in line. The moment a game wins <strong>3 in a row</strong> it's your pick — or a <strong>5-compare cap</strong> ends it, whichever comes first.</div>
+</div>
+
+<div class="film">
+  <div class="film-box">
+    <div class="film-row">
+      <div class="film-step">
+        <div class="film-rnd">Round 1</div>
+        <div class="fs-pair">
+          <div class="fs-mini"><div class="fs-cov keep">keep</div><div class="fs-nm keep">Hades</div></div>
+          <div class="fs-vs">VS</div>
+          <div class="fs-mini"><div class="fs-cov out">out</div><div class="fs-nm out">Dead Cells</div></div>
+        </div>
+        <div class="fs-note"><strong>Hades wins</strong> → streak: 1</div>
+      </div>
+      <div class="film-arrow">→</div>
+      <div class="film-step">
+        <div class="film-rnd">Round 2</div>
+        <div class="fs-pair">
+          <div class="fs-mini"><div class="fs-cov keep">keep</div><div class="fs-nm keep">Hades</div></div>
+          <div class="fs-vs">VS</div>
+          <div class="fs-mini"><div class="fs-cov out">out</div><div class="fs-nm out">Vampire Survivors</div></div>
+        </div>
+        <div class="fs-note">Wins again → streak: 2</div>
+      </div>
+      <div class="film-arrow">→</div>
+      <div class="film-step">
+        <div class="film-rnd">Round 3</div>
+        <div class="fs-pair">
+          <div class="fs-mini"><div class="fs-cov keep">keep</div><div class="fs-nm keep">Hades</div></div>
+          <div class="fs-vs">VS</div>
+          <div class="fs-mini"><div class="fs-cov out">out</div><div class="fs-nm out">Slay the Spire</div></div>
+        </div>
+        <div class="fs-note">Third straight → <strong>streak: 3 ✓</strong></div>
+      </div>
+      <div class="film-arrow">→</div>
+      <div class="film-result">
+        <div class="fr-cap">3 in a row</div>
+        <div class="fr-cov"></div>
+        <div class="fr-nm">Hades</div>
+        <div class="fr-sub">your pick · or a 5-compare cap</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ OUTCOME ════════ -->
+<div class="section-cap">
+  <div class="sc-k">3 · Outcome — the winning pick</div>
+  <div class="sc-d">The last game standing is revealed with a one-line reason it won.</div>
+</div>
+
+<div class="outcome-wrap">
+  <div class="oc">
+    <div class="oc-head">The winner <span class="ann" style="margin:0 0 0 7px;">5</span></div>
+    <div class="oc-body">
+      <div class="verdict-hero">
+        <div class="vh-cover">Cover</div>
+        <div class="vh-title">Hades</div>
+        <div class="vh-meta">Roguelike · PC / Switch · ~21 hrs to finish</div>
+        <div class="vh-reason">Won <strong>3 head-to-heads</strong> in a row</div>
+        <div class="vh-actions">
+          <span class="vh-btn">↻ Keep comparing</span>
+          <span class="vh-btn">Back to library</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ COLD-START — not enough to compare ════════ -->
+<div class="section-cap">
+  <div class="sc-k">4 · Cold-start — not enough to compare</div>
+  <div class="sc-d">Reached when fewer than two Want-list games fit the chosen intent. The Library entry is gated for thin/new backlogs, so this in-flow screen mainly covers the intent-too-narrow and deep-link cases — and offers a different intent or a hand-off to Discover, the platform's standard cold-start lever.</div>
+</div>
+
+<div class="stage">
+  <div class="viewport">
+    <div class="backdrop">
+      <div class="bd-nav"><span class="bd-logo">LEVELUP</span><span class="bd-link">Discover</span><span class="bd-link">Library</span><span class="bd-link">Friends</span><span class="bd-link">Search</span></div>
+      <div class="bd-body">
+        <div class="bd-hero"></div>
+        <div class="bd-grid">
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+          <div class="bd-card"><div class="bd-cover"></div><div class="bd-meta"></div><div class="bd-meta s"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="scrim"></div>
+
+    <div class="modal" style="width:560px;">
+      <div class="m-head">
+        <div class="m-close">✕</div>
+        <div>
+          <div class="m-kicker">Compare two</div>
+          <div class="m-title">Add games to compare</div>
+        </div>
+        <span class="time-chip" style="margin-left:auto;"><strong>Fast &amp; fun</strong> <span class="caret">▾</span></span>
+      </div>
+
+      <div class="m-body">
+        <div class="duel">
+          <div class="opt">
+            <div class="opt-cover">Cover</div>
+            <div class="opt-name">Hades</div>
+            <div class="opt-genre">Roguelike</div>
+            <div class="opt-hrs">~21 hrs</div>
+          </div>
+          <div class="or-badge">OR</div>
+          <div class="opt opt-empty">
+            <div class="opt-empty-ic">+</div>
+            <div class="opt-empty-t">Add a game</div>
+          </div>
+        </div>
+        <div class="cs-body">Only one of your Want-list games fits <strong>Fast &amp; fun</strong> right now. Try a different intent, or add more games to compare.</div>
+        <div class="cs-cta">
+          <span class="cs-btn">Change your intent</span>
+          <span class="cs-btn-ghost">Browse Discover →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;font-size:11px;color:#BBB;padding:6px 24px 50px;max-width:820px;margin:0 auto;line-height:1.5;">
+  Set an intent, then tap to compare; the winner survives each round, and the last game standing is what you play. Sparse cards, no scores, no stars.
+</div>
+
+</body>
+</html>

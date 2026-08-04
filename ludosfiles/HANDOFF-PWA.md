@@ -104,8 +104,8 @@ Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
 ## Verified state
 
 - `npm run build` clean, `npm run typecheck` clean
-- All **29 smoke checks pass**, zero console errors (as of the 1a work: 34 checks,
-  five of them covering persistence — not re-run since, see below)
+- All **34 smoke checks pass**, zero console errors (29 original, plus five
+  covering the 1a persistence work)
 - Fonts confirmed loading (not silently falling back)
 
 ---

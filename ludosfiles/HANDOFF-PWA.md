@@ -61,6 +61,7 @@ src/
     types.ts             State shape
     reducer.ts           Pure transitions
     useLudos.ts          Timers, toasts, scroll orchestration
+    persistence.ts       Versioned localStorage save (hydrate + write)
   data/
     games.ts             GAMES, SEED, PLAYED_DB, intents
     content.ts           Rails, reviews, taste axes, copy
@@ -92,7 +93,7 @@ public/
 | `npm run dev` | Dev server |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run typecheck` | Types only |
-| `npm run smoke` | 29-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
+| `npm run smoke` | 34-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
 | `npm run covers` | Rebuild cover manifest after adding art to `public/covers/` |
 | `npm run pack` | Single self-contained `preview.html` (gitignored) |
 | `npm run fonts` | Re-download self-hosted webfonts |
@@ -103,14 +104,22 @@ Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
 ## Verified state
 
 - `npm run build` clean, `npm run typecheck` clean
-- All **29 smoke checks pass**, zero console errors
+- All **29 smoke checks pass**, zero console errors (as of the 1a work: 34 checks,
+  five of them covering persistence — not re-run since, see below)
 - Fonts confirmed loading (not silently falling back)
 
 ---
 
 # Task 1 — Progressive Web App
 
-## 1a. State persistence — do this first
+## 1a. State persistence — ✅ done
+
+Implemented in `src/state/persistence.ts`; see the "Saved state" section of the
+README. Hydration runs through `useReducer`'s init argument, the write is a
+memoized effect in `useLudos.ts`, the payload is versioned and re-validated
+field-by-field on read, and `?reset` wipes the save. `State` gained a sticky
+`onboardingComplete` flag, set by `flow/enterHome`. The original problem, for
+reference:
 
 **This is the real blocker, not the PWA plumbing.** All state lives in a
 `useReducer` in memory and `initialState.flow` is hardcoded to `'onboarding'`

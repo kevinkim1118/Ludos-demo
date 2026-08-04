@@ -51,6 +51,8 @@ export interface State {
   flow: Flow;
 
   // onboarding
+  /** Sticky once the user enters Ludos — drives boot straight to Discover. */
+  onboardingComplete: boolean;
   obStep: ObStep;
   played: Record<string, true>;
   playedQuery: string;

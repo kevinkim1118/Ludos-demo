@@ -15,6 +15,7 @@ import {
 export const initialState: State = {
   flow: 'onboarding',
 
+  onboardingComplete: false,
   obStep: 'intro1',
   played: {},
   playedQuery: '',
@@ -214,7 +215,7 @@ export function reducer(state: State, action: Action): State {
       return { ...state, backlog: { ...state.backlog, [action.k]: !state.backlog[action.k] } };
 
     case 'flow/enterHome':
-      return { ...state, flow: 'home' };
+      return { ...state, flow: 'home', onboardingComplete: true };
 
     case 'flow/goCompare':
       return { ...state, flow: 'h2h', h2hScreen: 'intent', statusMenu: false };

@@ -65,7 +65,7 @@ The Library / Friends / Search / Profile tabs are stubs that report
 ```
 src/
   config.ts              Values that were "Tweaks" panel props
-  state/                 The state machine (reducer + timers/effects hook)
+  state/                 The state machine (reducer + timers/effects hook + save)
   data/                  Games, editorial content, generated cover manifest
   components/            Cover, PhoneShell, BottomSheet, Toast, icons
   screens/
@@ -80,6 +80,29 @@ src/
 State lives in one reducer (`src/state/reducer.ts`) with pure transitions;
 anything involving a timer — toasts, sheet exit animations, the duel's
 resolve beat — is orchestrated in `src/state/useLudos.ts`.
+
+## Saved state
+
+`src/state/persistence.ts` mirrors the durable slice of state to `localStorage`
+under `ludos.state`, so a reload — or a cold launch of the installed app —
+doesn't replay onboarding or lose what you're playing.
+
+Saved: `onboardingComplete`, `backlog`, `itemStatus`, `upNext`, `playingItem`,
+`played`. Deliberately **not** saved: sheets, toasts, the in-flight duel, and
+every other transient flag, so a launch never restores a half-open overlay.
+
+The payload carries a version (`{ v: 1, … }`) and a save written by any other
+version is discarded rather than migrated — bump `VERSION` whenever the shape
+changes and old saves retire themselves. Individual fields are re-validated on
+read too: the store is user-editable, so a malformed value degrades to its
+default instead of crashing the boot.
+
+The reducer stays pure. Hydration happens through `useReducer`'s init argument;
+the write is an effect in `useLudos.ts`, memoized on the saved fields so a toast
+or a duel frame doesn't touch `localStorage`.
+
+**`?reset` wipes the save** and starts over at onboarding — the only way back
+once it's complete.
 
 ## The phone frame
 
@@ -150,4 +173,5 @@ Replaces the prototype's "Jump to screen" tweak — handy for review:
 ?screen=onboarding:intro1 | intro2 | intro3 | intro4 | played | reading | result | done
 ?screen=home:discover | home:playing
 ?screen=h2h:intent | duel | outcome | cold
+?reset                 Wipe saved state and start at onboarding
 ```

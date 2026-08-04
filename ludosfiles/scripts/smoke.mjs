@@ -1,9 +1,18 @@
+import { existsSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { chromium } from 'playwright';
 
-const OUT = '/tmp/claude-0/-home-claude-repo/14c9009e-ea44-5f6c-a9e1-65c984ac57b3/scratchpad';
+const OUT = process.env.SMOKE_OUT ?? join(tmpdir(), 'ludos-smoke');
+mkdirSync(OUT, { recursive: true });
+
 const BASE = process.env.BASE_URL ?? 'http://localhost:5173';
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+// Falls back to whatever `npx playwright install chromium` put on this machine.
+const BROWSER = process.env.CHROMIUM_PATH ?? '/opt/pw-browsers/chromium';
+const browser = await chromium.launch(
+  existsSync(BROWSER) ? { executablePath: BROWSER } : {},
+);
 const page = await browser.newPage({ viewport: { width: 430, height: 900 } });
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
@@ -116,10 +125,32 @@ ok('second duel starts', await has('Which would you rather play?'));
 for (let i = 0; i < 5 && (await has('Which would you rather play?')); i++) await pickLeft();
 ok('streak path resolves', await has('Your pick to play next'));
 
-await page.getByRole('button', { name: /Mark .* as playing/ }).click();
+const markBtn = page.getByRole('button', { name: /Mark .* as playing/ });
+const winner = (await markBtn.innerText()).replace(/^Mark\s+|\s+as playing$/gi, '').trim();
+await markBtn.click();
 await page.waitForTimeout(700);
 ok('winner lands on Discover as playing', (await text()).includes('Currently playing'));
 await page.screenshot({ path: `${OUT}/flow-final.png` });
+
+// ── Persistence across a cold load ────────────────────────────
+// The point of the localStorage save: an installed app must not replay
+// onboarding, and must not forget what's in flight.
+await page.reload({ waitUntil: 'networkidle' });
+await page.waitForTimeout(600);
+ok('reload does not replay onboarding', !(await has('Welcome to Ludos')));
+ok('reload lands on Discover', await has('Currently playing'));
+ok('reload keeps the playing game', (await text()).includes(winner));
+
+// The pick card can only offer "From your Backlog" if the backlog survived too.
+await page.getByRole('button', { name: 'Update Status' }).click();
+await page.waitForTimeout(250);
+await page.getByRole('button', { name: 'Move to backlog' }).click();
+await page.waitForTimeout(400);
+ok('reload keeps the backlog', await has('From your Backlog'));
+
+await page.goto(`${BASE}/?reset`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(400);
+ok('?reset returns to onboarding', await has('Welcome to Ludos'));
 
 // ── Desktop framing ───────────────────────────────────────────
 await page.setViewportSize({ width: 1200, height: 1000 });

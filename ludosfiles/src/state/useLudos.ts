@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { GAMES, type Intent } from '../data/games';
+import { hydrate, serialize, write } from './persistence';
 import {
   activePickName,
   backlogGames,
@@ -44,7 +45,34 @@ type TimerKey =
   | 'scroll';
 
 export function useLudos() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState, hydrate);
+
+  // Only the durable slice is serialized, and only when one of its fields
+  // actually changes — otherwise every toast and duel frame would hit
+  // localStorage synchronously.
+  const payload = useMemo(
+    () =>
+      serialize({
+        onboardingComplete: state.onboardingComplete,
+        backlog: state.backlog,
+        itemStatus: state.itemStatus,
+        upNext: state.upNext,
+        playingItem: state.playingItem,
+        played: state.played,
+      }),
+    [
+      state.onboardingComplete,
+      state.backlog,
+      state.itemStatus,
+      state.upNext,
+      state.playingItem,
+      state.played,
+    ],
+  );
+
+  useEffect(() => {
+    write(payload);
+  }, [payload]);
 
   // Mirrors the class component's `this.state` — lets action creators read the
   // current state without re-binding every callback on each render.

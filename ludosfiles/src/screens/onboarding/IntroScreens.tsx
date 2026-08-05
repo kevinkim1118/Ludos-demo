@@ -18,6 +18,18 @@ const heading = {
   textWrap: 'balance',
 } as const;
 
+/**
+ * Marquee sizing. The rows are the only part of the intro that can afford to
+ * give up space, so they're the flexible element: the block asks for its full
+ * height and shrinks from there, rather than holding 556px and pushing the
+ * heading out of a short viewport. Safari's toolbar alone is enough to make a
+ * phone that tall unavailable.
+ */
+const COVER_W = 128;
+const COVER_H = 176;
+const ROW_GAP = 14;
+const MARQUEE_H = MARQUEE_ROWS.length * COVER_H + (MARQUEE_ROWS.length - 1) * ROW_GAP;
+
 /** 1 · Welcome. */
 export function IntroWelcome() {
   return (
@@ -72,11 +84,22 @@ export function IntroDiscover() {
   return (
     <div style={{ ...screenBase, padding: '26px 0 12px', overflow: 'hidden' }}>
       <div style={{ flex: 1 }} />
-      <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div
+        style={{
+          // Asks for its full height, yields it before the heading does.
+          flex: `0 1 ${MARQUEE_H}px`,
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: ROW_GAP,
+        }}
+      >
         {MARQUEE_ROWS.map((row, i) => (
           <div
             key={i}
             style={{
+              flex: '1 1 0',
+              minHeight: 0,
               overflow: 'hidden',
               maskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
               WebkitMaskImage:
@@ -87,7 +110,8 @@ export function IntroDiscover() {
               className="marquee-strip"
               style={{
                 display: 'flex',
-                gap: 14,
+                gap: ROW_GAP,
+                height: '100%',
                 width: 'max-content',
                 animation: `marqueeLeft ${row.duration} linear infinite`,
               }}
@@ -99,8 +123,10 @@ export function IntroDiscover() {
                     key={`${copy}-${slot}`}
                     id={slot}
                     style={{
-                      width: 128,
-                      height: 176,
+                      // Height comes from the row; the ratio keeps the width.
+                      height: '100%',
+                      width: 'auto',
+                      aspectRatio: `${COVER_W} / ${COVER_H}`,
                       flex: 'none',
                       background: 'var(--surface-2)',
                       border: '1px solid var(--border)',

@@ -174,7 +174,32 @@ await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(600);
 const frame = await page.locator('.phone').boundingBox();
 ok('desktop keeps 430px device frame', Math.round(frame.width) === 430);
+ok('tall desktop keeps the full 868px screen', Math.round(frame.height) === 890);
 await page.screenshot({ path: `${OUT}/desktop.png` });
+
+// A laptop viewport is shorter than the 938px the frame wants. It has to fit
+// rather than push the tab bar below the fold.
+await page.setViewportSize({ width: 1200, height: 760 });
+await page.waitForTimeout(400);
+const short = await page.locator('.phone').boundingBox();
+const overflow = await page.evaluate(
+  () => document.documentElement.scrollHeight - window.innerHeight,
+);
+ok('short desktop fits the frame in the viewport', short.y + short.height <= 760);
+ok('short desktop needs no page scroll', overflow <= 0);
+
+// ── Intro carousel on a short screen ──────────────────────────
+// The marquee has to give up height so the heading underneath stays readable.
+await page.setViewportSize({ width: 440, height: 730 });
+await page.goto(`${BASE}/?reset&screen=onboarding:intro2`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(700);
+const clipped = await page.evaluate(() => {
+  const h2 = document.querySelector('h2');
+  const scroller = document.querySelector('.scroll-y');
+  if (!h2 || !scroller) return null;
+  return h2.getBoundingClientRect().bottom > scroller.getBoundingClientRect().bottom + 0.5;
+});
+ok('intro heading is not clipped on a short screen', clipped === false);
 
 console.log(errors.length ? `\nPAGE ERRORS:\n${errors.join('\n')}` : '\nno page errors');
 await browser.close();

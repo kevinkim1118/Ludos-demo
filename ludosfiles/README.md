@@ -113,6 +113,19 @@ prototype; below 540px the frame and fake status bar drop away and the app runs
 full-bleed at `100dvh` against the real device chrome, with safe-area insets for
 notches. See the media query in `src/styles/app.css`.
 
+The frame is `min(868px, 100dvh - 70px)` tall, not a flat 868. At full height it
+also carries the phone's 11px bezel and the backdrop's 24px gutter — 938px in
+total, which overflows a laptop viewport and leaves the tab bar below the fold.
+Shortening the screen keeps the whole device visible without scaling the UI down
+and blurring it.
+
+Screens therefore can't assume 868px of height. The onboarding carousel is the
+one that had to give: its three marquee rows are the flexible element, sized
+`flex: 0 1 <full height>` so they shrink before the heading beneath them gets
+pushed out. Covers take their height from the row and hold shape with
+`aspect-ratio`. On a phone, Safari's toolbar alone is enough to make the full
+height unavailable.
+
 ## Fonts
 
 The design's two faces — **Familjen Grotesk** (UI) and **Newsreader** (the

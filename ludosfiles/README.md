@@ -221,9 +221,29 @@ look at it.
 
 ## Deploying
 
-Static build, no server. On Vercel: framework preset **Vite**, build
-`npm run build`, output `dist/`. `public/` is copied as-is, so cover art ships
-with it.
+Static build, no server, no environment variables. `public/` is copied as-is,
+so cover art, fonts and icons ship with it. Nothing loads from a CDN at runtime,
+so it works on a restricted network.
+
+**On Vercel, set the Root Directory to `ludosfiles`.** The repo wraps the app in
+a subdirectory — `package.json` and `vite.config.ts` are not at the repo root —
+and the build fails to find a project otherwise. Everything else comes from
+[`vercel.json`](vercel.json): framework, install and build commands, output
+directory, and cache headers. Node is pinned to 22 via `engines` in
+`package.json`.
+
+The cache headers exist because a service worker changes what a stale cache
+costs. JSON can't hold comments, so the reasoning lives here:
+
+| Path | Policy | Why |
+| --- | --- | --- |
+| `sw.js`, `registerSW.js`, `manifest.webmanifest` | `max-age=0, must-revalidate` | Fixed filenames. A cached service worker is never re-fetched, so the app can't discover it has updated — `autoUpdate` can't rescue a worker the browser won't re-request |
+| `/` | `max-age=0, must-revalidate` | The entry point. Its asset URLs are hashed, so revalidating this one document is what lets a new build reach anyone |
+| `assets/*`, `workbox-*`, `fonts/*` | 1 year, `immutable` | Content-hashed by Vite, or (fonts) effectively never changing |
+| `covers/*`, `images/*`, `icons/*`, `splash/*` | 1 day + 7 day `stale-while-revalidate` | Artwork keeps its filename when replaced — a new `hades-ii.webp` reuses the same URL — so `immutable` would mean new art never reaches anyone |
+
+There's deliberately **no catch-all rewrite**. The app has no client-side
+routes, so an unknown path should 404 rather than silently serve the shell.
 
 ## `?screen=` deep links
 

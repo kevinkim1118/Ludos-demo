@@ -10,6 +10,7 @@
     "typecheck": "tsc -b --noEmit",
     "smoke": "node scripts/smoke.mjs",
     "covers": "node scripts/gen-manifest.mjs",
+    "icons": "node scripts/gen-icons.mjs",
     "fonts": "node scripts/fetch-fonts.mjs",
     "pack": "npm run build && node scripts/pack-single.mjs"
   },
@@ -22,7 +23,9 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.0",
     "playwright": "^1.62.1",
+    "sharp": "^0.35.3",
     "typescript": "^5.9.0",
-    "vite": "^7.1.0"
+    "vite": "^7.1.0",
+    "vite-plugin-pwa": "^1.3.0"
   }
 }

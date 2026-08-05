@@ -23,6 +23,7 @@ npm run dev        # http://localhost:5173
 | `npm run typecheck` | Types only |
 | `npm run smoke` | End-to-end walkthrough (needs `npm run dev` running; set `BASE_URL` to retarget) |
 | `npm run covers` | Rebuild the cover manifest after adding art to `public/covers/` |
+| `npm run icons` | Regenerate the app icons from `brand/logo.*` |
 | `npm run pack` | Build a single self-contained `preview.html` — opens anywhere, no server |
 | `npm run fonts` | Re-download the self-hosted webfonts |
 
@@ -158,6 +159,40 @@ framed and carry no crop.
 
 Slots with no artwork by design: `cv-review-*` avatars render initials, and Stray
 has no cover anywhere in the handoff. `<Cover>` falls back gracefully.
+
+## Installable app
+
+`vite-plugin-pwa` generates `manifest.webmanifest` and a Workbox service
+worker at build time. Nothing to configure per environment — see
+`vite.config.ts`.
+
+**Icons** are generated from `brand/logo.svg` (or `.png`), which lives outside
+`public/` so the full-size original never ships:
+
+```bash
+npm run icons
+```
+
+Four outputs into `public/icons/`, because the platforms disagree about what an
+icon is: transparent 192 and 512 for the manifest's `any` purpose, a padded
+opaque `maskable` variant, and an opaque 180 for iOS. The generator trims the
+source's own margin first and derives the maskable scale from the mark's aspect
+ratio, so the safe zone is respected whatever shape the logo is.
+
+**What's precached** (~708 KB): the JS/CSS shell, `index.html`, the six
+self-hosted fonts, the icons, and the Ludos logo. **Cover art is not** — at
+1.6 MB it would more than triple the precache. So the app shell runs offline,
+but covers need the network until a runtime caching strategy is added.
+
+`registerType` is `autoUpdate`: a new build activates on next load rather than
+waiting on a prompt. There's no "new version available" UI yet, and without one
+a stale worker would pin users to an old build with no way out.
+
+To test it, you need a real build — the service worker is off in `npm run dev`:
+
+```bash
+npm run build && npm run preview
+```
 
 ## Deploying
 

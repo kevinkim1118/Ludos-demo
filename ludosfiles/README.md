@@ -140,12 +140,15 @@ Two sources, in priority order:
 2. **`public/images/<slot>.webp`** — the art exported from the design tool, used
    for anything without a drop-in.
 
-**The exported art is low-resolution.** It was recompressed three times inside
-the design tool to fit under a 2 MB storage cap, leaving covers ~240 px tall —
-about 2× too small for a 3× phone screen, and 2.8× short at the head-to-head
-outcome. The originals didn't survive; the editor sidecar is byte-identical.
-Replacing them means supplying new art at 600 × 900, which is what the drop-in
-folder is for. `npm run covers` reports which games are still on exported art.
+**Every registry key now has a 600 × 900 drop-in**, so nothing falls back to the
+exported art any more. What's left in `public/images/` is the 18 decorative
+marquee tiles on the onboarding screen, which no registry entry claims.
+
+The exports were low-resolution for a reason worth remembering: they were
+recompressed three times inside the design tool to fit under a 2 MB storage cap,
+leaving covers ~240 px tall — about 2× too small for a 3× phone screen, and 2.8×
+short at the head-to-head outcome. `npm run covers` reports any key that slips
+back onto them.
 
 One drop-in replaces every slot for a game at once, which also resolves the
 duplicate-slot-id problem from the original prototype, where the same title was
@@ -157,8 +160,9 @@ cover, then pan by a percentage of the box, clamped to the image's actual
 overflow so a crop never exposes background. Drop-ins are assumed correctly
 framed and carry no crop.
 
-Slots with no artwork by design: `cv-review-*` avatars render initials, and Stray
-has no cover anywhere in the handoff. `<Cover>` falls back gracefully.
+Slots with no artwork by design: the `cv-review-*` avatars render initials.
+`<Cover>` falls back gracefully. (Stray used to be the other gap — `cv-pick-stray`
+and `cv-h2h-stray` had nothing at all until the drop-ins landed.)
 
 ## Installable app
 
@@ -194,6 +198,27 @@ To test it, you need a real build — the service worker is off in `npm run dev`
 npm run build && npm run preview
 ```
 
+### iOS
+
+Safari ignores most of the manifest, so installability is spelled out in
+`index.html` instead: `apple-touch-icon`, `mobile-web-app-capable` (and the
+older prefixed spelling), `black-translucent` status bar, and the home-screen
+title.
+
+`npm run icons` also emits **11 portrait launch images** into `public/splash/`
+and writes their `<link>` tags into `index.html` between `GENERATED` markers —
+don't hand-edit those. Safari matches a launch image only when the media query
+hits the device's CSS size *and* pixel ratio exactly, with no fallback and no
+scaling, so a device missing from `scripts/lib/ios-devices.mjs` gets the plain
+white flash instead. Add it there and re-run. They ship but are **not**
+precached: iOS fetches them when the app is added to the home screen.
+
+iOS has no install prompt — `beforeinstallprompt` is Chrome-only — so
+`IosInstallHint` points at Share → Add to Home Screen. It shows once, on
+Discover rather than mid-onboarding, only in Safari on iOS, and never once
+installed. **`?hint` forces it on any device** so you don't need an iPhone to
+look at it.
+
 ## Deploying
 
 Static build, no server. On Vercel: framework preset **Vite**, build
@@ -209,4 +234,5 @@ Replaces the prototype's "Jump to screen" tweak — handy for review:
 ?screen=home:discover | home:playing
 ?screen=h2h:intent | duel | outcome | cold
 ?reset                 Wipe saved state and start at onboarding
+?hint                  Force the iOS "Add to Home Screen" hint on any device
 ```

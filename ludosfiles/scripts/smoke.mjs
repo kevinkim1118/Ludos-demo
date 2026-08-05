@@ -152,6 +152,22 @@ await page.goto(`${BASE}/?reset`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 ok('?reset returns to onboarding', await has('Welcome to Ludos'));
 
+// ── iOS install hint ──────────────────────────────────────────
+// This browser isn't iOS, so the hint must stay away — showing "tap Share" to
+// everyone is the failure mode worth guarding.
+const hint = page.locator('[role="note"]');
+await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(1900);
+ok('install hint stays hidden off iOS', (await hint.count()) === 0);
+
+await page.goto(`${BASE}/?hint&screen=home:discover`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+ok('?hint forces the install hint', await has('Add to Home Screen'));
+
+await page.getByRole('button', { name: 'Dismiss' }).click();
+await page.waitForTimeout(700);
+ok('dismissing unmounts the hint', (await hint.count()) === 0);
+
 // ── Desktop framing ───────────────────────────────────────────
 await page.setViewportSize({ width: 1200, height: 1000 });
 await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });

@@ -158,6 +158,22 @@ export const IconTabProfile = ({ size = 22 }: IconProps) => (
   </svg>
 );
 
+// ── Add to Home Screen hint ───────────────────────────────────
+/** iOS Share glyph — the button the hint points at. */
+export const IconShare = ({ size = 16 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" {...stroke} strokeWidth={1.6}>
+    <path d="M8 10.5V2" />
+    <path d="M5 4.8L8 1.8l3 3" />
+    <path d="M4 7H2.8v6.5h10.4V7H12" />
+  </svg>
+);
+
+export const IconClose = ({ size = 14 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 14 14" {...stroke} strokeWidth={1.8}>
+    <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" />
+  </svg>
+);
+
 // ── Status bar ────────────────────────────────────────────────
 export const IconSignal = () => (
   <svg width="17" height="11" viewBox="0 0 17 11" fill="var(--text-primary)">

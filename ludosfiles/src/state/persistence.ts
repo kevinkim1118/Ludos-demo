@@ -119,8 +119,39 @@ export function clear(): void {
   if (!store) return;
   try {
     store.removeItem(KEY);
+    for (const flag of FLAGS) store.removeItem(flagKey(flag));
   } catch {
     /* nothing to do */
+  }
+}
+
+/**
+ * One-shot UI flags — "has the user dismissed this?" — kept out of the reducer
+ * and out of the versioned save. They're not app state, they carry no data, and
+ * a shape change should never invalidate them.
+ */
+export type Flag = 'iosInstallHint';
+
+const FLAGS: Flag[] = ['iosInstallHint'];
+const flagKey = (flag: Flag) => `ludos.flag.${flag}`;
+
+export function readFlag(flag: Flag): boolean {
+  const store = storage();
+  if (!store) return false;
+  try {
+    return store.getItem(flagKey(flag)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function writeFlag(flag: Flag): void {
+  const store = storage();
+  if (!store) return;
+  try {
+    store.setItem(flagKey(flag), '1');
+  } catch {
+    /* the hint reappearing next launch is an acceptable failure */
   }
 }
 

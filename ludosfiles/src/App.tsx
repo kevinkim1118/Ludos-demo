@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { IosInstallHint } from './components/IosInstallHint';
 import { PhoneShell } from './components/PhoneShell';
 import { Toast } from './components/Toast';
 import { HeadToHead } from './screens/h2h/HeadToHead';
@@ -33,6 +34,10 @@ export function App() {
         <Discover state={state} actions={actions} scrollRef={homeScroll} />
       )}
       {state.flow === 'h2h' && <HeadToHead state={state} actions={actions} />}
+
+      {/* Held back until Discover — mid-onboarding is too early to ask
+          someone to install anything. */}
+      {state.flow === 'home' && <IosInstallHint />}
 
       {state.toast && <Toast message={state.toast} toastKey={state.toastKey} />}
     </PhoneShell>

@@ -75,7 +75,10 @@ a:hover {
 }
 
 .phone {
-  width: 430px;
+  /* iPhone 17 is 402pt wide. The design was drawn in a 430pt mockup, which
+     reads as a tablet-ish slab on a desktop screen; every current iPhone is
+     narrower than that. Content was already fluid, so only the frame changes. */
+  width: 402px;
   padding: 11px;
   background: #080606;
   border-radius: 46px;

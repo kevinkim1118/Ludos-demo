@@ -74,7 +74,7 @@ export function IntroWelcome() {
         <br />
         Conquer your backlog
       </p>
-      <div style={{ flex: 1.4 }} />
+      <div style={{ flex: 1.4, minHeight: 20 }} />
     </div>
   );
 }
@@ -142,7 +142,7 @@ export function IntroDiscover() {
       <h2 style={{ ...heading, margin: '34px 28px 0' }}>
         Discover video games matched to your tastes
       </h2>
-      <div style={{ flex: 1.6 }} />
+      <div style={{ flex: 1.6, minHeight: 20 }} />
     </div>
   );
 }
@@ -171,7 +171,11 @@ export function IntroAddToList() {
       <div
         style={{
           position: 'relative',
-          flex: 'none',
+          // Yields height before the heading does. The card already clips, and
+          // what goes first is the description under the gradient — the
+          // overlay stays pinned to whatever height is left.
+          flex: '0 1 auto',
+          minHeight: 0,
           alignSelf: 'center',
           width: 340,
           borderRadius: 18,
@@ -314,7 +318,7 @@ export function IntroAddToList() {
       <h2 style={{ ...heading, margin: '32px 4px 0' }}>
         Find video games to play, add them to your lists
       </h2>
-      <div style={{ flex: 1 }} />
+      <div style={{ flex: 1, minHeight: 20 }} />
     </div>
   );
 }
@@ -324,11 +328,26 @@ export function IntroReviews() {
   return (
     <div style={{ ...screenBase, padding: '24px 24px 12px', overflow: 'hidden' }}>
       <div style={{ flex: 1 }} />
-      <div style={{ flex: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div
+        style={{
+          // Same deal as the other intros: the sample reviews are an
+          // illustration, so they give up room before the heading does. The
+          // last card crops rather than the heading vanishing.
+          flex: '0 1 auto',
+          minHeight: 0,
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+        }}
+      >
         {REVIEWS.map((r) => (
           <div
             key={r.slotId}
             style={{
+              // Keep their own height so the container crops the last card,
+              // rather than every card squashing its text.
+              flex: 'none',
               background: 'var(--surface-1)',
               border: '1px solid var(--border)',
               borderRadius: 12,
@@ -396,7 +415,7 @@ export function IntroReviews() {
         ))}
       </div>
       <h2 style={{ ...heading, margin: '32px 4px 0' }}>Read honest reviews from players like you</h2>
-      <div style={{ flex: 1.4 }} />
+      <div style={{ flex: 1.4, minHeight: 20 }} />
     </div>
   );
 }

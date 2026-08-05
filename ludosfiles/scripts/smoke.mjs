@@ -173,7 +173,7 @@ await page.setViewportSize({ width: 1200, height: 1000 });
 await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(600);
 const frame = await page.locator('.phone').boundingBox();
-ok('desktop keeps 430px device frame', Math.round(frame.width) === 430);
+ok('desktop keeps the 402px iPhone-width frame', Math.round(frame.width) === 402);
 ok('tall desktop keeps the full 868px screen', Math.round(frame.height) === 890);
 await page.screenshot({ path: `${OUT}/desktop.png` });
 
@@ -188,18 +188,24 @@ const overflow = await page.evaluate(
 ok('short desktop fits the frame in the viewport', short.y + short.height <= 760);
 ok('short desktop needs no page scroll', overflow <= 0);
 
-// ── Intro carousel on a short screen ──────────────────────────
-// The marquee has to give up height so the heading underneath stays readable.
-await page.setViewportSize({ width: 440, height: 730 });
-await page.goto(`${BASE}/?reset&screen=onboarding:intro2`, { waitUntil: 'networkidle' });
-await page.waitForTimeout(700);
-const clipped = await page.evaluate(() => {
-  const h2 = document.querySelector('h2');
-  const scroller = document.querySelector('.scroll-y');
-  if (!h2 || !scroller) return null;
-  return h2.getBoundingClientRect().bottom > scroller.getBoundingClientRect().bottom + 0.5;
-});
-ok('intro heading is not clipped on a short screen', clipped === false);
+// ── Intro screens on a short screen ───────────────────────────
+// Each intro pairs a fixed-size illustration with a heading under it. The
+// illustration has to give up the height, never the words.
+const clearanceBelowCopy = () =>
+  page.evaluate(() => {
+    const scroller = document.querySelector('.scroll-y');
+    const copy = document.querySelector('h1') ? document.querySelector('p') : document.querySelector('h2');
+    if (!scroller || !copy) return null;
+    return scroller.getBoundingClientRect().bottom - copy.getBoundingClientRect().bottom;
+  });
+
+await page.setViewportSize({ width: 402, height: 730 });
+for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
+  await page.goto(`${BASE}/?reset&screen=onboarding:${step}`, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(450);
+  const clearance = await clearanceBelowCopy();
+  ok(`${step} copy clears the step dots on a short screen`, clearance !== null && clearance >= 0);
+}
 
 console.log(errors.length ? `\nPAGE ERRORS:\n${errors.join('\n')}` : '\nno page errors');
 await browser.close();

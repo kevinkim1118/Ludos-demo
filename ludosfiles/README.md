@@ -107,11 +107,15 @@ once it's complete.
 
 ## The phone frame
 
-The designs were drawn in a 430×868 device mockup. Above 540px the app keeps
-that frame (with the simulated 9:41 status bar) so it still demos like the
+The designs were drawn in a 430×868 device mockup. Above 540px the app keeps a
+device frame (with the simulated 9:41 status bar) so it still demos like the
 prototype; below 540px the frame and fake status bar drop away and the app runs
 full-bleed at `100dvh` against the real device chrome, with safe-area insets for
 notches. See the media query in `src/styles/app.css`.
+
+The frame is **402px wide** — iPhone 17 — not the mockup's 430. Every current
+iPhone is narrower than 430, which on a desktop screen reads as a tablet-ish
+slab. Content was already fluid, so only the frame changed.
 
 The frame is `min(868px, 100dvh - 70px)` tall, not a flat 868. At full height it
 also carries the phone's 11px bezel and the backdrop's 24px gutter — 938px in
@@ -119,12 +123,21 @@ total, which overflows a laptop viewport and leaves the tab bar below the fold.
 Shortening the screen keeps the whole device visible without scaling the UI down
 and blurring it.
 
-Screens therefore can't assume 868px of height. The onboarding carousel is the
-one that had to give: its three marquee rows are the flexible element, sized
-`flex: 0 1 <full height>` so they shrink before the heading beneath them gets
-pushed out. Covers take their height from the row and hold shape with
-`aspect-ratio`. On a phone, Safari's toolbar alone is enough to make the full
-height unavailable.
+Screens therefore can't assume 868px of height, and the onboarding intros are
+where that bites: each pairs a fixed-size illustration with a heading beneath
+it, and the heading is what used to disappear. In all of them the illustration
+is now the flexible element — `flex: 0 1 <its height>` — so it yields space
+first:
+
+- **intro2** — the three marquee rows shrink; covers take their height from the
+  row and hold shape with `aspect-ratio`
+- **intro3** — the game-detail card crops from the bottom, where the
+  description already sits under a gradient and the overlay stays pinned
+- **intro4** — the last sample review crops rather than the heading vanishing
+
+Each intro's trailing spacer carries `minHeight: 20` so the copy always clears
+the step dots instead of butting up against them. On a phone, Safari's toolbar
+alone is enough to make the full height unavailable.
 
 ## Fonts
 

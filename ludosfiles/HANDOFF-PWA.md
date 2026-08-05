@@ -186,16 +186,26 @@ in `src/styles/app.css`, so the notch and home indicator are correct.
 - **Cache budget** — shell 284 KB, fonts 360 KB (both fine to precache).
   Covers are the question, see cleanup below
 
-## 1e. Cleanup worth doing first
+## 1e. Cleanup — ✅ done
 
-`public/images/` contains **189 files (1.9 MB) but only 97 are referenced** —
-the rest belong to screens this build doesn't implement (Library, Profile, Game
-Detail). They're copied into `dist/` as dead weight today, and would bloat a
-precache. `src/data/covers.ts` lists exactly what's used; anything not in it and
-not in `covers.config.mjs` can go.
+`public/images/` held **189 files (1.8 MB) of which only 97 were reachable**;
+the other 92 (0.6 MB) belonged to screens this build doesn't implement —
+Library (`cv-lib-*`, `cv-list-*`), Profile (`cv-profile-*`), Game Detail
+(`cv-detail-*`), plus activity, collection and friend-face slots. They were
+copied into `dist/` as dead weight and would have bloated a precache.
 
-Hold off on offline precaching of covers until the 600×900 art lands (below) —
-it changes the budget substantially.
+The delete set was derived from `scripts/lib/slots.mjs` — the app's own slot
+data, the same source the manifest generator uses — rather than by matching
+names. `npm run covers` afterwards regenerated `src/data/covers.ts`
+**byte-identically** (97 slots), which is the proof no reachable slot lost its
+art. `dist/images/` is now 1.0 MB.
+
+Note: `cv-pick-stray` and `cv-h2h-stray` were already empty before this and
+still are. `cv-search-stray.webp` does exist and is in use, so the "Stray has no
+cover art anywhere" line under Known gaps is slightly overstated.
+
+Still open: hold off on offline precaching of covers until the 600×900 art
+lands (below) — it changes the budget substantially.
 
 ---
 

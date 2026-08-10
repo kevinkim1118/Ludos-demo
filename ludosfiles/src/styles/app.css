@@ -7,6 +7,16 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* Establishes a definite height all the way down to `.screen`, so the phone
+     layout can size itself with percentages instead of viewport units. iOS
+     resolves `dvh` against Safari's viewport on the first paint of an installed
+     app — toolbars and all — and only corrects once something forces a
+     recalculation, which is why the tab bar used to float until you scrolled. */
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
 
 body {
@@ -125,12 +135,14 @@ a:hover {
   .backdrop {
     display: block;
     min-height: 0;
+    height: 100%;
     padding: 0;
     background: var(--surface-0);
   }
 
   .phone {
     width: 100%;
+    height: 100%;
     padding: 0;
     border-radius: 0;
     background: var(--surface-0);
@@ -138,8 +150,8 @@ a:hover {
   }
 
   .screen {
-    height: 100vh;
-    height: 100dvh;
+    /* Percentage, not dvh — see the note on html/body above. */
+    height: 100%;
     border-radius: 0;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);

@@ -110,8 +110,16 @@ once it's complete.
 The designs were drawn in a 430×868 device mockup. Above 540px the app keeps a
 device frame (with the simulated 9:41 status bar) so it still demos like the
 prototype; below 540px the frame and fake status bar drop away and the app runs
-full-bleed at `100dvh` against the real device chrome, with safe-area insets for
-notches. See the media query in `src/styles/app.css`.
+full-bleed against the real device chrome, with safe-area insets for notches.
+See the media query in `src/styles/app.css`.
+
+The phone path sizes itself with a **percentage chain** — `height: 100%` from
+`html` down through `#root`, `.backdrop` and `.phone` to `.screen` — rather than
+viewport units. iOS resolves `dvh` against *Safari's* viewport on an installed
+app's first paint, toolbars included, and only corrects once something forces a
+recalculation. That left the tab bar floating above the bottom of the screen
+until the user scrolled. Percentages resolve against the layout viewport, which
+is right from the first frame.
 
 The frame is **402px wide** — iPhone 17 — not the mockup's 430. Every current
 iPhone is narrower than 430, which on a desktop screen reads as a tablet-ish

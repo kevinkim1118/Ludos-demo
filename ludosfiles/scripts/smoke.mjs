@@ -168,6 +168,23 @@ await page.getByRole('button', { name: 'Dismiss' }).click();
 await page.waitForTimeout(700);
 ok('dismissing unmounts the hint', (await hint.count()) === 0);
 
+// ── Phone layout fills the viewport ───────────────────────────
+// The installed app used to leave a gap under the tab bar until you scrolled:
+// iOS resolves dvh against Safari's viewport on an installed app's first paint.
+// The phone path uses a percentage chain now, so the screen must match the
+// viewport exactly, with nothing left over.
+for (const [w, h] of [[402, 874], [390, 844], [375, 667]]) {
+  await page.setViewportSize({ width: w, height: h });
+  await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(350);
+  const fill = await page.evaluate(() => ({
+    screenH: Math.round(document.querySelector('.screen').getBoundingClientRect().height),
+    innerH: window.innerHeight,
+    scrolls: document.documentElement.scrollHeight > window.innerHeight + 1,
+  }));
+  ok(`phone ${w}x${h} screen fills the viewport`, fill.screenH === fill.innerH && !fill.scrolls);
+}
+
 // ── Desktop framing ───────────────────────────────────────────
 await page.setViewportSize({ width: 1200, height: 1000 });
 await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });

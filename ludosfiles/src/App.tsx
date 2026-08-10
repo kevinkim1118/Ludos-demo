@@ -5,6 +5,7 @@ import { Toast } from './components/Toast';
 import { HeadToHead } from './screens/h2h/HeadToHead';
 import { Discover } from './screens/home/Discover';
 import { Onboarding } from './screens/onboarding/Onboarding';
+import { useBackNavigation } from './state/useBackNavigation';
 import { jumpPatch, useLudos } from './state/useLudos';
 
 const SCREEN_LABELS = {
@@ -15,6 +16,9 @@ const SCREEN_LABELS = {
 
 export function App() {
   const { state, actions, homeScroll } = useLudos();
+
+  // Back closes what's open rather than exiting the installed app.
+  useBackNavigation(state, actions);
 
   // Dev deep-link, e.g. ?screen=h2h:duel or ?screen=onboarding:result.
   // Replaces the prototype's "Jump to screen" tweak.

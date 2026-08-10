@@ -230,8 +230,26 @@ ratio, so the safe zone is respected whatever shape the logo is.
 
 **What's precached** (~708 KB): the JS/CSS shell, `index.html`, the six
 self-hosted fonts, the icons, and the Ludos logo. **Cover art is not** — at
-1.6 MB it would more than triple the precache. So the app shell runs offline,
-but covers need the network until a runtime caching strategy is added.
+1.6 MB it would more than triple the install.
+
+Artwork is instead cached at runtime: a `CacheFirst` route over `/covers/` and
+`/images/` fills as the user browses, so it costs nothing upfront and in
+practice the same handful of backlog covers is warm after one session. Entries
+expire after a week, because art keeps its filename when replaced and
+`CacheFirst` would otherwise serve a stale cover forever. `<Cover>` falls back
+to its empty box on a load error, so a genuine miss reads as a placeholder
+rather than a broken image.
+
+One wrinkle worth knowing when testing: on the very first visit the service
+worker isn't controlling the page yet, so nothing routes through it. Artwork
+starts caching from the second load onward — which for an installed app means
+it's always in effect by launch.
+
+Verify it against a real build, not the dev server:
+
+```bash
+npm run build && npm run preview
+```
 
 `registerType` is `autoUpdate`: a new build activates on next load rather than
 waiting on a prompt. There's no "new version available" UI yet, and without one
@@ -257,6 +275,24 @@ hits the device's CSS size *and* pixel ratio exactly, with no fallback and no
 scaling, so a device missing from `scripts/lib/ios-devices.mjs` gets the plain
 white flash instead. Add it there and re-run. They ship but are **not**
 precached: iOS fetches them when the app is added to the home screen.
+
+### Installed behaviour
+
+**The device frame drops away in an app window.** Installed on a desktop, the
+app owns its window, so a simulated bezel and a fake 9:41 clock inside it is a
+mockup of a phone inside a mockup of a phone. A
+`@media (display-mode: standalone) and (min-width: 541px)` block removes the
+device chrome and fills the window height, while keeping the 402pt column — the
+UI is drawn for phone width and stretching it across a desktop window would be
+worse than framing it.
+
+**Back closes UI instead of the app.** `src/state/useBackNavigation.ts` gives
+each dismissible layer — the head-to-head flow, the status sheet, the time
+sheet — its own history entry. Installed there's no browser chrome, so Android's
+back button otherwise goes straight to the OS and kills the app mid-sheet.
+Closing a layer from inside the app retires its entry, so back never silently
+does nothing later. On desktop it just means the back button closes the sheet
+before leaving the site.
 
 iOS has no install prompt — `beforeinstallprompt` is Chrome-only — so
 `IosInstallHint` points at Share → Add to Home Screen. It shows once, on

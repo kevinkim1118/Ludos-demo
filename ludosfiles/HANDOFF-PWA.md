@@ -98,7 +98,7 @@ public/
 | `npm run dev` | Dev server |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run typecheck` | Types only |
-| `npm run smoke` | 50-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
+| `npm run smoke` | 53-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
 | `npm run covers` | Rebuild cover manifest after adding art to `public/covers/` |
 | `npm run icons` | Regenerate app icons from `brand/logo.*` |
 | `npm run pack` | Single self-contained `preview.html` (gitignored) |
@@ -111,7 +111,7 @@ Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
 ## Verified state
 
 - `npm run build` clean, `npm run typecheck` clean
-- All **50 smoke checks pass**, zero console errors (29 original, five covering
+- All **53 smoke checks pass**, zero console errors (29 original, five covering
   1a persistence, three the 1c install hint, seven the viewport-fit fixes)
 - Fonts confirmed loading (not silently falling back)
 
@@ -224,21 +224,30 @@ Still open on iOS: no iPad launch images (the app is portrait phone-only, so an
 iPad add-to-home-screen still flashes white), and none of this has been tried on
 real hardware yet — see Task 3.
 
-## 1d. Polish
+## 1d. Polish — ✅ mostly done
 
-- **Update flow** — SW caching can pin users to a stale build. Add a "new
-  version available" prompt or auto-reload on activate
-- **Drop the phone frame when installed** — add a
-  `@media (display-mode: standalone)` rule alongside the existing
-  `max-width: 540px` block in `app.css`, or a desktop install shows a 430px
-  mockup floating in a window
-- **Android back gesture** — in standalone there's no browser chrome, so the OS
-  back button exits the app. Pushing history entries on flow changes fixes it
-- **Cache budget** — shell + fonts + icons are precached as of 1b (708 KB).
-  Covers are still the open question: 1.6 MB of 600×900 art now exists, and
-  precaching it would take the total to ~2.3 MB. The middle option nobody has
-  taken yet is a runtime CacheFirst route for `/covers/`, which costs nothing
-  upfront and warms as the user browses
+- **Cover caching** — done. A `CacheFirst` runtime route over `/covers/` and
+  `/images/` (`ludos-artwork`, 80 entries, 7-day expiry) rather than precaching
+  1.6 MB against a 708 KB shell. Nothing upfront, warms as the user browses.
+  Entries expire because art keeps its filename when replaced, so `CacheFirst`
+  would otherwise pin a stale cover forever. `<Cover>` now falls back to its
+  empty box on error, so a genuine miss reads as a placeholder. Verified against
+  a build: 13 covers cached, then offline all 13 render and none break. Note the
+  first visit isn't controlled by the worker, so caching starts on the second
+  load — always true by the time an app is installed.
+- **Drop the phone frame when installed** — done, via
+  `@media (display-mode: standalone) and (min-width: 541px)`. Verified in a real
+  Chromium app window (`--app=`): bezel, shadow and fake status bar gone, fills
+  the window height, keeps the 402pt column. CDP's `Emulation.setEmulatedMedia`
+  does *not* emulate `display-mode`, so it silently tests nothing — use `--app=`.
+- **Android back gesture** — done. `src/state/useBackNavigation.ts` gives each
+  dismissible layer a history entry, and retires it when the layer is closed
+  from inside the app so back can't later no-op. Covered by three smoke checks
+  driving `page.goBack()`, which is the same `popstate` path.
+- **Update prompt** — still open, and now optional. `registerType: 'autoUpdate'`
+  plus `must-revalidate` on `sw.js` already stops anyone being pinned to a stale
+  build; what's missing is only *telling* the user a new version took effect,
+  since the app can currently change under them mid-session.
 
 ## 1e. Cleanup — ✅ done
 

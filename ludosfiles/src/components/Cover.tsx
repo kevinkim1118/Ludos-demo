@@ -63,6 +63,10 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
   const boxRef = useRef<HTMLSpanElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [geometry, setGeometry] = useState<Geometry | null>(null);
+  // Artwork isn't precached, so offline it can genuinely be missing. Falling
+  // back to the empty box reads as a placeholder; a broken-image icon reads as
+  // a bug.
+  const [failed, setFailed] = useState(false);
 
   const recompute = useCallback(() => {
     if (!hasCrop || !entry) return;
@@ -90,7 +94,7 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
     ...style,
   };
 
-  if (!entry) {
+  if (!entry || failed) {
     return (
       <span
         className={className}
@@ -118,6 +122,7 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
           alt={alt}
           loading="lazy"
           decoding="async"
+          onError={() => setFailed(true)}
           style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </span>
@@ -132,6 +137,7 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
         alt={alt}
         decoding="async"
         onLoad={recompute}
+        onError={() => setFailed(true)}
         style={
           geometry
             ? {

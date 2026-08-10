@@ -224,6 +224,44 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   ok(`${step} copy clears the step dots on a short screen`, clearance !== null && clearance >= 0);
 }
 
+// ── Back navigation ───────────────────────────────────────────
+// Installed there's no browser chrome, so Android's back button goes to the OS.
+// Each dismissible layer owns a history entry so back closes it instead of
+// killing the app — and closing one from inside must retire its entry, or back
+// would silently do nothing later.
+{
+  const nav = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const nhas = async (t) =>
+    (await nav.locator('.screen').innerText()).toLowerCase().includes(t.toLowerCase());
+  await nav.goto('about:blank');
+  await nav.goto(`${BASE}/?reset&screen=home:discover`, { waitUntil: 'networkidle' });
+  await nav.waitForTimeout(700);
+
+  await nav.getByRole('button', { name: 'Add Celeste' }).click();
+  await nav.waitForTimeout(400);
+  await nav.goBack();
+  await nav.waitForTimeout(600);
+  ok(
+    'back closes the status sheet, not the app',
+    !(await nhas('Add Celeste to…')) && (await nhas('What to play next')),
+  );
+
+  await nav.getByRole('button', { name: /Still can't decide/ }).click();
+  await nav.waitForTimeout(400);
+  await nav.goBack();
+  await nav.waitForTimeout(500);
+  ok('back leaves head-to-head for Discover', await nhas('What to play next'));
+
+  await nav.getByRole('button', { name: 'Add Celeste' }).click();
+  await nav.waitForTimeout(400);
+  await nav.getByRole('button', { name: 'Mark as playing' }).click();
+  await nav.waitForTimeout(800);
+  await nav.goBack();
+  await nav.waitForTimeout(700);
+  ok('closing in-app leaves no orphan history entry', nav.url().startsWith('about:blank'));
+  await nav.close();
+}
+
 // ── Installed-app viewport height ─────────────────────────────
 // Launched from the home screen, iOS sizes its containing block as though
 // Safari's bottom toolbar were still there — ~56pt short — so the tab bar used

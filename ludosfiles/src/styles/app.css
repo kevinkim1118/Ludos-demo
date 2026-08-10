@@ -166,6 +166,40 @@ a:hover {
   }
 }
 
+/* Installed on a desktop, the app gets its own window — so a simulated device
+   bezel and a fake 9:41 clock inside it is a mockup of a phone inside a mockup
+   of a phone. Drop the device chrome and let the app own the window, but keep
+   the phone-width column: the UI is drawn for 402pt and stretching it across a
+   desktop window would be worse than framing it.
+
+   On a phone this changes nothing the `max-width: 540px` block above hasn't
+   already done — and it deliberately leaves the safe-area padding to that
+   block, since a desktop window has no notch. */
+@media (display-mode: standalone) and (min-width: 541px) {
+  .backdrop {
+    height: 100%;
+    padding: 0;
+    background: var(--surface-0);
+  }
+
+  .phone {
+    height: 100%;
+    padding: 0;
+    border-radius: 0;
+    background: var(--surface-0);
+    box-shadow: none;
+  }
+
+  .screen {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .status-bar {
+    display: none;
+  }
+}
+
 /* ── Interactive states ─────────────────────────────────────────
    The prototype expressed these as `style-hover` / `style-active`
    attributes. Layout stays inline on each element; only the

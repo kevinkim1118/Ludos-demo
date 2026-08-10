@@ -62,6 +62,31 @@ export default defineConfig({
         // Any navigation resolves to the shell; the app has no server routes.
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
+
+        runtimeCaching: [
+          {
+            // Cover art is too big to precache (1.6 MB against a 708 KB shell)
+            // but leaving it network-only means every cover breaks offline. This
+            // costs nothing at install and warms as the user browses — and in
+            // practice they see the same handful of backlog covers repeatedly.
+            urlPattern: ({ url }) =>
+              url.origin === self.location.origin &&
+              (url.pathname.startsWith('/covers/') || url.pathname.startsWith('/images/')),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'ludos-artwork',
+              expiration: {
+                // 37 covers plus 18 marquee tiles, with room to spare.
+                maxEntries: 80,
+                // Art keeps its filename when replaced, so CacheFirst would
+                // otherwise serve a stale cover indefinitely. A week bounds it.
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+                purgeOnQuotaError: true,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],

@@ -115,11 +115,22 @@ See the media query in `src/styles/app.css`.
 
 The phone path sizes itself with a **percentage chain** — `height: 100%` from
 `html` down through `#root`, `.backdrop` and `.phone` to `.screen` — rather than
-viewport units. iOS resolves `dvh` against *Safari's* viewport on an installed
-app's first paint, toolbars included, and only corrects once something forces a
-recalculation. That left the tab bar floating above the bottom of the screen
-until the user scrolled. Percentages resolve against the layout viewport, which
-is right from the first frame.
+viewport units.
+
+That alone isn't enough for an **installed iOS app**, which sizes its initial
+containing block as though Safari's bottom toolbar were still on screen — about
+56pt short on an iPhone 17. `100dvh`, `100vh` and `height: 100%` all inherit
+that, so the app lays out for chrome that isn't there and leaves a dead strip
+under the tab bar. (`dvh` self-corrects on the first scroll; percentages never
+do, which is worse.)
+
+`src/lib/standaloneHeight.ts` sets `--app-height` from `screen.height` in that
+case only — a value that doesn't come from the containing block, so it isn't
+wrong, and in standalone the web view really does cover the whole screen. It's
+applied at the root, so the whole chain below inherits the correction, and it's
+inert in a normal browser. The value is `max(screen.height, innerHeight)` so
+that the iOS keyboard, which shrinks `innerHeight`, can't collapse the app while
+someone types in the played-games search.
 
 The frame is **402px wide** — iPhone 17 — not the mockup's 430. Every current
 iPhone is narrower than 430, which on a desktop screen reads as a tablet-ish

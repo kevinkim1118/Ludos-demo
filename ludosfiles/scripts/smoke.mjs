@@ -224,5 +224,39 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   ok(`${step} copy clears the step dots on a short screen`, clearance !== null && clearance >= 0);
 }
 
+// ── Installed-app viewport height ─────────────────────────────
+// Launched from the home screen, iOS sizes its containing block as though
+// Safari's bottom toolbar were still there — ~56pt short — so the tab bar used
+// to sit above a dead strip. Simulated here by giving the page a viewport
+// shorter than the screen it claims to be on.
+{
+  const sa = await browser.newPage({ viewport: { width: 402, height: 818 } });
+  await sa.addInitScript(() => {
+    Object.defineProperty(navigator, 'standalone', { get: () => true, configurable: true });
+    Object.defineProperty(window.screen, 'height', { get: () => 874, configurable: true });
+  });
+  await sa.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });
+  await sa.waitForTimeout(400);
+  const corrected = await sa.evaluate(
+    () => Math.round(document.querySelector('.screen').getBoundingClientRect().height),
+  );
+  ok('installed app corrects a short containing block', corrected === 874);
+
+  // The iOS keyboard shrinks innerHeight; the app must not collapse with it.
+  await sa.setViewportSize({ width: 402, height: 400 });
+  await sa.waitForTimeout(300);
+  const held = await sa.evaluate(
+    () => Math.round(document.querySelector('.screen').getBoundingClientRect().height),
+  );
+  ok('installed app height survives the keyboard', held === 874);
+  await sa.close();
+}
+
+// The shim must stay out of the way everywhere else.
+const shimOff = await page.evaluate(
+  () => getComputedStyle(document.documentElement).getPropertyValue('--app-height').trim(),
+);
+ok('height shim is inert in a normal browser', shimOff === '');
+
 console.log(errors.length ? `\nPAGE ERRORS:\n${errors.join('\n')}` : '\nno page errors');
 await browser.close();

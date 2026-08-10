@@ -98,7 +98,7 @@ public/
 | `npm run dev` | Dev server |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run typecheck` | Types only |
-| `npm run smoke` | 47-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
+| `npm run smoke` | 50-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
 | `npm run covers` | Rebuild cover manifest after adding art to `public/covers/` |
 | `npm run icons` | Regenerate app icons from `brand/logo.*` |
 | `npm run pack` | Single self-contained `preview.html` (gitignored) |
@@ -111,7 +111,7 @@ Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
 ## Verified state
 
 - `npm run build` clean, `npm run typecheck` clean
-- All **47 smoke checks pass**, zero console errors (29 original, five covering
+- All **50 smoke checks pass**, zero console errors (29 original, five covering
   1a persistence, three the 1c install hint, seven the viewport-fit fixes)
 - Fonts confirmed loading (not silently falling back)
 

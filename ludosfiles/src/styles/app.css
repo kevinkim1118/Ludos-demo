@@ -8,11 +8,14 @@ body {
   margin: 0;
   padding: 0;
   /* Establishes a definite height all the way down to `.screen`, so the phone
-     layout can size itself with percentages instead of viewport units. iOS
-     resolves `dvh` against Safari's viewport on the first paint of an installed
-     app — toolbars and all — and only corrects once something forces a
-     recalculation, which is why the tab bar used to float until you scrolled. */
-  height: 100%;
+     layout sizes itself with percentages rather than viewport units.
+
+     An installed iOS app can't trust any of them: it sizes its containing block
+     as though Safari's bottom toolbar were still there, ~56pt short, and
+     `100dvh`, `100vh` and `height: 100%` all inherit that. `--app-height` is set
+     from `screen.height` in that case only — see src/lib/standaloneHeight.ts.
+     Correcting it here, at the root, fixes the whole chain below. */
+  height: var(--app-height, 100%);
 }
 
 #root {

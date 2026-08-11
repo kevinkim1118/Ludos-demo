@@ -1,42 +1,45 @@
-# Ludos — PWA + Deployment Handoff
+# Ludos — project state
 
-Paste this into a new chat as context. It covers what exists, what to build
-next (PWA), and how to get it onto GitHub and Vercel.
+Orientation for a new session. Everything the original handoff asked for is
+built, deployed and verified; this now describes what exists, what's
+deliberately left alone, and the small number of things still open.
+
+**Live:** https://ludos-demo.vercel.app — deploys from `main` on push.
+**Branch:** work from `main`. `feat/pwa` and `feat/pwa-polish` are both fully
+merged and safe to delete.
 
 ---
 
-## ⚠️ Step zero: is the code actually on GitHub?
+## Read this before running anything
 
-At the time this was written, **the work was committed locally but never
-pushed — the repo had no git remote configured at all.** The session it was
-built in ran in an ephemeral container.
-
-**Before anything else, verify the app source is present:**
+**Node lives at `~/.local/node`**, not in `/usr/local` or Homebrew — it's the
+official v22 tarball extracted into the home directory, on `PATH` via
+`~/.zshrc`. A shell that hasn't sourced that will report `npm: command not
+found` and look like Node isn't installed at all. Either start a login shell or:
 
 ```bash
-ls src/ scripts/ covers.config.mjs
-git log --oneline
+export PATH="$HOME/.local/node/bin:$PATH"
 ```
 
-- If you see `src/App.tsx`, `src/state/reducer.ts`, `covers.config.mjs` etc. —
-  good, the code is here. Continue.
-- If all you see is `project/`, `chats/` and a single commit named
-  *"Claude Design handoff: Video Game Backlog Project"* — **the React app is
-  missing.** It was never pushed and the container was reclaimed. The work
-  described below no longer exists and would need rebuilding from
-  `project/Prototype.dc.html`. Stop and tell the user.
+Playwright's chromium is in the default cache (`~/Library/Caches/ms-playwright`)
+and `scripts/smoke.mjs` finds it automatically — it only falls back to
+`CHROMIUM_PATH` / `/opt/pw-browsers/chromium` if that's where the browser is.
+No need to re-download it.
+
+There is **no Xcode on this machine**, only Command Line Tools, so `simctl` and
+the iOS Simulator are unavailable. Anything iOS-specific has to be checked on a
+real device.
 
 ---
 
 ## What this is
 
 A video game backlog app — discover what to play, track it, and settle
-head-to-head matchups when you can't decide. Originally designed in Claude
-Design (the bundle in `project/`, with the design conversations in `chats/`),
-then implemented as a real app.
+head-to-head matchups when you can't decide. Designed in Claude Design (the
+bundle in `project/`, conversations in `chats/`), then implemented as a real app.
 
 **Stack:** React 19 + Vite 7 + TypeScript. Node 22. No router, no state
-library — one `useReducer`. Static build, no server.
+library — one `useReducer`. Static build, no server. Installable PWA.
 
 **Scope:** implements `project/Prototype.dc.html` only — three flows:
 
@@ -52,6 +55,24 @@ a "Not available in this demo" toast, matching the prototype. Full designs for
 those screens exist as separate `.dc.html` files in `project/` if they're ever
 wanted.
 
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Dev server. **No service worker** — PWA behaviour needs a build |
+| `npm run build` | Typecheck + production build to `dist/` |
+| `npm run preview` | Serve the built output — use this for anything PWA-related |
+| `npm run typecheck` | Types only |
+| `npm run smoke` | 57-check end-to-end walkthrough (needs a server running; `BASE_URL` retargets) |
+| `npm run covers` | Rebuild the cover manifest after adding art to `public/covers/` |
+| `npm run icons` | Regenerate app icons and iOS launch images from `brand/logo.*` |
+| `npm run pack` | Single self-contained `preview.html` (gitignored) |
+| `npm run fonts` | Re-download self-hosted webfonts |
+
+Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
+`?screen=h2h:duel`, `?screen=h2h:outcome`, `?screen=h2h:cold`. Also `?reset`
+(wipe saved state) and `?hint` (force the iOS install hint on any device).
+
 ## Layout
 
 ```
@@ -62,11 +83,14 @@ src/
     reducer.ts           Pure transitions
     useLudos.ts          Timers, toasts, scroll orchestration
     persistence.ts       Versioned localStorage save (hydrate + write)
+    useBackNavigation.ts History entries so back dismisses UI, not the app
+  lib/
+    standaloneHeight.ts  Corrects iOS's wrong viewport height when installed
   data/
-    games.ts             GAMES, SEED, PLAYED_DB, intents
+    games.ts             GAMES, SEED, PLAYED_DB, PLAYED_BLANKS, intents
     content.ts           Rails, reviews, taste axes, copy
     covers.ts            GENERATED — do not hand-edit
-  components/            Cover, PhoneShell, BottomSheet, Toast, icons
+  components/            Cover, PhoneShell, BottomSheet, Toast, IosInstallHint, icons
   screens/
     onboarding/  home/  h2h/
   styles/
@@ -74,263 +98,133 @@ src/
     fonts.css            GENERATED by scripts/fetch-fonts.mjs
     app.css              Shell, responsive frame, motion, interaction states
 covers.config.mjs        Cover art registry (game → slots)
+vercel.json              Build config + cache headers
 brand/logo.png           Icon source, outside public/ so it never ships
 scripts/
   lib/slots.mjs          Derives valid slot ids from the app's own data
-  lib/ios-devices.mjs    iPhone sizes a launch image must match
+  lib/ios-devices.mjs    iPhone sizes an iOS launch image must match
   gen-manifest.mjs       npm run covers
   gen-icons.mjs          npm run icons
   fetch-fonts.mjs        npm run fonts
   pack-single.mjs        npm run pack
   smoke.mjs              npm run smoke
 public/
-  images/                Low-res art exported from the design tool
-  covers/                Full-res drop-ins (see its README)
+  images/                18 decorative marquee tiles (all that's left)
+  covers/                Full-res 600×900 drop-ins (see its README)
   icons/                 GENERATED by scripts/gen-icons.mjs
   splash/                GENERATED — iOS launch images
   fonts/                 Self-hosted woff2
 ```
 
-## Commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Dev server |
-| `npm run build` | Typecheck + production build to `dist/` |
-| `npm run typecheck` | Types only |
-| `npm run smoke` | 57-check end-to-end walkthrough (needs dev running; `BASE_URL` retargets) |
-| `npm run covers` | Rebuild cover manifest after adding art to `public/covers/` |
-| `npm run icons` | Regenerate app icons from `brand/logo.*` |
-| `npm run pack` | Single self-contained `preview.html` (gitignored) |
-| `npm run fonts` | Re-download self-hosted webfonts |
-
-Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
-`?screen=h2h:duel`, `?screen=h2h:outcome`, `?screen=h2h:cold`. Also `?reset`
-(wipe saved state) and `?hint` (force the iOS install hint).
-
 ## Verified state
 
-- `npm run build` clean, `npm run typecheck` clean
-- All **57 smoke checks pass**, zero console errors (29 original, five covering
-  1a persistence, three the 1c install hint, seven the viewport-fit fixes)
-- Fonts confirmed loading (not silently falling back)
+- `npm run build` and `npm run typecheck` clean
+- All **57 smoke checks pass**, zero console errors
+- Deployed headers confirmed correct; offline behaviour confirmed against
+  production
+- Installed and confirmed working on a real iPhone
 
 ---
 
-# Task 1 — Progressive Web App
+# How it works
 
-## 1a. State persistence — ✅ done
+## Saved state
 
-Implemented in `src/state/persistence.ts`; see the "Saved state" section of the
-README. Hydration runs through `useReducer`'s init argument, the write is a
-memoized effect in `useLudos.ts`, the payload is versioned and re-validated
-field-by-field on read, and `?reset` wipes the save. `State` gained a sticky
-`onboardingComplete` flag, set by `flow/enterHome`. The original problem, for
-reference:
+`src/state/persistence.ts` mirrors the durable slice to `localStorage` under
+`ludos.state`: `onboardingComplete`, `backlog`, `itemStatus`, `upNext`,
+`playingItem`, `played`. Transient UI — sheets, toasts, the in-flight duel — is
+deliberately excluded so a launch never restores a half-open overlay.
 
-**This is the real blocker, not the PWA plumbing.** All state lives in a
-`useReducer` in memory and `initialState.flow` is hardcoded to `'onboarding'`
-(`src/state/reducer.ts`). An installed app would replay the entire onboarding —
-including re-picking 10 games — on **every cold launch**, and lose the backlog,
-playing status, and head-to-head result.
+The payload is versioned (`{ v: 1, … }`) and a save from any other version is
+discarded rather than migrated; bump `VERSION` when the shape changes. Fields
+are re-validated on read, since the store is user-editable.
 
-Needs:
+The reducer stays pure: hydration goes through `useReducer`'s init argument, and
+the write is a memoized effect in `useLudos.ts` so a toast doesn't touch
+storage. One-shot UI flags (the install hint's dismissal) live under
+`ludos.flag.*`, outside the versioned save, because they carry no data.
 
-- Persist to `localStorage`: `backlog`, `itemStatus`, `upNext`, `playingItem`,
-  `played`, plus an `onboardingComplete` flag
-- On boot, hydrate and start at `flow: 'home'` when onboarding is complete
-- **Version the stored shape** (e.g. `{ v: 1, ... }`) and discard on mismatch,
-  so a later data change can't crash on old saved state
-- Do *not* persist transient UI: `sheet`, `timeSheet`, `toast`, `picking`,
-  `pickFading`, `statusMenu`, `spotDismissing`
-- Keep the reducer pure — hydrate via `useReducer`'s init argument, and write in
-  an effect in `useLudos.ts`
+## PWA
 
-Worth doing whether or not the PWA ships.
+`vite-plugin-pwa` generates the manifest and a Workbox service worker.
 
-## 1b. Installability — ✅ done
+- **Precache: 708 KB / 17 entries** — shell, fonts, icons, manifest, and the
+  Ludos logo. The logo is listed explicitly because it only sits under `covers/`
+  thanks to the art registry's naming; it's chrome, and the welcome screen
+  renders a broken image without it offline.
+- **Artwork is cached at runtime**, not precached — a `CacheFirst` route over
+  `/covers/` and `/images/` (`ludos-artwork`, 80 entries, 7-day expiry). 1.6 MB
+  of art against a 708 KB shell wasn't worth paying at install. Entries expire
+  because art keeps its filename when replaced, so `CacheFirst` would otherwise
+  pin a stale cover forever.
+- **`registerType: 'autoUpdate'`** — no update prompt exists, and a stale worker
+  without one strands users on an old build.
+- **`includeManifestIcons: false`** — the `icons/*.png` glob already precaches
+  them and also catches `apple-touch-icon-180`, which the manifest never lists.
+  Left on, each manifest icon was entered twice.
 
-`vite-plugin-pwa` (Workbox) in `vite.config.ts`, generating
-`manifest.webmanifest` and `sw.js` at build time. All the fields the plugin
-needed are as specified above: name, short_name, `start_url: "/"`,
-`display: "standalone"`, `orientation: "portrait"`, `#241B1D` for both colours.
+**Icons** come from `brand/logo.png` (1024×1024) via `npm run icons`. The
+generator trims the source's own margin — the supplied logo carried 28% of it —
+and *derives* the maskable scale from the trimmed mark's aspect ratio rather
+than hardcoding one: the bounding box has to fit the safe circle of 80%
+diameter, which solves to `0.8 · max(w,h) / hypot(w,h)`. A fixed 0.62 clipped
+the corners by 17 px.
 
-**Icons** come from `brand/logo.png` (1024×1024) via `npm run icons` →
-`scripts/gen-icons.mjs`, not from `favicon.svg`. Four outputs: transparent 192
-and 512 for `purpose: "any"`, an opaque padded `maskable` 512, and an opaque
-180 for iOS (unwired until 1c). The generator trims the source's own margin
-first — the supplied logo carried 28% of it — and *derives* the maskable scale
-from the trimmed mark's aspect ratio rather than hardcoding one: the mark's
-bounding box has to fit inside the safe circle of 80% diameter, which works out
-to `0.8 · max(w,h) / hypot(w,h)`, or 0.572 here. A fixed 0.62 clipped the
-corners by 17 px.
+## iOS
 
-**Precache is 708 KB / 17 entries** — shell, fonts, icons, manifest, plus the
-Ludos logo. The logo is precached explicitly because it only lives under
-`covers/` due to the registry's naming; it's chrome, and the welcome screen
-renders a broken image without it offline. Cover art is *not* precached — see
-1d.
+Safari ignores most of the manifest, so it's spelled out in `index.html`:
+`apple-touch-icon`, `mobile-web-app-capable` plus the older prefixed spelling,
+`black-translucent` status bar, and `apple-mobile-web-app-title`.
 
-Verified against a real build: service worker registers and activates, 17
-entries cached, and with the preview server **stopped** the welcome screen
-still renders completely — shell, fonts and logo all from cache.
+**Launch images** — `npm run icons` emits 11 portrait PNGs into `public/splash/`
+and writes their `<link>` tags into `index.html` between `GENERATED` markers.
+The device table is `scripts/lib/ios-devices.mjs`, shared by the generator and
+the tag writer so the two can't drift. Safari matches a launch image only on an
+exact CSS-size *and* pixel-ratio hit — no fallback, no scaling — so a device
+missing from that list gets the white flash. Shipped but not precached; iOS
+fetches them at add-to-home-screen time.
 
-Two decisions worth knowing:
+**The install hint** (`src/components/IosInstallHint.tsx`) points at Share → Add
+to Home Screen, since `beforeinstallprompt` is Chrome-only. Shown once, on
+Discover rather than mid-onboarding. Gated on iOS *and* Safari specifically:
+every iOS browser is WebKit underneath, but only Safari offers Add to Home
+Screen. `?hint` forces it on any device.
 
-- `registerType: 'autoUpdate'`, because there's no update prompt yet and a
-  stale worker with no affordance would pin users to an old build. 1d can trade
-  this for a prompt.
-- `includeManifestIcons: false`, since the `icons/*.png` glob already precaches
-  them and it also catches `apple-touch-icon-180`, which the manifest never
-  lists. Left on, each manifest icon was entered twice.
+## Deployment
 
-## 1c. iOS — ✅ done
+Vercel, from `main`, static build, no env vars. **Root Directory must be
+`ludosfiles`** — the repo wraps the app in a subdirectory. Everything else is in
+`vercel.json`; Node is pinned to 22 via `engines`.
 
-Safari ignores most of the manifest, so it's all spelled out in `index.html`:
-`apple-touch-icon` → the generated 180, `mobile-web-app-capable` plus the older
-`apple-mobile-web-app-capable`, `black-translucent` for the status bar (the
-safe-area padding already in `app.css` is what keeps content clear of the
-clock), and `apple-mobile-web-app-title`.
-
-**Launch images.** `npm run icons` emits 11 portrait PNGs into `public/splash/`
-— theme colour with the mark centred, so the handoff to the first rendered
-frame is invisible — and writes their `<link>` tags into `index.html` between
-`GENERATED` markers. The device table is `scripts/lib/ios-devices.mjs`, shared
-by the generator and the tag writer so the two can't drift. Safari matches a
-launch image only when the media query hits CSS size *and* pixel ratio exactly,
-with no fallback and no scaling, so a device that isn't in that list gets the
-white flash; add it there and re-run. 180 KB total, shipped but **not**
-precached — iOS fetches them at add-to-home-screen time.
-
-**The install hint.** `src/components/IosInstallHint.tsx` points at Share → Add
-to Home Screen, since `beforeinstallprompt` is Chrome-only and nothing else
-tells the user. Shown once, on Discover rather than mid-onboarding — by then
-they've picked ten games and have something worth keeping. Gated on iOS *and*
-Safari specifically: every iOS browser is WebKit underneath, but only Safari
-offers Add to Home Screen, and the others' share sheets look nothing like the
-copy. Never shown once installed. Dismissal persists via a `ludos.flag.*` key,
-kept out of the versioned save because it carries no data and a shape change
-shouldn't invalidate it.
-
-**`?hint` forces it on any device**, so reviewing it doesn't need an iPhone.
-
-One bug found and fixed while testing, worth not reintroducing: the hint first
-unmounted on `animationend`, and that event doesn't always arrive — a
-backgrounded tab swallowed it, leaving the element in the DOM at opacity 0,
-invisible but still eating taps aimed at the screen underneath. It now unmounts
-on a timer, the same way the sheets in `useLudos.ts` do.
-
-Still open on iOS: no iPad launch images (the app is portrait phone-only, so an
-iPad add-to-home-screen still flashes white), and none of this has been tried on
-real hardware yet — see Task 3.
-
-## 1d. Polish — ✅ mostly done
-
-- **Cover caching** — done. A `CacheFirst` runtime route over `/covers/` and
-  `/images/` (`ludos-artwork`, 80 entries, 7-day expiry) rather than precaching
-  1.6 MB against a 708 KB shell. Nothing upfront, warms as the user browses.
-  Entries expire because art keeps its filename when replaced, so `CacheFirst`
-  would otherwise pin a stale cover forever. `<Cover>` now falls back to its
-  empty box on error, so a genuine miss reads as a placeholder. Verified against
-  a build: 13 covers cached, then offline all 13 render and none break. Note the
-  first visit isn't controlled by the worker, so caching starts on the second
-  load — always true by the time an app is installed.
-- **Drop the phone frame when installed** — done, via
-  `@media (display-mode: standalone) and (min-width: 541px)`. Verified in a real
-  Chromium app window (`--app=`): bezel, shadow and fake status bar gone, fills
-  the window height, keeps the 402pt column. CDP's `Emulation.setEmulatedMedia`
-  does *not* emulate `display-mode`, so it silently tests nothing — use `--app=`.
-- **Android back gesture** — done. `src/state/useBackNavigation.ts` gives each
-  dismissible layer a history entry, and retires it when the layer is closed
-  from inside the app so back can't later no-op. Covered by three smoke checks
-  driving `page.goBack()`, which is the same `popstate` path.
-- **Update prompt** — still open, and now optional. `registerType: 'autoUpdate'`
-  plus `must-revalidate` on `sw.js` already stops anyone being pinned to a stale
-  build; what's missing is only *telling* the user a new version took effect,
-  since the app can currently change under them mid-session.
-
-## 1e. Cleanup — ✅ done
-
-`public/images/` held **189 files (1.8 MB) of which only 97 were reachable**;
-the other 92 (0.6 MB) belonged to screens this build doesn't implement —
-Library (`cv-lib-*`, `cv-list-*`), Profile (`cv-profile-*`), Game Detail
-(`cv-detail-*`), plus activity, collection and friend-face slots. They were
-copied into `dist/` as dead weight and would have bloated a precache.
-
-The delete set was derived from `scripts/lib/slots.mjs` — the app's own slot
-data, the same source the manifest generator uses — rather than by matching
-names. `npm run covers` afterwards regenerated `src/data/covers.ts`
-**byte-identically** (97 slots), which is the proof no reachable slot lost its
-art. `dist/images/` is now 1.0 MB.
-
-Note: `cv-pick-stray` and `cv-h2h-stray` were already empty before this and
-still are. `cv-search-stray.webp` does exist and is in use, so the "Stray has no
-cover art anywhere" line under Known gaps is slightly overstated.
-
-Still open: hold off on offline precaching of covers until the 600×900 art
-lands (below) — it changes the budget substantially.
+The cache headers matter more than usual because of the service worker:
+`sw.js`, `registerSW.js`, `manifest.webmanifest` and `/` revalidate every time
+(a cached worker is never re-fetched, so the app can't discover it updated);
+hashed assets and fonts get a year immutable; artwork gets a day plus a week of
+`stale-while-revalidate`, because covers keep their filename when replaced.
 
 ---
 
-# Task 2 — GitHub
+# Still open
 
-The local repo had **no remote configured**. Confirm with `git remote -v`.
+Nothing blocking. In rough order of value:
 
-```bash
-# If empty, add the user's repo:
-git remote add origin https://github.com/<user>/<repo>.git
-
-# Never commit to the default branch — cut a branch first:
-git checkout -b feat/pwa
-
-git add -A
-git commit -m "…"
-git push -u origin feat/pwa
-```
-
-Notes:
-
-- If the GitHub repo already has commits, the histories are **unrelated** (this
-  one starts from the Claude Design import) and a plain push will be rejected.
-  Branch off their `main` rather than force-pushing.
-- Pushing over HTTPS needs a credential in the environment. If `gh` is
-  authenticated, use it; otherwise the push prompts and fails.
-- Don't open a PR unless asked.
-- `.gitignore` already covers `node_modules`, `dist`, `*.tsbuildinfo`, and
-  `preview.html`.
-- `project/` (the original design bundle) is intentionally kept — it's the
-  source of truth `npm run covers` regenerates from. It duplicates
-  `public/images/`, which is known and accepted.
+- **Update prompt.** Optional now: `autoUpdate` plus `must-revalidate` on
+  `sw.js` already prevents anyone being pinned to a stale build. What's missing
+  is only *telling* the user a new version took effect, since the app can
+  currently change under them mid-session.
+- **Android has never been tested on real hardware.** `useBackNavigation` is
+  covered by smoke checks driving `page.goBack()` — the same `popstate` path —
+  but the OS integration, the install prompt and the maskable icon's rendering
+  in a launcher are unverified.
+- **No iPad launch images.** The app is portrait phone-only, so an iPad
+  add-to-home-screen still flashes white. A few rows in `ios-devices.mjs`.
+- **The 18 marquee tiles** on the onboarding carousel are still on the design
+  tool's low-resolution exports. They're decorative and heavily masked, so it
+  has never looked wrong.
 
 ---
 
-# Task 3 — Vercel
-
-Static build, no server, no env vars.
-
-- **Framework preset:** Vite
-- **Build command:** `npm run build`
-- **Output directory:** `dist`
-- **Install command:** `npm install`
-- **Node:** 22
-
-`public/` is copied as-is, so cover art and fonts ship automatically. Nothing
-loads from a CDN at runtime — fonts are self-hosted — so it works on a
-restricted network.
-
-Once a service worker is added, set caching headers so `sw.js` and
-`manifest.webmanifest` are **not** long-cached, or users get stuck on old
-builds. `vite-plugin-pwa` handles most of this, but verify the deployed headers.
-
-After deploying, test on a real phone: Add to Home Screen, force-quit, relaunch,
-and confirm it opens to Discover rather than replaying onboarding (that's the
-1a persistence work paying off).
-
----
-
-# Known gaps and quirks
-
-Carried over deliberately — don't "fix" without asking:
+# Deliberate — don't "fix" without asking
 
 - **The time sheet is unreachable.** Its markup and state exist, but nothing
   opens it — `onOpenTime` was never wired into the template in the original
@@ -340,32 +234,79 @@ Carried over deliberately — don't "fix" without asking:
   `false`** (`src/config.ts`), matching the prototype's saved tweak state. So
   the "Recommended for you" spotlight is hidden and the friends rail shows its
   cold-start prompt.
-- **Stray has no cover art** anywhere in the handoff, and `cv-review-1/2/3`
-  avatars render initials by design. `<Cover>` falls back gracefully.
-
-Real constraints:
-
-- **Cover art is low resolution.** It was recompressed three times inside the
-  design tool to fit a 2 MB storage cap, leaving covers ~240 px tall — roughly
-  2× too small for a 3× phone screen, and 2.8× short at the head-to-head
-  outcome. **The originals did not survive**; the editor sidecar is
-  byte-identical, so this is not recoverable — it needs new art at 600×900.
-  Drop files in `public/covers/<key>.webp` and run `npm run covers`; see
-  `public/covers/README.md` and `covers.config.mjs` for the 38 keys.
-- **`src/styles/ludos.css` is vendored verbatim** from the design system in
-  `project/_ds/`. Don't hand-edit; re-vendor instead.
+- **`cv-review-1/2/3` avatars render initials** by design. `<Cover>` falls back
+  gracefully.
+- **`src/styles/ludos.css` is vendored verbatim** from `project/_ds/`. Don't
+  hand-edit; re-vendor.
 - **`src/data/covers.ts` and `src/styles/fonts.css` are generated.** Edit
   `covers.config.mjs` / `scripts/fetch-fonts.mjs` and re-run.
+- **`project/` is kept intentionally** — it's the source `npm run covers`
+  regenerates from, and it's where the 92 deleted `public/images/` files still
+  live.
 
-## Two bugs already found and fixed — don't reintroduce
+## Cover art
+
+All 38 registry keys now have 600×900 drop-ins in `public/covers/`; nothing
+falls back to the design tool's exports any more. The exports were ~240 px tall
+after being recompressed three times to fit a 2 MB cap in the design tool —
+roughly 2× too small for a 3× phone screen. To replace a cover, drop
+`public/covers/<key>.webp` and run `npm run covers`, then **commit the
+regenerated `src/data/covers.ts` with it** — the image alone does nothing.
+
+Files must genuinely be WebP; a PNG renamed `.webp` renders fine but is ~20×
+larger, and git keeps both copies forever once committed.
+
+---
+
+# Bugs already fixed — don't reintroduce
 
 - **`<button>` centers its content vertically.** Cards in a grid stretch to the
-  tallest in the row, so short-titled cards had their cover art pushed away from
-  the top edge. Any `<button>` acting as a stretched card must set
-  `display: flex; flex-direction: column`. Already applied in
-  `PlayedGames.tsx`; every other Cover-containing button sets it explicitly.
+  tallest in the row, so short-titled cards had their cover art pushed off the
+  top edge. Any `<button>` acting as a stretched card must set
+  `display: flex; flex-direction: column`.
 - **`IMAGES.md`'s crop recipe is wrong.** It says to reproduce crops with
   `transform: translate(x%, y%)` on an `object-fit: cover` image, but that moves
   the whole element and tears background gaps. The design tool panned *within*
   the image's overflow and clamped to it. The correct math is in
   `src/components/Cover.tsx` — don't "simplify" it back.
+- **`animationend` doesn't always arrive.** The install hint originally
+  unmounted on it; a backgrounded tab swallowed the event and left the element
+  in the DOM at opacity 0 — invisible but still eating taps. Everything that
+  unmounts after an exit animation uses a timer, like the sheets in
+  `useLudos.ts`.
+- **An installed iOS app can't trust any viewport unit.** It sizes its initial
+  containing block as though Safari's bottom toolbar were still there — ~56pt
+  short — and `100dvh`, `100vh` and `height: 100%` all inherit that.
+  `src/lib/standaloneHeight.ts` sets `--app-height` from `screen.height`, which
+  doesn't come from the containing block. It's `max(screen.height, innerHeight)`
+  so it can only move up: the iOS keyboard shrinks `innerHeight`, and the
+  played-games picker has a search field.
+- **The intro screens can't assume a tall viewport.** Each pairs a fixed-size
+  illustration with a heading beneath it, and the heading is what disappeared.
+  The illustration is the flexible element in all of them (`flex: 0 1 auto`),
+  and each trailing spacer carries `minHeight: 20` so the copy always clears the
+  step dots.
+- **Both played-games lists must stay searchable.** `PLAYED_BLANKS` exists only
+  because those cards own `cv-played-blank-*` slots instead of `cv-search-*`
+  ones. It was once filtered out entirely whenever a query was active, so ten
+  titles vanished as you typed their name. Search also normalizes punctuation —
+  "assassins creed odyssey" has to find "Assassin's Creed: Odyssey".
+
+---
+
+# Testing traps that cost real time
+
+- **The service worker doesn't run in `npm run dev`.** Anything PWA-related
+  needs `npm run build && npm run preview`.
+- **A page's first visit isn't controlled by the service worker**, so runtime
+  caching doesn't happen until the second load. An offline test that warms the
+  cache on load one and then goes offline will fail for the wrong reason.
+- **CDP's `Emulation.setEmulatedMedia` does not emulate `display-mode`.** It
+  silently matches nothing, so a standalone test written that way passes while
+  verifying nothing. Launch Chromium with `--app=<url>` via
+  `launchPersistentContext` instead — that's a real standalone context.
+- **Verify a deploy landed by comparing the built asset hash**, not by grepping
+  the bundle for a string that may predate the change.
+- **`git` pathspecs are relative to the shell's cwd**, and the app lives in
+  `ludosfiles/` inside the repo. A `git ls-tree` that returns nothing usually
+  means the prefix is wrong, not that the files are missing.

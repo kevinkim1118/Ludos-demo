@@ -13,6 +13,10 @@
 //   apple-touch-icon-180     opaque, because iOS composites transparency onto
 //                            black and would put a black square on the home
 //                            screen
+//
+// Two kinds of source get handled differently — see `fullBleed` below. A mark
+// floating in transparent margin is centred and inset; artwork already composed
+// to its own edges is used as it is.
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
@@ -80,11 +84,32 @@ if (!source) {
 
 mkdirSync(outDir, { recursive: true });
 
-/** The mark with the source's own transparent margin removed. */
-const mark = await sharp(source, { density: 512 })
+const rendered = await sharp(source, { density: 512 })
   .ensureAlpha()
-  .trim()
   .toBuffer({ resolveWithObject: true });
+
+/**
+ * The mark with the source's own transparent margin removed — transparent
+ * only, never a colour.
+ *
+ * This used to trim by colour, which reads the top-left pixel as "background"
+ * and cuts everything matching it off the edges. That silently ate the L of the
+ * current logo, whose own artwork starts in that corner, and shipped icons
+ * showing the O alone.
+ */
+const mark = await sharp(rendered.data)
+  .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 0 })
+  .toBuffer({ resolveWithObject: true });
+
+/**
+ * Nothing transparent at the edges means the artwork is already composed to
+ * them — a finished icon rather than a mark needing a plate. Insetting one of
+ * those second-guesses the design, and the transparency it does carry is
+ * interior, so it gets the theme colour behind it instead of a hole for the
+ * wallpaper to show through.
+ */
+const fullBleed =
+  mark.info.width >= rendered.info.width && mark.info.height >= rendered.info.height;
 
 /**
  * Centres the mark at `scale` of a `size` canvas, over `background` (null for
@@ -109,25 +134,40 @@ async function icon(size, scale, background) {
     .png();
 }
 
-const maskable = maskableScale(mark.info.width, mark.info.height);
+/**
+ * Full-bleed artwork fills every output, including the maskable one: letting
+ * the launcher crop edge-to-edge art is what maskable icons are *for*, and
+ * shrinking it into the safe circle would leave a small mark adrift in a dark
+ * field on every Android launcher. A mark on a plate is the opposite case — it
+ * can't afford to be cropped, so it gets the derived safe-zone scale.
+ */
+const maskable = fullBleed ? 1 : maskableScale(mark.info.width, mark.info.height);
+const plain = fullBleed ? 1 : SCALE.plain;
+const apple = fullBleed ? 1 : SCALE.apple;
+const behind = fullBleed ? BACKGROUND : null;
 
 const outputs = [
-  { file: 'icon-192.png', build: () => icon(192, SCALE.plain, null) },
-  { file: 'icon-512.png', build: () => icon(512, SCALE.plain, null) },
+  { file: 'icon-192.png', build: () => icon(192, plain, behind) },
+  { file: 'icon-512.png', build: () => icon(512, plain, behind) },
   { file: 'icon-maskable-512.png', build: () => icon(512, maskable, BACKGROUND) },
-  { file: 'apple-touch-icon-180.png', build: () => icon(180, SCALE.apple, BACKGROUND) },
+  { file: 'apple-touch-icon-180.png', build: () => icon(180, apple, BACKGROUND) },
 ];
 
 const meta = await sharp(source).metadata();
 console.log(
   `\nsource: brand/${source.split('/').pop()}  ${meta.width}×${meta.height} ${meta.format}` +
-    `  → mark ${mark.info.width}×${mark.info.height} after trim`,
+    `  → mark ${mark.info.width}×${mark.info.height} after trim` +
+    `  (${fullBleed ? 'full-bleed: used as composed' : 'inset on the theme colour'})`,
 );
 
 if (meta.format !== 'svg' && Math.min(meta.width, meta.height) < 512) {
   console.log(`  ⚠ below 512×512 — the 512 icon will be upscaled`);
 }
-console.log(`maskable safe-zone scale: ${maskable.toFixed(3)}`);
+console.log(
+  fullBleed
+    ? 'maskable: edge to edge, the launcher crops'
+    : `maskable safe-zone scale: ${maskable.toFixed(3)}`,
+);
 
 console.log('');
 for (const { file, build } of outputs) {

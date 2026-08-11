@@ -39,7 +39,9 @@ export function IntroWelcome() {
         id="intro-logo"
         alt="Ludos"
         style={{
-          width: '50%',
+          // Square, because the box crops to fill and the mark reaches its own
+          // edges — a wider box would shave the L's foot and the top of the O.
+          width: 150,
           height: 150,
           margin: '0 auto',
           background: 'transparent',

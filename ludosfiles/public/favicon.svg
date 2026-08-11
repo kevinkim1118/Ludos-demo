@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The mark, simplified for a 16px tab: L bracket and O, held off the
+       plate's rounded corners so the corner radius can't eat the L's foot.
+       Geometry scaled from brand/logo.png — strips 168/1024, disc r 389/1024
+       tangent to the top and right edges, hole r 89/1024. -->
   <rect width="32" height="32" rx="7" fill="#241B1D"/>
-  <g fill="#F0E9E9">
-    <rect x="7" y="8" width="4" height="16" rx="1"/>
-    <rect x="13" y="12" width="4" height="12" rx="1"/>
-    <rect x="24" y="12" width="4" height="12" rx="1" transform="rotate(12 26 18)"/>
-  </g>
-  <rect x="19" y="10" width="4" height="14" rx="1" fill="#E23E4E"/>
+  <path fill="#F0E9E9" d="M3 3h4.3v26H3z"/>
+  <path fill="#F0E9E9" d="M3 24.7h26V29H3z"/>
+  <circle cx="19.1" cy="12.9" r="9.9" fill="#E23E4E"/>
+  <circle cx="19.1" cy="12.9" r="2.3" fill="#241B1D"/>
 </svg>

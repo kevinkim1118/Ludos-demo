@@ -197,12 +197,18 @@ at most one and a waiting build outranks the hint. The hint is one-shot but
 comes back next launch if it loses; an unreloaded build keeps the whole session
 on old code.
 
-**Icons** come from `brand/logo.png` (1024×1024) via `npm run icons`. The
-generator trims the source's own margin — the supplied logo carried 28% of it —
-and *derives* the maskable scale from the trimmed mark's aspect ratio rather
-than hardcoding one: the bounding box has to fit the safe circle of 80%
-diameter, which solves to `0.8 · max(w,h) / hypot(w,h)`. A fixed 0.62 clipped
-the corners by 17 px.
+**Icons** come from `brand/logo.png` (1024×1024) via `npm run icons`, and the
+generator branches on what the source carries at its edges. Transparent margin
+means a mark: trim the margin, inset it, derive the maskable scale from the
+trimmed mark's aspect ratio rather than hardcoding one — the bounding box has to
+fit the safe circle of 80% diameter, which solves to `0.8 · max(w,h) /
+hypot(w,h)` (a fixed 0.62 clipped the corners by 17 px). Nothing transparent at
+the edges means the artwork is already an icon: it fills every output as
+composed, on the theme colour, maskable included.
+
+The current logo is the second kind — an L and an O, drawn to the canvas edges,
+with the disc tangent to the top and right. Android's crop shaves the outer
+corner of the L, which is what full-bleed art is expected to do.
 
 ## iOS
 
@@ -289,6 +295,15 @@ larger, and git keeps both copies forever once committed.
 ---
 
 # Bugs already fixed — don't reintroduce
+
+- **Trimming an icon source by colour eats artwork.** `sharp`'s bare `.trim()`
+  reads the top-left pixel as the background and cuts everything matching it off
+  every edge. The logo's L starts in that corner, so the icons came out as the O
+  alone. `gen-icons.mjs` trims fully transparent margin only — a colour at the
+  edge is a decision the designer made, not padding.
+- **The welcome screen's logo box crops to fill.** `<Cover>` is
+  `object-fit: cover`, so a 4:3 box took a quarter of the height off a square
+  mark. It was harmless while the mark floated in its own margin and isn't now.
 
 - **`<button>` centers its content vertically.** Cards in a grid stretch to the
   tallest in the row, so short-titled cards had their cover art pushed off the

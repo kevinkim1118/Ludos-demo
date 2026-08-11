@@ -72,9 +72,10 @@ export const PLAYED_DB: PlayedGame[] = [
 ];
 
 /**
- * Hand-authored cards appended after the searchable catalogue. Each owns a
- * `cv-played-blank-*` cover slot; they hide while a search query is active
- * because they aren't in the searchable set.
+ * Hand-authored cards shown after the searchable catalogue. Each owns a
+ * `cv-played-blank-*` cover slot rather than a `cv-search-*` one, which is the
+ * only reason they're a separate list — `PlayedGames` searches these and
+ * `PLAYED_DB` as one set.
  */
 export const PLAYED_BLANKS: { id: string; slotId: string; name: string }[] = [
   { id: 'blank1', slotId: 'cv-played-blank-1', name: 'Balatro' },

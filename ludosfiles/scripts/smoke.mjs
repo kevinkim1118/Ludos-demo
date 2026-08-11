@@ -224,6 +224,40 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   ok(`${step} copy clears the step dots on a short screen`, clearance !== null && clearance >= 0);
 }
 
+// ── Played-games search ───────────────────────────────────────
+// The hand-authored cards used to sit in a second list the filter never
+// touched, so ten titles vanished the moment you typed their name.
+{
+  const sq = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  await sq.goto(`${BASE}/?reset&screen=onboarding:played`, { waitUntil: 'networkidle' });
+  await sq.waitForTimeout(700);
+  const box = sq.getByPlaceholder('Search for a game');
+  const count = () => sq.locator('.scroll-y button[aria-pressed]').count();
+
+  let missing = [];
+  for (const q of ['balatro', 'katana zero', 'lies of p', 'dead cells', 'nier automata',
+                   'sea of stars', 'until then', 'super mario galaxy 2', 'clair obscur']) {
+    await box.fill(q);
+    await sq.waitForTimeout(200);
+    if ((await count()) === 0) missing.push(q);
+  }
+  ok(`every picker card is searchable${missing.length ? ` (missing: ${missing})` : ''}`, missing.length === 0);
+
+  // Punctuation in the title shouldn't have to be typed.
+  await box.fill('assassins creed odyssey');
+  await sq.waitForTimeout(220);
+  ok('search ignores punctuation in titles', (await count()) > 0);
+
+  await box.fill('zzzqqq');
+  await sq.waitForTimeout(220);
+  ok('a genuine miss still shows the empty state', await sq.locator('.screen').innerText().then((t) => t.includes('Nothing matches')));
+
+  await box.fill('');
+  await sq.waitForTimeout(250);
+  ok('clearing the query restores the whole grid', (await count()) >= 30);
+  await sq.close();
+}
+
 // ── Back navigation ───────────────────────────────────────────
 // Installed there's no browser chrome, so Android's back button goes to the OS.
 // Each dismissible layer owns a history entry so back closes it instead of

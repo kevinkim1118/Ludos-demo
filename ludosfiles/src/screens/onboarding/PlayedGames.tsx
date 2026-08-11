@@ -95,21 +95,51 @@ function GameCard({ slotId, name, selected, onToggle }: CardProps) {
   );
 }
 
+/**
+ * Everything the picker offers, in display order: the searchable catalogue
+ * first, then the hand-authored cards.
+ *
+ * These were two separate lists, and only the first was searchable — so ten
+ * games sat visible in the grid and then vanished the moment you typed their
+ * name. Both are keyed the same way into `state.played`, so there was never a
+ * reason to search only half of them.
+ */
+const PICKER_CARDS: { id: string; slotId: string; name: string }[] = [
+  ...PLAYED_DB.map((g) => ({ id: g.k, slotId: `cv-search-${g.k}`, name: g.n })),
+  ...PLAYED_BLANKS.map((b) => ({ id: b.id, slotId: b.slotId, name: b.name })),
+];
+
+/**
+ * Titles carry punctuation nobody types — "Assassin's Creed: Odyssey" against
+ * "assassins creed odyssey". Apostrophes drop out entirely so the possessive
+ * closes up; everything else becomes a space.
+ */
+function normalize(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+/** Precomputed so typing doesn't re-normalize every title on every keystroke. */
+const SEARCHABLE = PICKER_CARDS.map((card) => ({ card, haystack: normalize(card.name) }));
+
 export function PlayedGames({ state, actions }: { state: State; actions: LudosActions }) {
-  const query = state.playedQuery.trim().toLowerCase();
+  const query = normalize(state.playedQuery);
   const pickedCount = Object.keys(state.played).length;
   const remaining = Math.max(0, PLAYED_MINIMUM - pickedCount);
   const canContinue = pickedCount >= PLAYED_MINIMUM;
 
   const results = useMemo(
-    () => PLAYED_DB.filter((g) => !query || g.n.toLowerCase().includes(query)),
+    () =>
+      query
+        ? SEARCHABLE.filter((e) => e.haystack.includes(query)).map((e) => e.card)
+        : PICKER_CARDS,
     [query],
   );
 
-  // The hand-authored cards aren't in the searchable set, so they step aside
-  // as soon as the user types.
-  const showBlanks = !query;
-  const noResults = results.length === 0 && !!query;
+  const noResults = results.length === 0;
 
   return (
     <div
@@ -211,25 +241,15 @@ export function PlayedGames({ state, actions }: { state: State; actions: LudosAc
       <div className="scroll-y" style={{ flex: 1, minHeight: 0, padding: '16px 20px 0' }}>
         {!noResults && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 11 }}>
-            {results.map((g) => (
+            {results.map((card) => (
               <GameCard
-                key={g.k}
-                slotId={`cv-search-${g.k}`}
-                name={g.n}
-                selected={!!state.played[g.k]}
-                onToggle={() => actions.togglePlayed(g.k)}
+                key={card.id}
+                slotId={card.slotId}
+                name={card.name}
+                selected={!!state.played[card.id]}
+                onToggle={() => actions.togglePlayed(card.id)}
               />
             ))}
-            {showBlanks &&
-              PLAYED_BLANKS.map((b) => (
-                <GameCard
-                  key={b.id}
-                  slotId={b.slotId}
-                  name={b.name}
-                  selected={!!state.played[b.id]}
-                  onToggle={() => actions.togglePlayed(b.id)}
-                />
-              ))}
           </div>
         )}
 

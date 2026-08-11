@@ -168,6 +168,30 @@ await page.getByRole('button', { name: 'Dismiss' }).click();
 await page.waitForTimeout(700);
 ok('dismissing unmounts the hint', (await hint.count()) === 0);
 
+// ── Update prompt ─────────────────────────────────────────────
+// A new worker used to take over silently and reload the page under whoever was
+// using it. It waits now, and this is what asks. `?update` fakes one, the way
+// `?hint` fakes the install hint — a real one needs two deploys to look at.
+await page.goto(`${BASE}/?screen=home:discover`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(400);
+ok('update prompt stays hidden with nothing waiting', !(await has('new version')));
+
+await page.goto(`${BASE}/?update&screen=home:discover`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(400);
+ok('?update forces the update prompt', await has('A new version of Ludos is ready'));
+
+await page.getByRole('button', { name: 'Reload' }).click();
+await page.waitForTimeout(900);
+ok(
+  'Reload reloads onto the new build',
+  (await page.evaluate(() => performance.getEntriesByType('navigation')[0]?.type)) === 'reload' &&
+    (await has('What to play next')),
+);
+
+await page.getByRole('button', { name: 'Not now' }).click();
+await page.waitForTimeout(700);
+ok('dismissing unmounts the update prompt', !(await has('new version')));
+
 // ── Phone layout fills the viewport ───────────────────────────
 // The installed app used to leave a gap under the tab bar until you scrolled:
 // iOS resolves dvh against Safari's viewport on an installed app's first paint.

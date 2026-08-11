@@ -63,7 +63,7 @@ wanted.
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the built output — use this for anything PWA-related |
 | `npm run typecheck` | Types only |
-| `npm run smoke` | 57-check end-to-end walkthrough (needs a server running; `BASE_URL` retargets) |
+| `npm run smoke` | 61-check end-to-end walkthrough (needs a server running; `BASE_URL` retargets) |
 | `npm run covers` | Rebuild the cover manifest after adding art to `public/covers/` |
 | `npm run icons` | Regenerate app icons and iOS launch images from `brand/logo.*` |
 | `npm run pack` | Single self-contained `preview.html` (gitignored) |
@@ -71,7 +71,8 @@ wanted.
 
 Dev deep links: `?screen=onboarding:played`, `?screen=home:playing`,
 `?screen=h2h:duel`, `?screen=h2h:outcome`, `?screen=h2h:cold`. Also `?reset`
-(wipe saved state) and `?hint` (force the iOS install hint on any device).
+(wipe saved state), `?hint` (force the iOS install hint on any device) and
+`?update` (force the update prompt without deploying twice).
 
 ## Layout
 
@@ -86,11 +87,13 @@ src/
     useBackNavigation.ts History entries so back dismisses UI, not the app
   lib/
     standaloneHeight.ts  Corrects iOS's wrong viewport height when installed
+    appUpdate.ts         Registers the worker, reports a waiting build
   data/
     games.ts             GAMES, SEED, PLAYED_DB, PLAYED_BLANKS, intents
     content.ts           Rails, reviews, taste axes, copy
     covers.ts            GENERATED — do not hand-edit
-  components/            Cover, PhoneShell, BottomSheet, Toast, IosInstallHint, icons
+  components/            Cover, PhoneShell, BottomSheet, Toast, IosInstallHint,
+                         UpdatePrompt, icons
   screens/
     onboarding/  home/  h2h/
   styles/
@@ -119,7 +122,9 @@ public/
 ## Verified state
 
 - `npm run build` and `npm run typecheck` clean
-- All **57 smoke checks pass**, zero console errors
+- All **61 smoke checks pass**, zero console errors
+- The update prompt was driven against a genuine second build: banner on a real
+  waiting worker, handover on Reload, nothing left waiting afterwards
 - Deployed headers confirmed correct; offline behaviour confirmed against
   production
 - Installed and confirmed working on a real iPhone
@@ -157,11 +162,40 @@ storage. One-shot UI flags (the install hint's dismissal) live under
   of art against a 708 KB shell wasn't worth paying at install. Entries expire
   because art keeps its filename when replaced, so `CacheFirst` would otherwise
   pin a stale cover forever.
-- **`registerType: 'autoUpdate'`** — no update prompt exists, and a stale worker
-  without one strands users on an old build.
+- **`registerType: 'prompt'`** — a new worker installs and waits; the user takes
+  it. `autoUpdate` reloads the page the instant a deploy lands, and only the
+  durable slice of state is saved, so that could drop someone mid-duel onto a
+  fresh Discover. Ignoring the prompt strands nobody: a waiting worker activates
+  on its own once every tab is closed, so the next cold launch is on the new
+  build regardless.
+- **`clientsClaim: true`, set explicitly** — `autoUpdate` used to imply it and
+  `prompt` doesn't. Without it the first visit runs uncontrolled and no artwork
+  reaches the runtime cache until the second load. It only takes effect when a
+  worker activates, so a waiting build still waits.
+- **`injectRegister: false`** — the app registers the worker itself through
+  `virtual:pwa-register` (`src/lib/appUpdate.ts`), which is the only way to hear
+  about the waiting build. Left on, it would ship `registerSW.js` and register a
+  second time.
 - **`includeManifestIcons: false`** — the `icons/*.png` glob already precaches
   them and also catches `apple-touch-icon-180`, which the manifest never lists.
   Left on, each manifest icon was entered twice.
+
+**The update prompt** is `src/lib/appUpdate.ts` plus
+`src/components/UpdatePrompt.tsx`: a banner above the tab bar saying a new
+version is ready, with Reload and a dismiss. Reload messages the waiting worker
+to skip waiting and reloads once it takes control — backed by a 3-second timer,
+because that handover is a message to another thread and can go unanswered.
+Dismissing it is per-session only; nothing about an update is worth persisting.
+
+The browser only looks for a new worker when the page navigates, and an
+installed app never navigates. So the registration is re-checked hourly, and on
+returning to the foreground if an hour has passed — that second one is what
+actually fires on a phone.
+
+The prompt and the iOS install hint occupy the same spot, so `App.tsx` renders
+at most one and a waiting build outranks the hint. The hint is one-shot but
+comes back next launch if it loses; an unreloaded build keeps the whole session
+on old code.
 
 **Icons** come from `brand/logo.png` (1024×1024) via `npm run icons`. The
 generator trims the source's own margin — the supplied logo carried 28% of it —
@@ -197,8 +231,8 @@ Vercel, from `main`, static build, no env vars. **Root Directory must be
 `vercel.json`; Node is pinned to 22 via `engines`.
 
 The cache headers matter more than usual because of the service worker:
-`sw.js`, `registerSW.js`, `manifest.webmanifest` and `/` revalidate every time
-(a cached worker is never re-fetched, so the app can't discover it updated);
+`sw.js`, `manifest.webmanifest` and `/` revalidate every time (a cached worker
+is never re-fetched, so the app can't discover it updated);
 hashed assets and fonts get a year immutable; artwork gets a day plus a week of
 `stale-while-revalidate`, because covers keep their filename when replaced.
 
@@ -208,10 +242,6 @@ hashed assets and fonts get a year immutable; artwork gets a day plus a week of
 
 Nothing blocking. In rough order of value:
 
-- **Update prompt.** Optional now: `autoUpdate` plus `must-revalidate` on
-  `sw.js` already prevents anyone being pinned to a stale build. What's missing
-  is only *telling* the user a new version took effect, since the app can
-  currently change under them mid-session.
 - **Android has never been tested on real hardware.** `useBackNavigation` is
   covered by smoke checks driving `page.goBack()` — the same `popstate` path —
   but the OS integration, the install prompt and the maskable icon's rendering
@@ -301,6 +331,10 @@ larger, and git keeps both copies forever once committed.
 - **A page's first visit isn't controlled by the service worker**, so runtime
   caching doesn't happen until the second load. An offline test that warms the
   cache on load one and then goes offline will fail for the wrong reason.
+- **`?update` fakes the banner, not the handover.** It's there so the layout and
+  copy can be looked at without deploying twice, and its Reload just reloads.
+  Exercising the real path means two genuinely different builds: load one, swap
+  `dist/` for the next, reload, and let the worker install and go to waiting.
 - **CDP's `Emulation.setEmulatedMedia` does not emulate `display-mode`.** It
   silently matches nothing, so a standalone test written that way passes while
   verifying nothing. Launch Chromium with `--app=<url>` via

@@ -206,9 +206,10 @@ hypot(w,h)` (a fixed 0.62 clipped the corners by 17 px). Nothing transparent at
 the edges means the artwork is already an icon: it fills every output as
 composed, on the theme colour, maskable included.
 
-The current logo is the second kind — an L and an O, drawn to the canvas edges,
-with the disc tangent to the top and right. Android's crop shaves the outer
-corner of the L, which is what full-bleed art is expected to do.
+The current logo is the first kind — an L and an O as a 700×700 mark inside its
+own 162 px margin, so no platform's mask reaches it. Every output gets the theme
+colour behind it, `any` included: the mark is off-white, and a transparent icon
+on a light launcher or tab strip is a red circle beside an invisible L.
 
 ## iOS
 

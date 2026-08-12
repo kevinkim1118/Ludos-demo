@@ -41,11 +41,12 @@ export function IntroWelcome() {
         style={{
           // Square, because the box crops to fill and the mark reaches its own
           // edges — a wider box would shave the L's foot and the top of the O.
+          // No corner radius for the same reason: there's no icon plate here to
+          // round, only the mark, and rounding it clips the L.
           width: 150,
           height: 150,
           margin: '0 auto',
           background: 'transparent',
-          borderRadius: 16,
         }}
       />
       <h1

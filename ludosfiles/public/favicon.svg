@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- The mark, simplified for a 16px tab: L bracket and O, held off the
-       plate's rounded corners so the corner radius can't eat the L's foot.
-       Geometry scaled from brand/logo.png — strips 168/1024, disc r 389/1024
-       tangent to the top and right edges, hole r 89/1024. -->
+  <!-- The mark, simplified for a 16px tab. Geometry scaled from the 700×700
+       mark inside brand/logo.png — L strips 115/700, disc r 266.5/700 centred
+       at (433, 266), hole r 60.5/700 — mapped into a 24-unit box at (4, 4) so
+       the plate's corner radius stays clear of the L. -->
   <rect width="32" height="32" rx="7" fill="#241B1D"/>
-  <path fill="#F0E9E9" d="M3 3h4.3v26H3z"/>
-  <path fill="#F0E9E9" d="M3 24.7h26V29H3z"/>
-  <circle cx="19.1" cy="12.9" r="9.9" fill="#E23E4E"/>
-  <circle cx="19.1" cy="12.9" r="2.3" fill="#241B1D"/>
+  <path fill="#F0E9E9" d="M4 4h3.94v24H4z"/>
+  <path fill="#F0E9E9" d="M4 24.06h24V28H4z"/>
+  <circle cx="18.85" cy="13.12" r="9.14" fill="#E23E4E"/>
+  <circle cx="18.85" cy="13.12" r="2.07" fill="#241B1D"/>
 </svg>

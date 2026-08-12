@@ -37,20 +37,20 @@ than cropped, since cropping a logo usually eats the mark.
 margin means a mark that needs a plate built around it; artwork reaching its own
 edges means a finished icon that gets used as composed.
 
-**A mark in transparent margin** — the margin is trimmed off, then:
+**A mark in transparent margin** (the current logo) has that margin trimmed off
+and is then inset per platform: a little breathing room on the manifest icons,
+closer to the edge for `apple-touch-icon` since iOS only rounds the corners, and
+scaled into Android's safe circle for the maskable one, because it crops to a
+circle or squircle and a tightly-framed mark loses its edges.
 
-- **Android / manifest icons** keep transparency
-- **`apple-touch-icon`** is flattened onto `#241B1D` — iOS composites
-  transparent pixels onto black, which would put a black square on the home
-  screen
-- **The maskable variant** is scaled into Android's safe circle, because it
-  crops to a circle or squircle and a tightly-framed mark loses its edges
+**Artwork composed to its own edges** is scaled to fill each icon with nothing
+trimmed and nothing inset — including maskable, since letting the launcher crop
+edge-to-edge art is what maskable icons are for.
 
-**Artwork composed to its own edges** (the current logo) is scaled to fill each
-icon with nothing trimmed and nothing inset, on `#241B1D` throughout — including
-maskable, since letting the launcher crop edge-to-edge art is what maskable
-icons are for. Any transparency it carries is interior, and the theme colour
-goes behind it rather than the wallpaper showing through.
+**Either kind gets `#241B1D` behind it**, all four outputs. Transparent `any`
+icons are the usual advice and wrong here: the mark is off-white, so on a light
+launcher, taskbar or tab strip it would be a red circle beside an invisible L.
+iOS would have flattened `apple-touch-icon` onto black regardless.
 
 Either way one file covers all four outputs. You don't need to export variants.
 `npm run icons` prints which of the two it decided on — worth a glance.

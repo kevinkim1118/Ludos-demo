@@ -144,11 +144,16 @@ async function icon(size, scale, background) {
 const maskable = fullBleed ? 1 : maskableScale(mark.info.width, mark.info.height);
 const plain = fullBleed ? 1 : SCALE.plain;
 const apple = fullBleed ? 1 : SCALE.apple;
-const behind = fullBleed ? BACKGROUND : null;
 
+/**
+ * Every output gets the theme colour behind it, `any` included. Keeping those
+ * transparent is the usual advice, but the mark is off-white — on a light
+ * launcher, taskbar or tab strip it would be a red circle beside an invisible
+ * L. The plate is part of the identity, not packaging around it.
+ */
 const outputs = [
-  { file: 'icon-192.png', build: () => icon(192, plain, behind) },
-  { file: 'icon-512.png', build: () => icon(512, plain, behind) },
+  { file: 'icon-192.png', build: () => icon(192, plain, BACKGROUND) },
+  { file: 'icon-512.png', build: () => icon(512, plain, BACKGROUND) },
   { file: 'icon-maskable-512.png', build: () => icon(512, maskable, BACKGROUND) },
   { file: 'apple-touch-icon-180.png', build: () => icon(180, apple, BACKGROUND) },
 ];

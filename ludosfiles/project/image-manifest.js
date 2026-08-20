@@ -3,45 +3,51 @@
 // this as its source of truth when the editing sidecar has no entry.
 // Regenerate after dropping new images. Safe to delete once every
 // <image-slot> has been replaced with a plain <img>.
+//
+// Cover slots repointed to covers/ — the full-resolution drop-ins the deployed
+// app serves from public/covers/. Crop transforms (s/x/y) were preserved.
 window.IMAGE_SLOT_STATIC = {
  "cv-spotlight": {
-  "src": "images/cv-spotlight.webp"
+  "src": "covers/elden-ring.webp"
+ },
+ "cv-fr-eldenring": {
+  "src": "covers/elden-ring.webp"
  },
  "cv-fr-hades": {
-  "src": "images/cv-fr-hades.webp"
+  "src": "covers/hades-ii.webp"
  },
  "cv-fr-pizzatower": {
-  "src": "images/cv-fr-pizzatower.webp"
+  "src": "covers/pizza-tower.webp"
  },
  "cv-fr-citizensleeper": {
-  "src": "images/cv-fr-citizensleeper.webp"
+  "src": "covers/citizen-sleeper.webp"
  },
  "cv-fr-tunic": {
-  "src": "images/cv-fr-tunic.webp"
+  "src": "covers/tunic.webp"
  },
  "cv-ts-outerwilds": {
-  "src": "images/cv-ts-outerwilds.webp"
+  "src": "covers/outer-wilds.webp"
  },
  "cv-ts-celeste": {
-  "src": "images/cv-ts-celeste.webp"
+  "src": "covers/celeste.webp"
  },
  "cv-ts-slaythespire": {
-  "src": "images/cv-ts-slaythespire.webp"
+  "src": "covers/slay-the-spire.webp"
  },
  "cv-ts-tunic": {
-  "src": "images/cv-ts-tunic.webp"
+  "src": "covers/tunic.webp"
  },
  "cv-ts-inscryption": {
-  "src": "images/cv-ts-inscryption.webp"
+  "src": "covers/inscryption.webp"
  },
  "cv-ts-tetriseffect": {
-  "src": "images/cv-ts-tetriseffect.webp"
+  "src": "covers/tetris-effect.webp"
  },
  "cv-fr-cocoon": {
-  "src": "images/cv-fr-cocoon.webp"
+  "src": "covers/cocoon.webp"
  },
  "cv-fr-seaofstars": {
-  "src": "images/cv-fr-seaofstars.webp"
+  "src": "covers/sea-of-stars.webp"
  },
  "cv-tg-liesofp": {
   "src": "images/cv-tg-liesofp.webp"
@@ -62,7 +68,7 @@ window.IMAGE_SLOT_STATIC = {
   "src": "images/cv-tg-mortalshell.webp"
  },
  "cv-gl-bg3": {
-  "src": "images/cv-gl-bg3.webp"
+  "src": "covers/baldurs-gate-3.webp"
  },
  "cv-gl-helldivers2": {
   "src": "images/cv-gl-helldivers2.webp"
@@ -235,71 +241,74 @@ window.IMAGE_SLOT_STATIC = {
   "src": "images/ob-ply-4.webp"
  },
  "cv-h2h-hades": {
-  "src": "images/cv-h2h-hades.webp",
+  "src": "covers/hades-ii.webp",
   "x": 1.1102230246251565e-14,
   "y": -6.93359375
  },
  "cv-h2h-sts": {
-  "src": "images/cv-h2h-sts.webp"
+  "src": "covers/slay-the-spire.webp"
  },
  "cv-h2h-tunic": {
-  "src": "images/cv-h2h-tunic.webp"
+  "src": "covers/tunic.webp"
  },
  "cv-h2h-citizen": {
-  "src": "images/cv-h2h-citizen.webp"
+  "src": "covers/citizen-sleeper.webp"
  },
  "cv-h2h-deadcells": {
   "src": "images/cv-h2h-deadcells.webp",
   "y": 24.881516587677723
  },
  "cv-h2h-hollow": {
-  "src": "images/cv-h2h-hollow.webp",
+  "src": "covers/hollow-knight.webp",
   "y": 19.565217391304344
  },
  "cv-h2h-disco": {
-  "src": "images/cv-h2h-disco.webp"
+  "src": "covers/disco-elysium.webp"
  },
  "cv-h2h-bg3": {
-  "src": "images/cv-h2h-bg3.webp",
+  "src": "covers/baldurs-gate-3.webp",
   "y": 10.203437805175795
  },
  "cv-h2h-outer": {
-  "src": "images/cv-h2h-outer.webp"
+  "src": "covers/outer-wilds.webp"
  },
  "cv-pick-hades": {
-  "src": "images/cv-pick-hades.webp"
+  "src": "covers/hades-ii.webp"
  },
  "cv-pick-outerwilds": {
   "src": "images/cv-pick-outerwilds.webp"
  },
  "cv-pick-hollow": {
-  "src": "images/cv-pick-hollow.webp"
+  "src": "covers/hollow-knight.webp"
  },
  "cv-search-elden": {
-  "src": "images/cv-search-elden.webp"
+  "src": "covers/elden-ring.webp"
  },
  "cv-search-meccha": {
-  "src": "images/cv-search-meccha.webp"
+  "src": "covers/meccha-chameleon.webp"
  },
  "cv-search-gamble": {
-  "src": "images/cv-search-gamble.webp"
+  "src": "covers/gamble-with-your-friends.webp"
  },
  "cv-search-zelda": {
-  "src": "images/cv-search-zelda.webp"
+  "src": "covers/zelda-totk.webp"
  },
  "cv-search-hades2": {
-  "src": "images/cv-search-hades2.webp"
+  "src": "covers/hades-ii.webp"
  },
  "cv-search-bg3": {
-  "src": "images/cv-search-bg3.webp"
+  "src": "covers/baldurs-gate-3.webp"
  },
  "cv-lib-hades": {
   "src": "images/cv-lib-hades.webp"
  },
  "cv-search-mina": {
-  "src": "images/cv-search-mina.webp"
+  "src": "covers/mina-the-hollower.webp"
  },
  "cv-rev-persona3": {
+  "src": "images/cv-rev-persona3.webp"
+ },
+ "cv-act-a-persona3": {
   "src": "images/cv-rev-persona3.webp"
  },
  "cv-rev-elden": {
@@ -348,43 +357,43 @@ window.IMAGE_SLOT_STATIC = {
   "src": "images/cv-act-a-hades.webp"
  },
  "cv-search-disco": {
-  "src": "images/cv-search-disco.webp"
+  "src": "covers/disco-elysium.webp"
  },
  "cv-search-pragmata": {
-  "src": "images/cv-search-pragmata.webp"
+  "src": "covers/pragmata.webp"
  },
  "cv-search-hollow": {
-  "src": "images/cv-search-hollow.webp"
+  "src": "covers/hollow-knight.webp"
  },
  "cv-search-outerwilds": {
-  "src": "images/cv-search-outerwilds.webp"
+  "src": "covers/outer-wilds.webp"
  },
  "cv-search-sekiro": {
-  "src": "images/cv-search-sekiro.webp"
+  "src": "covers/sekiro.webp"
  },
  "cv-search-acbf": {
-  "src": "images/cv-search-acbf.webp"
+  "src": "covers/ac-black-flag.webp"
  },
  "cv-search-firstlight": {
-  "src": "images/cv-search-firstlight.webp"
+  "src": "covers/007-first-light.webp"
  },
  "cv-search-forza": {
-  "src": "images/cv-search-forza.webp"
+  "src": "covers/forza-horizon-6.webp"
  },
  "cv-search-stray": {
-  "src": "images/cv-search-stray.webp"
+  "src": "covers/stray.webp"
  },
  "cv-search-citizen": {
-  "src": "images/cv-search-citizen.webp"
+  "src": "covers/citizen-sleeper.webp"
  },
  "cv-search-celeste": {
-  "src": "images/cv-search-celeste.webp"
+  "src": "covers/celeste.webp"
  },
  "cv-search-tunic": {
-  "src": "images/cv-search-tunic.webp"
+  "src": "covers/tunic.webp"
  },
  "cv-search-subnautica": {
-  "src": "images/cv-search-subnautica.webp"
+  "src": "covers/subnautica-2.webp"
  },
  "cv-coll-hh-0": {
   "src": "images/cv-coll-hh-0.webp"
@@ -467,52 +476,52 @@ window.IMAGE_SLOT_STATIC = {
   "src": "images/disc-r3-1.webp"
  },
  "intro-elden-cover": {
-  "src": "images/intro-elden-cover.webp"
+  "src": "covers/clair-obscur-33.webp"
  },
  "cv-seed-hollow": {
-  "src": "images/cv-seed-hollow.webp"
+  "src": "covers/hollow-knight.webp"
  },
  "cv-seed-outer": {
-  "src": "images/cv-seed-outer.webp"
+  "src": "covers/outer-wilds.webp"
  },
  "cv-seed-tunic": {
-  "src": "images/cv-seed-tunic.webp"
+  "src": "covers/tunic.webp"
  },
  "cv-gl-firstlight": {
-  "src": "images/cv-gl-firstlight.webp"
+  "src": "covers/007-first-light.webp"
  },
  "cv-gl-subnautica": {
-  "src": "images/cv-gl-subnautica.webp"
+  "src": "covers/subnautica-2.webp"
  },
  "cv-gl-forza": {
-  "src": "images/cv-gl-forza.webp"
+  "src": "covers/forza-horizon-6.webp"
  },
  "cv-gl-pragmata": {
-  "src": "images/cv-gl-pragmata.webp"
+  "src": "covers/pragmata.webp"
  },
  "cv-gl-sflegends": {
-  "src": "images/cv-gl-sflegends.webp"
+  "src": "covers/silksong.webp"
  },
  "cv-h2h-celeste": {
-  "src": "images/cv-h2h-celeste.webp"
+  "src": "covers/celeste.webp"
  },
  "cv-pick-outer": {
-  "src": "images/cv-pick-outer.webp"
+  "src": "covers/outer-wilds.webp"
  },
  "intro-logo": {
-  "src": "images/intro-logo.webp"
+  "src": "covers/ludos-logo.png"
  },
  "cv-seed-celeste": {
-  "src": "images/cv-seed-celeste.webp"
+  "src": "covers/celeste.webp"
  },
  "cv-seed-totk": {
-  "src": "images/cv-seed-totk.webp"
+  "src": "covers/zelda-totk.webp"
  },
  "cv-seed-ds3": {
-  "src": "images/cv-seed-ds3.webp"
+  "src": "covers/dark-souls-3.webp"
  },
  "cv-h2h-totk": {
-  "src": "images/cv-h2h-totk.webp"
+  "src": "covers/zelda-totk.webp"
  },
  "cv-outer": {
   "src": "images/cv-outer.webp"
@@ -524,77 +533,200 @@ window.IMAGE_SLOT_STATIC = {
   "src": "images/cv-seed-hades.webp"
  },
  "cv-pick-tunic": {
-  "src": "images/cv-pick-tunic.webp",
+  "src": "covers/tunic.webp",
   "y": 8.841463414634143
  },
  "cv-pick-celeste": {
-  "src": "images/cv-pick-celeste.webp"
+  "src": "covers/celeste.webp"
  },
  "cv-seed-citizen": {
   "src": "images/cv-seed-citizen.webp",
   "y": 24.644321348608994
  },
  "cv-pick-citizen": {
-  "src": "images/cv-pick-citizen.webp",
+  "src": "covers/citizen-sleeper.webp",
   "y": 24.644321348608994
  },
  "cv-seed-sts": {
   "src": "images/cv-seed-sts.webp"
  },
  "cv-pick-sts": {
-  "src": "images/cv-pick-sts.webp"
+  "src": "covers/slay-the-spire.webp"
  },
  "cv-seed-disco": {
   "src": "images/cv-seed-disco.webp",
   "y": -6.353764478764479
  },
  "cv-pick-disco": {
-  "src": "images/cv-pick-disco.webp",
+  "src": "covers/disco-elysium.webp",
   "y": -6.353764478764479
  },
  "cv-seed-bg3": {
   "src": "images/cv-seed-bg3.webp"
  },
  "cv-pick-bg3": {
-  "src": "images/cv-pick-bg3.webp"
+  "src": "covers/baldurs-gate-3.webp"
  },
  "cv-pick-totk": {
-  "src": "images/cv-pick-totk.webp"
+  "src": "covers/zelda-totk.webp"
  },
  "cv-pick-ds3": {
-  "src": "images/cv-pick-ds3.webp"
+  "src": "covers/dark-souls-3.webp"
  },
  "cv-h2h-ds3": {
-  "src": "images/cv-h2h-ds3.webp"
+  "src": "covers/dark-souls-3.webp"
  },
  "cv-played-blank-1": {
-  "src": "images/cv-played-blank-1.webp"
+  "src": "covers/balatro.webp"
  },
  "cv-played-blank-2": {
-  "src": "images/cv-played-blank-2.webp"
+  "src": "covers/mario-galaxy-2.webp"
  },
  "cv-played-blank-3": {
-  "src": "images/cv-played-blank-3.webp"
+  "src": "covers/katana-zero.webp"
  },
  "cv-played-blank-4": {
-  "src": "images/cv-played-blank-4.webp"
+  "src": "covers/clair-obscur-33.webp"
  },
  "cv-played-blank-5": {
-  "src": "images/cv-played-blank-5.webp"
+  "src": "covers/lies-of-p.webp"
  },
  "cv-played-blank-6": {
-  "src": "images/cv-played-blank-6.webp"
+  "src": "covers/dead-cells.webp"
  },
  "cv-played-blank-7": {
-  "src": "images/cv-played-blank-7.webp"
+  "src": "covers/nier-automata.webp"
  },
  "cv-played-blank-8": {
-  "src": "images/cv-played-blank-8.webp"
+  "src": "covers/sea-of-stars.webp"
  },
  "cv-played-blank-9": {
-  "src": "images/cv-played-blank-9.webp"
+  "src": "covers/until-then.webp"
  },
  "cv-played-blank-10": {
-  "src": "images/cv-played-blank-10.webp"
+  "src": "covers/ac-odyssey.webp"
+ },
+ "cv-h2h-stray": {
+  "src": "covers/stray.webp"
+ },
+ "cv-pick-stray": {
+  "src": "covers/stray.webp"
+ },
+ "cv-coll-cozy-3": {
+  "src": "covers/outer-wilds.webp"
+ },
+ "cv-coll-cozy-4": {
+  "src": "covers/baldurs-gate-3.webp"
+ },
+ "cv-coll-cozy-5": {
+  "src": "covers/citizen-sleeper.webp"
+ },
+ "cv-coll-cozy-6": {
+  "src": "covers/sea-of-stars.webp"
+ },
+ "cv-coll-cozy-7": {
+  "src": "covers/until-then.webp"
+ },
+ "cv-coll-fav-3": {
+  "src": "covers/dark-souls-3.webp"
+ },
+ "cv-coll-fav-4": {
+  "src": "covers/elden-ring.webp"
+ },
+ "cv-coll-fav-5": {
+  "src": "covers/hades-ii.webp"
+ },
+ "cv-coll-fav-6": {
+  "src": "covers/nier-automata.webp"
+ },
+ "cv-coll-fav-7": {
+  "src": "covers/disco-elysium.webp"
+ },
+ "cv-coll-hh-3": {
+  "src": "covers/balatro.webp"
+ },
+ "cv-coll-hh-4": {
+  "src": "covers/dead-cells.webp"
+ },
+ "cv-coll-hh-5": {
+  "src": "covers/tetris-effect.webp"
+ },
+ "cv-coll-hh-6": {
+  "src": "covers/hollow-knight.webp"
+ },
+ "cv-coll-hh-7": {
+  "src": "covers/katana-zero.webp"
+ },
+ "cv-coll-hh-8": {
+  "src": "covers/slay-the-spire.webp"
+ },
+ "cv-coll-hh-9": {
+  "src": "covers/inscryption.webp"
+ },
+ "cv-pl-cozy-3": {
+  "src": "covers/outer-wilds.webp"
+ },
+ "cv-pl-cozy-4": {
+  "src": "covers/baldurs-gate-3.webp"
+ },
+ "cv-pl-cozy-5": {
+  "src": "covers/citizen-sleeper.webp"
+ },
+ "cv-pl-cozy-6": {
+  "src": "covers/sea-of-stars.webp"
+ },
+ "cv-pl-cozy-7": {
+  "src": "covers/until-then.webp"
+ },
+ "cv-pl-fav-3": {
+  "src": "covers/dark-souls-3.webp"
+ },
+ "cv-pl-fav-4": {
+  "src": "covers/elden-ring.webp"
+ },
+ "cv-pl-fav-5": {
+  "src": "covers/hades-ii.webp"
+ },
+ "cv-pl-fav-6": {
+  "src": "covers/nier-automata.webp"
+ },
+ "cv-pl-fav-7": {
+  "src": "covers/disco-elysium.webp"
+ },
+ "cv-pl-hh-3": {
+  "src": "covers/balatro.webp"
+ },
+ "cv-pl-hh-4": {
+  "src": "covers/dead-cells.webp"
+ },
+ "cv-pl-hh-5": {
+  "src": "covers/tetris-effect.webp"
+ },
+ "cv-pl-hh-6": {
+  "src": "covers/hollow-knight.webp"
+ },
+ "cv-pl-hh-7": {
+  "src": "covers/katana-zero.webp"
+ },
+ "cv-pl-hh-8": {
+  "src": "covers/slay-the-spire.webp"
+ },
+ "cv-pl-hh-9": {
+  "src": "covers/inscryption.webp"
+ },
+ "cv-review-1": {
+  "src": "images/cv-review-1.webp"
+ },
+ "cv-review-2": {
+  "src": "images/cv-review-2.webp"
+ },
+ "cv-review-3": {
+  "src": "images/cv-review-3.webp"
+ },
+ "cv-lib-ac": {
+  "src": "images/cv-lib-ac.webp"
+ },
+ "cv-lib-starfield": {
+  "src": "images/cv-lib-starfield.webp"
  }
 };

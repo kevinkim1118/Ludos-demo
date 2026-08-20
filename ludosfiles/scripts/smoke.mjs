@@ -282,6 +282,118 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   await sq.close();
 }
 
+// ── Library ───────────────────────────────────────────────────
+// The shelf is fixed demo content, so what's worth guarding is the machinery
+// around it: the chip filter, the two-pane slide, and the editor's drafts. The
+// editor commits into four per-list override maps at once — a Save that only
+// half-lands leaves a list wearing one edit's title and another's order.
+{
+  const lib = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const ltext = () => lib.locator('.screen').innerText();
+  const lhas = async (t) => (await ltext()).includes(t);
+  // Shelf cards are the only thing carrying the lift treatment on this screen.
+  const cards = () => lib.locator('.u-lift').count();
+
+  await lib.goto(`${BASE}/?screen=library`, { waitUntil: 'networkidle' });
+  await lib.waitForTimeout(500);
+  ok('library opens on the backlog shelf', (await lhas('Your library')) && (await cards()) === 6);
+
+  const chips = (await lib.locator('[aria-pressed]').allInnerTexts()).join(',').replace(/\n/g, '');
+  ok('chip counts read 6/4/4/2/16', chips === 'Backlog6,Playing4,Finished4,DNF2,All16');
+
+  for (const [chip, n, title] of [
+    ['Playing', 4, 'Playing now'],
+    ['Finished', 4, 'Finished'],
+    ['DNF', 2, 'Did not finish'],
+    ['All', 16, 'All games'],
+  ]) {
+    await lib.locator('[aria-pressed]', { hasText: new RegExp(`^${chip}`) }).first().click();
+    await lib.waitForTimeout(300);
+    ok(`${chip} filters to ${n} and retitles`, (await cards()) === n && (await lhas(title)));
+  }
+
+  // Each status shows a different fact, and picking the wrong one reads as a
+  // bug rather than a blank: hours played under a game you never started.
+  const shelf = await ltext();
+  ok(
+    'each status carries its own meta line',
+    shelf.includes('~21 hours') &&
+      shelf.includes('40h played') &&
+      shelf.includes("Aug '24") &&
+      shelf.includes('9h played'),
+  );
+
+  // Both panes are mounted at once and the track slides between them, so a
+  // broken transform leaves the wrong pane on screen with no error.
+  await lib.goto(`${BASE}/?screen=library:lists`, { waitUntil: 'networkidle' });
+  await lib.waitForTimeout(500);
+  const track = await lib.evaluate(
+    () => [...document.querySelectorAll('div')].find((d) => d.style.width === '200%')?.style.transform,
+  );
+  ok('?screen=library:lists lands on the lists pane', track === 'translateX(-50%)');
+  ok('collections list their counts', await lhas('8 games · updated 2d ago'));
+
+  const strips = await lib.evaluate(() =>
+    [...document.querySelectorAll('.scroll-x')]
+      .filter((el) => el.querySelector('img, span'))
+      .map((el) => el.children.length),
+  );
+  ok('cover strips fill from the collection count', strips.join(',').endsWith('8,8,4'));
+
+  // A ranked list numbers its rows; an unranked one must not.
+  await lib.locator('button', { hasText: 'Favorite Games' }).click();
+  await lib.waitForTimeout(600);
+  ok(
+    'a ranked list opens with numbered rows',
+    (await lhas('Ranking of my favorite games')) && (await lhas('1.')),
+  );
+
+  await lib.getByLabel('Back to your library').click();
+  await lib.waitForTimeout(500);
+  await lib.locator('button', { hasText: 'Cozy night-ins' }).click();
+  await lib.waitForTimeout(600);
+  ok('an unranked list shows no positions', !(await lhas('1.')) && (await lhas('Spiritfarer')));
+
+  // Cancel has to drop every draft, not just the ones left untouched.
+  await lib.getByLabel('Edit list').click();
+  await lib.waitForTimeout(500);
+  ok('the editor opens prefilled', (await lib.locator('#lib-edit-title').inputValue()) === 'Cozy night-ins');
+  ok('profile toggle copy follows the toggle', await lhas('Visible to others on your profile'));
+  await lib.getByLabel('Toggle display on profile').click();
+  await lib.waitForTimeout(200);
+  ok('flipping it hides the list instead', await lhas('Hidden — only you can see this list'));
+
+  await lib.locator('#lib-edit-title').fill('Scratch title');
+  await lib.locator('button', { hasText: /^Cancel$/ }).click();
+  await lib.waitForTimeout(500);
+  ok('cancel discards the drafts', (await lhas('Cozy night-ins')) && !(await lhas('Scratch title')));
+
+  // Reordering is applied through CSS `order`, so a row never remounts — and
+  // the saved order has to survive the panel closing and reopening.
+  await lib.getByLabel('Edit list').click();
+  await lib.waitForTimeout(500);
+  await lib.locator('#lib-edit-title').fill('Rainy days');
+  await lib.getByLabel('Toggle ranked list').click();
+  await lib.waitForTimeout(150);
+  const rows = () =>
+    lib.evaluate(() =>
+      [...document.querySelectorAll('[draggable="true"]')].map((r) => r.innerText.replace(/\n/g, ' ').trim()),
+    );
+  const before = (await rows())[0];
+  await lib.locator('[draggable="true"]').nth(0).dragTo(lib.locator('[draggable="true"]').nth(2));
+  await lib.waitForTimeout(300);
+  const after = await rows();
+  ok('dragging a row reorders and renumbers the draft', after[0] !== before && after[0].startsWith('1.'));
+
+  await lib.locator('button', { hasText: /^Save$/ }).click();
+  await lib.waitForTimeout(600);
+  ok(
+    'save commits title, ranked flag and order together',
+    (await lhas('Rainy days')) && (await lhas('1.')) && (await lhas(after[0].replace(/^1\.\s*/, ''))),
+  );
+  await lib.close();
+}
+
 // ── Back navigation ───────────────────────────────────────────
 // Installed there's no browser chrome, so Android's back button goes to the OS.
 // Each dismissible layer owns a history entry so back closes it instead of
@@ -318,6 +430,45 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   await nav.waitForTimeout(700);
   ok('closing in-app leaves no orphan history entry', nav.url().startsWith('about:blank'));
   await nav.close();
+}
+
+// ── Back navigation through the library ───────────────────────
+// The library stacks two panels on top of a tab, so back has three things to
+// unwind before it may leave. Each must come off on its own press, and a panel
+// mid-slide has to count as already gone — otherwise closing one pushes a
+// fresh entry instead of spending the one it owns, and back starts no-opping.
+{
+  const lnav = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const lhas = async (t) => (await lnav.locator('.screen').innerText()).includes(t);
+  await lnav.goto('about:blank');
+  await lnav.goto(`${BASE}/?screen=library:lists`, { waitUntil: 'networkidle' });
+  await lnav.waitForTimeout(600);
+
+  await lnav.locator('button', { hasText: 'Favorite Games' }).click();
+  await lnav.waitForTimeout(600);
+  await lnav.getByLabel('Edit list').click();
+  await lnav.waitForTimeout(500);
+
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok(
+    'back closes the list editor first',
+    !(await lhas('Edit list')) && (await lhas('Ranking of my favorite games')),
+  );
+
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok('back then closes the list detail', !(await lhas('Ranking of my favorite games')));
+
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok('back then leaves the library for Discover', await lhas('What to play next'));
+
+  // Three layers opened, three retired: one more press leaves the app.
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok('the library stack leaves no orphan history entries', lnav.url().startsWith('about:blank'));
+  await lnav.close();
 }
 
 // ── Installed-app viewport height ─────────────────────────────

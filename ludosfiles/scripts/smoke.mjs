@@ -323,6 +323,23 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
       shelf.includes('9h played'),
   );
 
+  // A slot with no registry entry renders an empty box rather than a broken
+  // image, so missing artwork is silent — worth asserting outright.
+  const art = await lib.evaluate(() => {
+    const cards = [...document.querySelectorAll('.u-lift')];
+    return {
+      cards: cards.length,
+      withArt: cards.filter((c) => c.querySelector('img')).length,
+      broken: [...document.querySelectorAll('img')].filter(
+        (i) => i.complete && i.naturalWidth === 0,
+      ).length,
+    };
+  });
+  ok(
+    'every shelf card resolves its cover',
+    art.cards === 16 && art.withArt === 16 && art.broken === 0,
+  );
+
   // Both panes are mounted at once and the track slides between them, so a
   // broken transform leaves the wrong pane on screen with no error.
   await lib.goto(`${BASE}/?screen=library:lists`, { waitUntil: 'networkidle' });

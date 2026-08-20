@@ -42,6 +42,10 @@ export const COVER_SOURCES = {
   'pragmata':          { title: 'PRAGMATA',                keys: ['pragmata'] },
   'subnautica-2':      { title: 'Subnautica 2',            keys: ['subnautica'] },
 
+  // ── Library-only titles ─────────────────────────────────────────
+  'starfield':         { title: 'Starfield',                keys: ['starfield'] },
+  'ac-valhalla':       { title: "Assassin's Creed Valhalla", keys: ['ac'] },
+
   // ── Played-games catalogue ──────────────────────────────────────
   'sekiro':            { title: 'Sekiro: Shadows Die Twice', keys: ['sekiro'] },
   'ac-black-flag':     { title: "Assassin's Creed Black Flag", keys: ['acbf'] },

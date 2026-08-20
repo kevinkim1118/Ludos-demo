@@ -49,7 +49,9 @@ function filterRecord<T>(value: unknown, pick: (v: unknown) => v is T): Record<s
 
 const isBoolean = (v: unknown): v is boolean => typeof v === 'boolean';
 const isTrue = (v: unknown): v is true => v === true;
-const STATUSES: GameStatus[] = ['backlog', 'playing', 'finished'];
+// Widening this set doesn't need a VERSION bump — an older save stays readable,
+// and a newer one only loses statuses this build wouldn't understand anyway.
+const STATUSES: GameStatus[] = ['backlog', 'playing', 'finished', 'dnf'];
 const isStatus = (v: unknown): v is GameStatus => STATUSES.includes(v as GameStatus);
 
 function parsePlayingItem(value: unknown): PlayingItem | null {

@@ -15,21 +15,21 @@
 
 export const COVER_SOURCES = {
   // ── Backlog / duel games ────────────────────────────────────────
-  'hades-ii':          { title: 'Hades II',                keys: ['hades', 'hades2'] },
-  'outer-wilds':       { title: 'Outer Wilds',             keys: ['outer', 'outerwilds'] },
+  'hades-ii':          { title: 'Hades II',                keys: ['hades', 'hades2'], slots: ['cv-coll-fav-5'] },
+  'outer-wilds':       { title: 'Outer Wilds',             keys: ['outer', 'outerwilds'], slots: ['cv-coll-cozy-3'] },
   'hollow-knight':     { title: 'Hollow Knight',           keys: ['hollow'] },
   'tunic':             { title: 'Tunic',                   keys: ['tunic'] },
   'celeste':           { title: 'Celeste',                 keys: ['celeste'] },
-  'citizen-sleeper':   { title: 'Citizen Sleeper',         keys: ['citizen', 'citizensleeper'] },
+  'citizen-sleeper':   { title: 'Citizen Sleeper',         keys: ['citizen', 'citizensleeper'], slots: ['cv-coll-cozy-5'] },
   'slay-the-spire':    { title: 'Slay the Spire',          keys: ['sts', 'slaythespire'] },
-  'disco-elysium':     { title: 'Disco Elysium',           keys: ['disco'] },
-  'stray':             { title: 'Stray',                   keys: ['stray'] },
-  'baldurs-gate-3':    { title: "Baldur's Gate 3",         keys: ['bg3'] },
+  'disco-elysium':     { title: 'Disco Elysium',           keys: ['disco'], slots: ['cv-coll-fav-7'] },
+  'stray':             { title: 'Stray',                   keys: ['stray', 'strayss'] },
+  'baldurs-gate-3':    { title: "Baldur's Gate 3",         keys: ['bg3'], slots: ['cv-coll-cozy-4'] },
   'zelda-totk':        { title: 'Zelda: Tears of the Kingdom', keys: ['totk', 'zelda'] },
-  'dark-souls-3':      { title: 'Dark Souls III',          keys: ['ds3'] },
+  'dark-souls-3':      { title: 'Dark Souls III',          keys: ['ds3'], slots: ['cv-coll-fav-3'] },
 
   // ── Elden Ring also fills the Discover spotlight ────────────────
-  'elden-ring':        { title: 'Elden Ring',              keys: ['elden'], slots: ['cv-spotlight'] },
+  'elden-ring':        { title: 'Elden Ring',              keys: ['elden'], slots: ['cv-spotlight', 'cv-list-fav5', 'cv-coll-fav-4'] },
 
   // ── Rail-only titles ────────────────────────────────────────────
   'pizza-tower':       { title: 'Pizza Tower',             keys: ['pizzatower'] },
@@ -50,16 +50,16 @@ export const COVER_SOURCES = {
   'mina-the-hollower': { title: 'Mina the Hollower',       keys: ['mina'] },
 
   // ── Hand-authored picker cards ──────────────────────────────────
-  'balatro':           { title: 'Balatro',                 slots: ['cv-played-blank-1'] },
-  'mario-galaxy-2':    { title: 'Super Mario Galaxy 2',    slots: ['cv-played-blank-2'] },
-  'katana-zero':       { title: 'Katana Zero',             slots: ['cv-played-blank-3'] },
+  'balatro':           { title: 'Balatro',                 slots: ['cv-played-blank-1', 'cv-coll-hh-3'] },
+  'mario-galaxy-2':    { title: 'Super Mario Galaxy 2',    slots: ['cv-played-blank-2', 'cv-list-fav7'] },
+  'katana-zero':       { title: 'Katana Zero',             slots: ['cv-played-blank-3', 'cv-list-fav3'] },
   // Also the mock game-detail card on onboarding screen 3.
-  'clair-obscur-33':   { title: 'Clair Obscur: Expedition 33', slots: ['cv-played-blank-4', 'intro-elden-cover'] },
+  'clair-obscur-33':   { title: 'Clair Obscur: Expedition 33', slots: ['cv-played-blank-4', 'intro-elden-cover', 'cv-list-fav0'] },
   'lies-of-p':         { title: 'Lies of P',               slots: ['cv-played-blank-5'] },
   'dead-cells':        { title: 'Dead Cells',              slots: ['cv-played-blank-6'] },
-  'nier-automata':     { title: 'NieR: Automata',          slots: ['cv-played-blank-7'] },
-  'sea-of-stars':      { title: 'Sea of Stars',            keys: ['seaofstars'], slots: ['cv-played-blank-8'] },
-  'until-then':        { title: 'Until Then',              slots: ['cv-played-blank-9'] },
+  'nier-automata':     { title: 'NieR: Automata',          slots: ['cv-played-blank-7', 'cv-list-fav4', 'cv-coll-fav-6'] },
+  'sea-of-stars':      { title: 'Sea of Stars',            keys: ['seaofstars'], slots: ['cv-played-blank-8', 'cv-coll-cozy-6'] },
+  'until-then':        { title: 'Until Then',              slots: ['cv-played-blank-9', 'cv-list-fav2', 'cv-coll-cozy-7'] },
   'ac-odyssey':        { title: "Assassin's Creed Odyssey", slots: ['cv-played-blank-10'] },
 
   // ── Brand ───────────────────────────────────────────────────────
@@ -70,6 +70,13 @@ export const COVER_SOURCES = {
   // stay on their exported art. To promote one, add its slot id to a game, e.g.
   //   'hades-ii': { title: 'Hades II', keys: ['hades','hades2'], slots: ['disc-r1-3'] },
 };
+
+// ── Library ─────────────────────────────────────────────────────
+//
+// The shelf (`cv-lib-*`) and list rows (`cv-list-<key>`) follow the usual
+// convention, so a game registered above already fills its Library slots.
+// The positional slots — `cv-list-fav0…7` and the `cv-coll-*` strips — are
+// attached to whichever game the design's own manifest put there.
 
 /**
  * Slots that intentionally have no artwork.

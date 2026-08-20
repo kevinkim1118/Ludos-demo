@@ -93,6 +93,33 @@ export const IconPlus = ({ size = 20, strokeWidth = 1.7 }: IconProps & { strokeW
   </svg>
 );
 
+/** Edit a list. */
+export const IconPencil = ({ size = 17 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 18 18" {...stroke} strokeWidth={1.6}>
+    <path d="M12.5 2.5l3 3L6 15l-3.5.5L3 12z" />
+  </svg>
+);
+
+/** Grab handle on a reorderable row. */
+export const IconDragHandle = ({ size = 18 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 18 18" {...stroke} strokeWidth={1.6}>
+    <line x1="4" y1="6" x2="14" y2="6" />
+    <line x1="4" y1="9" x2="14" y2="9" />
+    <line x1="4" y1="12" x2="14" y2="12" />
+  </svg>
+);
+
+/** "Did not finish" — a circle struck through. */
+export const IconCircleSlash = ({
+  size = 20,
+  strokeWidth = 1.6,
+}: IconProps & { strokeWidth?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" {...stroke} strokeWidth={strokeWidth}>
+    <circle cx="10" cy="10" r="7" />
+    <path d="M7 7l6 6" />
+  </svg>
+);
+
 export const IconRefresh = ({ size = 14 }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 16 16" {...stroke} strokeWidth={1.6}>
     <path d="M13 8a5 5 0 1 1-1.5-3.5" />

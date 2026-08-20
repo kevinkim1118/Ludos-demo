@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { State } from './types';
+import type { Overlay, State } from './types';
 import type { LudosActions } from './useLudos';
 
 /**
@@ -17,16 +17,42 @@ import type { LudosActions } from './useLudos';
  */
 
 /** Dismissible layers, outermost first — the last one is what back closes. */
-type Layer = 'h2h' | 'sheet' | 'time';
+type Layer = 'flow' | Overlay | 'sheet' | 'time';
+
+/**
+ * True anywhere back should unwind to Discover. Onboarding is excluded — it
+ * runs before Discover exists, so there's nothing behind it to return to.
+ */
+function isSecondaryFlow(state: State): boolean {
+  return state.flow !== 'onboarding' && state.flow !== 'home';
+}
 
 function openLayers(state: State): Layer[] {
   const open: Layer[] = [];
-  if (state.flow === 'h2h') open.push('h2h');
+
+  // Head-to-head and the five secondary tabs are all "somewhere other than
+  // Discover", and back returns from any of them the same way.
+  if (isSecondaryFlow(state)) open.push('flow');
+
+  // Panels a tab can be left holding open, above the tab but below the sheet.
+  // A panel sliding out counts as gone, like a sheet mid-exit below.
+  if (state.libDetailOpen && state.libDetailIn) open.push('libDetail');
+  if (state.libEditOpen && state.libEditIn) open.push('libEdit');
+  if (state.frSheet) open.push('frSheet');
+  if (state.frAddOpen) open.push('frAdd');
+  if (state.prEditOpen) open.push('prEdit');
+
   // A sheet mid-exit-animation is already on its way out; counting it would
   // push a fresh entry for something that's closing.
   if (state.sheet && !state.sheetClosing) open.push('sheet');
   if (state.timeSheet && !state.timeClosing) open.push('time');
   return open;
+}
+
+const OVERLAYS: Overlay[] = ['libDetail', 'libEdit', 'frSheet', 'frAdd', 'prEdit'];
+
+function isOverlay(layer: Layer): layer is Overlay {
+  return (OVERLAYS as Layer[]).includes(layer);
 }
 
 export function useBackNavigation(state: State, actions: LudosActions) {
@@ -73,7 +99,9 @@ export function useBackNavigation(state: State, actions: LudosActions) {
 
       if (top === 'time') actions.closeTimeSheet();
       else if (top === 'sheet') actions.closeSheet();
-      else actions.h2hBack();
+      else if (isOverlay(top)) actions.closeOverlay(top);
+      else if (stateRef.current.flow === 'h2h') actions.h2hBack();
+      else actions.goDiscover();
     };
 
     window.addEventListener('popstate', onPopState);

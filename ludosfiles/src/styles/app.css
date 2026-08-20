@@ -259,6 +259,20 @@ a:hover {
   color: var(--text-secondary);
 }
 
+/* Text-only buttons: a list card's title link, Cancel, "Search in list". */
+.u-link:hover {
+  color: var(--text-primary);
+}
+
+.u-link-accent:hover {
+  color: var(--accent-400);
+}
+
+/* A card that only firms up its border on hover. */
+.u-border-hover:hover {
+  border-color: var(--border-strong);
+}
+
 .u-underline:hover {
   color: var(--text-secondary);
 }

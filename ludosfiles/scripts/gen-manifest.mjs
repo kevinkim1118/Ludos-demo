@@ -207,7 +207,8 @@ console.log(
 console.log(`\n  drop files in public/covers/ named <key>.webp to replace them`);
 
 if (report.orphanSlots.length) {
-  console.log(`\nUnclaimed slots keeping exported art (${report.orphanSlots.length}): decorative marquee tiles`);
+  console.log(`\nUnclaimed slots keeping exported art (${report.orphanSlots.length}):`);
+  console.log(`  marquee tiles, plus library art with no full-resolution drop-in`);
 }
 if (report.unknownFiles.length) {
   console.log(`\n⚠ Files in public/covers/ matching no registry key:`);

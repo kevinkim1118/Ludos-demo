@@ -1,15 +1,8 @@
 import { Cover } from '../../components/Cover';
-import {
-  IconBookmarkSmall,
-  IconCheck,
-  IconChevronDown,
-  IconPlay,
-  IconRefresh,
-} from '../../components/icons';
+import { IconChevronDown, IconPlay, IconRefresh } from '../../components/icons';
 import { CONFIG } from '../../config';
 import { TIME_FIT } from '../../data/content';
-import { GAMES } from '../../data/games';
-import { currentPick } from '../../state/reducer';
+import { activePickTarget } from '../../state/reducer';
 import type { State } from '../../state/types';
 import type { LudosActions } from '../../state/useLudos';
 
@@ -23,22 +16,13 @@ const diamond = {
 /**
  * The card at the top of Discover. Before anything is in flight it offers a
  * backlog pick with an "Another" re-roll; once a game is playing it becomes
- * "Currently playing" with a status dropdown instead.
+ * "Currently playing", and the same button opens the status sheet instead.
  */
 export function PickCard({ state, actions }: { state: State; actions: LudosActions }) {
   const isPlaying = !!state.upNext || !!state.playingItem;
 
-  // A head-to-head winner (upNext) outranks a game marked playing by hand.
-  const pick =
-    (state.upNext ? GAMES[state.upNext] : null) ?? currentPick(state) ?? GAMES.hades;
-
-  const slotId = state.playingItem
-    ? state.playingItem.slotId || 'cv-pick-x'
-    : `cv-pick-${pick.k}`;
-  const name = state.playingItem ? state.playingItem.name : pick.name;
-  const meta = state.playingItem
-    ? state.playingItem.meta
-    : `${pick.genre} · ${pick.plat} · ${pick.hrs}`;
+  // Shared with the status sheet, which opens on whatever this card is showing.
+  const { name, meta, slotId } = activePickTarget(state);
 
   const timeFit = TIME_FIT[state.time];
   const reasons = [
@@ -156,94 +140,32 @@ export function PickCard({ state, actions }: { state: State; actions: LudosActio
       )}
 
       {isPlaying && (
-        <div style={{ position: 'relative' }}>
-          <button
-            type="button"
-            className="u-accent"
-            onClick={actions.toggleStatusMenu}
-            aria-expanded={state.statusMenu}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 9,
-              width: '100%',
-              marginTop: 15,
-              background: 'var(--accent-500)',
-              color: 'var(--on-accent)',
-              border: 'none',
-              borderRadius: 10,
-              padding: 13,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background 120ms var(--ease)',
-            }}
-          >
-            Update Status
-            <IconChevronDown />
-          </button>
-
-          {state.statusMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: '100%',
-                marginTop: 8,
-                zIndex: 5,
-                background: 'var(--surface-2)',
-                border: '1px solid var(--border-strong)',
-                borderRadius: 12,
-                padding: 5,
-                boxShadow: '0 14px 34px rgba(0,0,0,0.45)',
-                animation: 'riseIn 160ms cubic-bezier(0.2,0,0,1)',
-              }}
-            >
-              <button
-                type="button"
-                className="u-row"
-                onClick={actions.markPickFinished}
-                style={menuItem}
-              >
-                <span style={{ color: 'var(--text-secondary)', display: 'inline-flex' }}>
-                  <IconCheck />
-                </span>
-                Mark as finished
-              </button>
-              <button
-                type="button"
-                className="u-row"
-                onClick={actions.moveToBacklog}
-                style={menuItem}
-              >
-                <span style={{ color: 'var(--text-secondary)', display: 'inline-flex' }}>
-                  <IconBookmarkSmall />
-                </span>
-                Move to backlog
-              </button>
-            </div>
-          )}
-        </div>
+        <button
+          type="button"
+          className="u-accent"
+          onClick={actions.openStatusSheet}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 9,
+            width: '100%',
+            marginTop: 15,
+            background: 'var(--accent-500)',
+            color: 'var(--on-accent)',
+            border: 'none',
+            borderRadius: 10,
+            padding: 13,
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'background 120ms var(--ease)',
+          }}
+        >
+          Update Status
+          <IconChevronDown />
+        </button>
       )}
     </div>
   );
 }
-
-const menuItem = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  width: '100%',
-  textAlign: 'left',
-  background: 'transparent',
-  border: 'none',
-  borderRadius: 9,
-  padding: '11px 12px',
-  fontSize: 13.5,
-  fontWeight: 500,
-  color: 'var(--text-primary)',
-  cursor: 'pointer',
-  transition: 'background 120ms var(--ease)',
-} as const;

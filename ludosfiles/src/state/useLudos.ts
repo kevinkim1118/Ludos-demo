@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { GAMES, type Intent } from '../data/games';
 import { hydrate, serialize, write } from './persistence';
 import {
-  activePickName,
+  activePickTarget,
   backlogGames,
   currentPick,
   initialState,
@@ -10,7 +10,28 @@ import {
   reducer,
   type Action,
 } from './reducer';
-import type { GameStatus, ObStep, PlayingItem, SheetTarget, Side, State } from './types';
+import type { LibSeg } from '../data/library';
+import type {
+  FriendsFilter,
+  GameStatus,
+  LibView,
+  ObStep,
+  Overlay,
+  PlayingItem,
+  ProfileTab,
+  SheetTarget,
+  Side,
+  State,
+  TabFlow,
+} from './types';
+
+/** Toast copy for a status set from the sheet's status mode. */
+function statusToast(status: GameStatus, name: string): string {
+  if (status === 'finished') return `Marked ${name} as finished`;
+  if (status === 'backlog') return `Moved ${name} to backlog`;
+  if (status === 'dnf') return `Marked ${name} as did not finish`;
+  return `Now playing ${name}`;
+}
 
 /**
  * Animation and flow timings, in ms. These are load-bearing: sheets and the
@@ -19,6 +40,10 @@ import type { GameStatus, ObStep, PlayingItem, SheetTarget, Side, State } from '
  */
 const TIMING = {
   toast: 1900,
+  /** One tick out of frame before a sliding panel moves, so the transition runs. */
+  panelEnter: 40,
+  /** Matches the `left` / `transform` transitions on the library panels. */
+  panelExit: 300,
   /** "Analyzing what you've played…" before the result screen. */
   reading: 2400,
   /** Highlight the chosen card before the next matchup loads. */
@@ -42,7 +67,11 @@ type TimerKey =
   | 'timeSheet'
   | 'pickIntro'
   | 'spot'
-  | 'scroll';
+  | 'scroll'
+  | 'libDetail'
+  | 'libDetailIn'
+  | 'libEdit'
+  | 'libEditIn';
 
 export function useLudos() {
   const [state, dispatch] = useReducer(reducer, initialState, hydrate);
@@ -129,6 +158,23 @@ export function useLudos() {
     setTimer('timeSheet', () => dispatch({ type: 'time/closed' }), TIMING.sheetClose);
   }, [setTimer]);
 
+  const closeLibDetail = useCallback(() => {
+    if (!stateRef.current.libDetailOpen) return;
+    dispatch({ type: 'lib/closingDetail' });
+    setTimer('libDetail', () => dispatch({ type: 'lib/closedDetail' }), TIMING.panelExit);
+  }, [setTimer]);
+
+  /** Cancel discards the drafts; Save commits them before the panel leaves. */
+  const closeLibEdit = useCallback(
+    (save: boolean) => {
+      if (!stateRef.current.libEditOpen) return;
+      if (save) dispatch({ type: 'lib/saveEdit' });
+      dispatch({ type: 'lib/closingEdit' });
+      setTimer('libEdit', () => dispatch({ type: 'lib/closedEdit' }), TIMING.panelExit);
+    },
+    [setTimer],
+  );
+
   const actions = useMemo(
     () => ({
       dispatch: (action: Action) => dispatch(action),
@@ -170,18 +216,57 @@ export function useLudos() {
         dispatch({ type: 'pick/startPlaying' });
         flash(`Now playing ${game.name}`);
       },
-      toggleStatusMenu: () => dispatch({ type: 'status/toggleMenu' }),
-      markPickFinished: () => {
-        const name = activePickName(stateRef.current);
-        dispatch({ type: 'pick/clearStatus', status: 'finished', name });
-        flash(`Marked ${name} as finished`);
-      },
-      moveToBacklog: () => {
-        const name = activePickName(stateRef.current);
-        dispatch({ type: 'pick/clearStatus', status: 'backlog', name });
-        flash(`Moved ${name} to backlog`);
+      /** The pick card's "Update Status" button — the sheet in status mode. */
+      openStatusSheet: () => {
+        clearTimer('sheet');
+        dispatch({
+          type: 'sheet/open',
+          target: { ...activePickTarget(stateRef.current), statusUpdate: true },
+        });
       },
       goCompare: () => dispatch({ type: 'flow/goCompare' }),
+
+      // ── navigation ──────────────────────────────────────────
+      navigate: (flow: TabFlow) => dispatch({ type: 'flow/go', flow }),
+      goDiscover: () => dispatch({ type: 'flow/go', flow: 'home' }),
+      openDetail: () => dispatch({ type: 'flow/go', flow: 'detail' }),
+      /**
+       * Used by back navigation, which knows what's open but not how each
+       * layer leaves. The library panels animate out; the rest are still
+       * plain flags until their screens land.
+       */
+      closeOverlay: (overlay: Overlay) => {
+        if (overlay === 'libDetail') closeLibDetail();
+        else if (overlay === 'libEdit') closeLibEdit(false);
+        else dispatch({ type: 'overlay/close', overlay });
+      },
+
+      // ── library ─────────────────────────────────────────────
+      setLibView: (view: LibView) => dispatch({ type: 'lib/view', view }),
+      setLibSeg: (seg: LibSeg) => dispatch({ type: 'lib/seg', seg }),
+
+      openLibList: (name: string) => {
+        clearTimer('libDetail');
+        dispatch({ type: 'lib/openDetail', name });
+        setTimer('libDetailIn', () => dispatch({ type: 'lib/detailIn' }), TIMING.panelEnter);
+      },
+      closeLibList: closeLibDetail,
+
+      openLibEdit: () => {
+        clearTimer('libEdit');
+        dispatch({ type: 'lib/openEdit' });
+        setTimer('libEditIn', () => dispatch({ type: 'lib/editIn' }), TIMING.panelEnter);
+      },
+      cancelLibEdit: () => closeLibEdit(false),
+      saveLibEdit: () => closeLibEdit(true),
+
+      setLibEditTitle: (value: string) => dispatch({ type: 'lib/editTitle', value }),
+      setLibEditDesc: (value: string) => dispatch({ type: 'lib/editDesc', value }),
+      toggleLibRanked: () => dispatch({ type: 'lib/toggleOrdered' }),
+      toggleLibProfile: () => dispatch({ type: 'lib/toggleProfile' }),
+      libDragStart: (index: number) => dispatch({ type: 'lib/dragStart', index }),
+      libDragOver: (index: number) => dispatch({ type: 'lib/dragOver', index }),
+      libDragEnd: () => dispatch({ type: 'lib/dragEnd' }),
 
       dismissSpotlight: () => {
         if (stateRef.current.spotDismissing) return;
@@ -204,6 +289,19 @@ export function useLudos() {
         dispatch({ type: 'sheet/open', target });
       },
       closeSheet,
+
+      /**
+       * Status chosen from the sheet's status mode. Unlike the add sheet this
+       * clears the pick card outright — the game it was showing is no longer
+       * what's in flight.
+       */
+      setPickStatus: (status: GameStatus) => {
+        const name = stateRef.current.sheet?.name;
+        closeSheet();
+        if (!name) return;
+        dispatch({ type: 'pick/clearStatus', status, name });
+        flash(statusToast(status, name));
+      },
 
       /** Status chosen from the add sheet. "Playing" also takes over the pick card. */
       sheetAction: (status: GameStatus, msg: string) => {
@@ -263,7 +361,17 @@ export function useLudos() {
       },
       h2hBack: () => dispatch({ type: 'h2h/back' }),
     }),
-    [flash, demo, setTimer, clearTimer, closeSheet, closeTimeSheet, scrollHomeTop],
+    [
+      flash,
+      demo,
+      setTimer,
+      clearTimer,
+      closeSheet,
+      closeTimeSheet,
+      closeLibDetail,
+      closeLibEdit,
+      scrollHomeTop,
+    ],
   );
 
   return { state, actions, homeScroll };
@@ -296,6 +404,34 @@ export function jumpPatch(state: State, target: string): Partial<State> | null {
       return { flow: 'home', upNext: game?.k ?? null, playingItem: null };
     }
     return { flow: 'home', upNext: null, playingItem: null };
+  }
+
+  if (group === 'search') return { flow: 'search' };
+
+  if (group === 'detail') return { flow: 'detail' };
+
+  // Each tab lands on itself with nothing it may have been left holding open.
+  if (group === 'profile') {
+    const tabs: ProfileTab[] = ['reviews', 'lists', 'activity'];
+    const prTab = tabs.find((t) => t === name) ?? 'reviews';
+    return { flow: 'profile', prTab, prEditOpen: false };
+  }
+
+  if (group === 'friends') {
+    const frFilter: FriendsFilter = 'all';
+    return { flow: 'friends', frFilter, frSheet: false, frAddOpen: false };
+  }
+
+  if (group === 'library') {
+    const libView: LibView = name === 'lists' ? 'lists' : 'library';
+    return {
+      flow: 'library',
+      libView,
+      libDetailOpen: false,
+      libDetailIn: false,
+      libEditOpen: false,
+      libEditIn: false,
+    };
   }
 
   if (group === 'h2h') {

@@ -10,7 +10,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const read = (p) => readFileSync(resolve(root, p), 'utf8');
 
 /** Slot-id prefixes that follow the `cv-<prefix>-<game key>` convention. */
-export const GAME_SLOT_PREFIXES = ['pick', 'h2h', 'seed', 'fr', 'ts', 'gl', 'search'];
+export const GAME_SLOT_PREFIXES = ['pick', 'h2h', 'seed', 'fr', 'ts', 'gl', 'search', 'lib', 'list'];
 
 /**
  * @returns {{ all: Set<string>, byPrefix: Record<string, Set<string>>, standalone: Set<string> }}
@@ -20,6 +20,7 @@ export const GAME_SLOT_PREFIXES = ['pick', 'h2h', 'seed', 'fr', 'ts', 'gl', 'sea
 export function appSlots() {
   const games = read('src/data/games.ts');
   const content = read('src/data/content.ts');
+  const library = read('src/data/library.ts');
 
   const all = new Set();
   const byPrefix = Object.fromEntries(GAME_SLOT_PREFIXES.map((p) => [p, new Set()]));
@@ -53,6 +54,19 @@ export function appSlots() {
   // Seeded backlog on the onboarding result screen.
   const seed = games.match(/export const SEED = \[([^\]]+)\]/)?.[1] ?? '';
   for (const m of seed.matchAll(/'([^']+)'/g)) addGame('seed', m[1]);
+
+  // Library shelf — one card per LIB_GAMES entry.
+  const libGames = library.match(/LIB_GAMES: LibGame\[\] = \[([\s\S]*?)\n\];/)?.[1] ?? '';
+  for (const m of libGames.matchAll(/\{ k: '([^']+)', n: /g)) addGame('lib', m[1]);
+
+  // Rows inside a list's detail panel.
+  for (const m of library.matchAll(/\{ k: '([^']+)', name: /g)) addGame('list', m[1]);
+
+  // Collection cover strips — `cv-coll-<key>-<n>`, capped at ten by libCoverStrip.
+  for (const m of library.matchAll(/key: '([^']+)', count: (\d+)/g)) {
+    const n = Math.min(Number(m[2]), 10);
+    for (let i = 0; i < n; i++) standalone.add(`cv-coll-${m[1]}-${i}`);
+  }
 
   // Discover rails — each block's prefix applies to the items beneath it.
   for (const block of content.split(/prefix: '/).slice(1)) {

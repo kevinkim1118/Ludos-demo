@@ -1,20 +1,36 @@
 import { useEffect } from 'react';
 import { IosInstallHint } from './components/IosInstallHint';
 import { PhoneShell } from './components/PhoneShell';
+import { StatusSheet } from './components/StatusSheet';
 import { Toast } from './components/Toast';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { useAppUpdate } from './lib/appUpdate';
+import { Placeholder } from './screens/Placeholder';
+import { Library } from './screens/library/Library';
+import { ListEdit } from './screens/library/ListEdit';
 import { HeadToHead } from './screens/h2h/HeadToHead';
 import { Discover } from './screens/home/Discover';
+import { TabBar } from './screens/home/TabBar';
 import { Onboarding } from './screens/onboarding/Onboarding';
+import { TAB_FLOWS, type Flow } from './state/types';
 import { useBackNavigation } from './state/useBackNavigation';
 import { jumpPatch, useLudos } from './state/useLudos';
 
-const SCREEN_LABELS = {
+const SCREEN_LABELS: Record<Flow, string> = {
   onboarding: 'Onboarding',
   home: 'Discover',
+  detail: 'Game detail',
+  library: 'Library',
+  friends: 'Friends',
+  profile: 'Profile',
+  search: 'Search',
   h2h: 'Head-to-head',
-} as const;
+};
+
+/** Game detail, onboarding and head-to-head all take over the whole screen. */
+function hasTabBar(flow: Flow): boolean {
+  return (TAB_FLOWS as readonly Flow[]).includes(flow);
+}
 
 export function App() {
   const { state, actions, homeScroll } = useLudos();
@@ -40,7 +56,23 @@ export function App() {
       {state.flow === 'home' && (
         <Discover state={state} actions={actions} scrollRef={homeScroll} />
       )}
+      {state.flow === 'detail' && <Placeholder name="Game detail" />}
+      {state.flow === 'library' && <Library state={state} actions={actions} />}
+      {state.flow === 'friends' && <Placeholder name="Friends" />}
+      {state.flow === 'search' && <Placeholder name="Search" />}
+      {state.flow === 'profile' && <Placeholder name="Profile" />}
       {state.flow === 'h2h' && <HeadToHead state={state} actions={actions} />}
+
+      {/* One tab bar for every tabbed flow, rather than one per screen — the
+          active tab and the routing then can't drift between them. */}
+      {hasTabBar(state.flow) && <TabBar active={state.flow} onNavigate={actions.navigate} />}
+
+      {/* Opened from Discover, Game detail and Search, so it's mounted above
+          all three rather than inside any one of them. */}
+      <StatusSheet state={state} actions={actions} />
+
+      {/* Full-screen over the tab bar, which the Library's own box excludes. */}
+      {state.libEditOpen && <ListEdit state={state} actions={actions} />}
 
       {/* Both live in the same spot above the tab bar, so only one shows. A
           waiting build outranks the install hint: the hint returns next time

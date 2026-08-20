@@ -1,5 +1,10 @@
 import { Cover } from '../../components/Cover';
-import { IconBookmark, IconCheckWide, IconPlayLarge } from '../../components/icons';
+import {
+  IconBookmark,
+  IconCheckWide,
+  IconCircleSlash,
+  IconPlayLarge,
+} from '../../components/icons';
 import type { RailItem } from '../../data/content';
 import type { GameStatus } from '../../state/types';
 
@@ -19,6 +24,8 @@ function StatusBadge({ status }: { status: GameStatus | undefined }) {
   if (status === 'backlog') return <span style={badgeBase}><IconBookmark size={15} strokeWidth={1.8} /></span>;
   if (status === 'playing') return <span style={badgeBase}><IconPlayLarge size={15} /></span>;
   if (status === 'finished') return <span style={badgeBase}><IconCheckWide size={15} /></span>;
+  if (status === 'dnf')
+    return <span style={badgeBase}><IconCircleSlash size={15} strokeWidth={1.9} /></span>;
 
   return (
     <span

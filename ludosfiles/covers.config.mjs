@@ -15,21 +15,27 @@
 
 export const COVER_SOURCES = {
   // ── Backlog / duel games ────────────────────────────────────────
-  'hades-ii':          { title: 'Hades II',                keys: ['hades', 'hades2'], slots: ['cv-coll-fav-5'] },
-  'outer-wilds':       { title: 'Outer Wilds',             keys: ['outer', 'outerwilds'], slots: ['cv-coll-cozy-3'] },
-  'hollow-knight':     { title: 'Hollow Knight',           keys: ['hollow'] },
+  'hades-ii':          { title: 'Hades II',                keys: ['hades', 'hades2'], slots: ['cv-coll-fav-5', 'ff-maya', 'cv-act-a-hades'] },
+  'outer-wilds':       { title: 'Outer Wilds',             keys: ['outer', 'outerwilds'], slots: ['cv-coll-cozy-3', 'ff-dana'] },
+  'hollow-knight':     { title: 'Hollow Knight',           keys: ['hollow'], slots: ['ff-sam'] },
   'tunic':             { title: 'Tunic',                   keys: ['tunic'] },
   'celeste':           { title: 'Celeste',                 keys: ['celeste'] },
-  'citizen-sleeper':   { title: 'Citizen Sleeper',         keys: ['citizen', 'citizensleeper'], slots: ['cv-coll-cozy-5'] },
+  'citizen-sleeper':   { title: 'Citizen Sleeper',         keys: ['citizen', 'citizensleeper'], slots: ['cv-coll-cozy-5', 'ff-jordan'] },
   'slay-the-spire':    { title: 'Slay the Spire',          keys: ['sts', 'slaythespire'] },
   'disco-elysium':     { title: 'Disco Elysium',           keys: ['disco'], slots: ['cv-coll-fav-7'] },
   'stray':             { title: 'Stray',                   keys: ['stray', 'strayss'] },
-  'baldurs-gate-3':    { title: "Baldur's Gate 3",         keys: ['bg3'], slots: ['cv-coll-cozy-4'] },
+  'baldurs-gate-3':    { title: "Baldur's Gate 3",         keys: ['bg3'], slots: ['cv-coll-cozy-4', 'ff-chris'] },
   'zelda-totk':        { title: 'Zelda: Tears of the Kingdom', keys: ['totk', 'zelda'] },
-  'dark-souls-3':      { title: 'Dark Souls III',          keys: ['ds3'], slots: ['cv-coll-fav-3'] },
+  'dark-souls-3':      { title: 'Dark Souls III',          keys: ['ds3', 'darksouls'], slots: ['cv-coll-fav-3'] },
 
   // ── Elden Ring also fills the Discover spotlight ────────────────
-  'elden-ring':        { title: 'Elden Ring',              keys: ['elden'], slots: ['cv-spotlight', 'cv-list-fav5', 'cv-coll-fav-4'] },
+  'elden-ring':        { title: 'Elden Ring',              keys: ['elden', 'eldenring'], slots: ['cv-spotlight', 'cv-list-fav5', 'cv-coll-fav-4', 'ff-alex', 'cv-rev-elden', 'cv-act-a-elden'] },
+
+  // Game detail's hero is landscape key art, not a vertical capsule, so it
+  // gets its own registry key — an `elden-ring` cover drop-in must never land
+  // in the banner slot. Drop `public/covers/elden-ring-hero.webp` (any wide
+  // landscape crop, ~1600x1200 or larger) and run `npm run covers`.
+  'elden-ring-hero':   { title: 'Elden Ring — detail hero',  slots: ['cv-detail-hero'] },
 
   // ── Rail-only titles ────────────────────────────────────────────
   'pizza-tower':       { title: 'Pizza Tower',             keys: ['pizzatower'] },
@@ -54,17 +60,32 @@ export const COVER_SOURCES = {
   'mina-the-hollower': { title: 'Mina the Hollower',       keys: ['mina'] },
 
   // ── Hand-authored picker cards ──────────────────────────────────
-  'balatro':           { title: 'Balatro',                 slots: ['cv-played-blank-1', 'cv-coll-hh-3'] },
+  'balatro':           { title: 'Balatro',                 slots: ['cv-played-blank-1', 'cv-coll-hh-3', 'ff-priya'] },
   'mario-galaxy-2':    { title: 'Super Mario Galaxy 2',    slots: ['cv-played-blank-2', 'cv-list-fav7'] },
   'katana-zero':       { title: 'Katana Zero',             slots: ['cv-played-blank-3', 'cv-list-fav3'] },
   // Also the mock game-detail card on onboarding screen 3.
   'clair-obscur-33':   { title: 'Clair Obscur: Expedition 33', slots: ['cv-played-blank-4', 'intro-elden-cover', 'cv-list-fav0'] },
   'lies-of-p':         { title: 'Lies of P',               slots: ['cv-played-blank-5'] },
   'dead-cells':        { title: 'Dead Cells',              slots: ['cv-played-blank-6'] },
-  'nier-automata':     { title: 'NieR: Automata',          slots: ['cv-played-blank-7', 'cv-list-fav4', 'cv-coll-fav-6'] },
+  'nier-automata':     { title: 'NieR: Automata',          slots: ['cv-played-blank-7', 'cv-list-fav4', 'cv-coll-fav-6', 'cv-act-a-nier'] },
   'sea-of-stars':      { title: 'Sea of Stars',            keys: ['seaofstars'], slots: ['cv-played-blank-8', 'cv-coll-cozy-6'] },
   'until-then':        { title: 'Until Then',              slots: ['cv-played-blank-9', 'cv-list-fav2', 'cv-coll-cozy-7'] },
-  'ac-odyssey':        { title: "Assassin's Creed Odyssey", slots: ['cv-played-blank-10'] },
+  'ac-odyssey':        { title: "Assassin's Creed Odyssey", slots: ['cv-played-blank-10', 'cv-rev-acodyssey'] },
+
+  // ── Profile-only titles ─────────────────────────────────────────
+  // Neither appears anywhere else in the app — they exist because the profile
+  // shows what *you* played, which is a different shelf from Discover's.
+  'persona-3-reload':  { title: 'Persona 3 Reload',        slots: ['cv-rev-persona3', 'cv-act-a-persona3'] },
+  'persona-4-golden':  { title: 'Persona 4 Golden',        slots: ['cv-act-a-persona4'] },
+
+  // The profile's own two images, neither of them a 2:3 capsule, so each gets
+  // its own registry key rather than borrowing a game's art. Both render as
+  // their placeholder — a surface-2 band, initials in the circle — until the
+  // files land. Drop `public/covers/profile-cover.webp` (wide, ~1600×900 or
+  // larger) and `public/covers/profile-avatar.webp` (square) and run
+  // `npm run covers`.
+  'profile-cover':     { title: 'Profile cover banner',    slots: ['cv-profile-cover'] },
+  'profile-avatar':    { title: 'Profile avatar',          slots: ['cv-profile-avatar'] },
 
   // ── Brand ───────────────────────────────────────────────────────
   // Not a cover: the welcome screen logo. Transparent PNG works well here.
@@ -74,6 +95,12 @@ export const COVER_SOURCES = {
   // stay on their exported art. To promote one, add its slot id to a game, e.g.
   //   'hades-ii': { title: 'Hades II', keys: ['hades','hades2'], slots: ['disc-r1-3'] },
 };
+
+// ── Friends ─────────────────────────────────────────────────────
+//
+// The feed's covers are `ff-<person key>`, keyed by who did the thing rather
+// than by the game — one row, one friend — so they sit outside the
+// `cv-<prefix>-<game key>` convention and are mapped by hand above.
 
 // ── Library ─────────────────────────────────────────────────────
 //

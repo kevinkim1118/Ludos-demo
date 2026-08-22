@@ -41,7 +41,13 @@ export const INTENT_OPTIONS: { key: Intent; title: string; sub: string }[] = [
   { key: 'chill', title: 'Something chill', sub: 'Flexible and cozy' },
 ];
 
-/** Searchable catalogue behind the "What games have you played?" step. */
+/**
+ * Searchable catalogue behind the "What games have you played?" step — and,
+ * unchanged, the catalogue the Search tab filters. The prototype carried a
+ * second copy of these twenty as `SEARCH_DB`; same keys, same names, same
+ * platform strings, only a different order. One list, so the two screens
+ * cannot drift.
+ */
 export interface PlayedGame {
   k: string;
   n: string;
@@ -90,5 +96,27 @@ export const PLAYED_BLANKS: { id: string; slotId: string; name: string }[] = [
   { id: 'blank10', slotId: 'cv-played-blank-10', name: "Assassin's Creed: Odyssey" },
 ];
 
-/** Minimum played-games selections before onboarding can continue. */
-export const PLAYED_MINIMUM = 10;
+/**
+ * Minimum played-games selections before onboarding can continue. Five, not
+ * ten: ten was too long a wall before the payoff, and five is enough signal
+ * for the archetype read. Every count and label on the picker derives from
+ * this — the screen has no hardcoded number.
+ */
+export const PLAYED_MINIMUM = 5;
+
+/**
+ * Titles carry punctuation nobody types — "Assassin's Creed: Odyssey" against
+ * "assassins creed odyssey". Apostrophes drop out entirely so the possessive
+ * closes up; everything else becomes a space.
+ *
+ * It lives beside the catalogue rather than in either screen because the
+ * onboarding picker and the Search tab both match against it, and a query that
+ * finds a game on one has to find it on the other.
+ */
+export function normalize(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}

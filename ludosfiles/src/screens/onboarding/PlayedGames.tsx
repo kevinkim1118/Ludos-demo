@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Cover } from '../../components/Cover';
 import { IconSearch } from '../../components/icons';
-import { PLAYED_BLANKS, PLAYED_DB, PLAYED_MINIMUM } from '../../data/games';
+import { PLAYED_BLANKS, PLAYED_DB, PLAYED_MINIMUM, normalize } from '../../data/games';
 import type { LudosActions } from '../../state/useLudos';
 import type { State } from '../../state/types';
 
@@ -109,19 +109,6 @@ const PICKER_CARDS: { id: string; slotId: string; name: string }[] = [
   ...PLAYED_BLANKS.map((b) => ({ id: b.id, slotId: b.slotId, name: b.name })),
 ];
 
-/**
- * Titles carry punctuation nobody types — "Assassin's Creed: Odyssey" against
- * "assassins creed odyssey". Apostrophes drop out entirely so the possessive
- * closes up; everything else becomes a space.
- */
-function normalize(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-}
-
 /** Precomputed so typing doesn't re-normalize every title on every keystroke. */
 const SEARCHABLE = PICKER_CARDS.map((card) => ({ card, haystack: normalize(card.name) }));
 
@@ -150,150 +137,163 @@ export function PlayedGames({ state, actions }: { state: State; actions: LudosAc
         animation: 'fadeIn 300ms cubic-bezier(0.2,0,0,1)',
       }}
     >
-      <div style={{ flex: 'none', padding: '30px 20px 0' }}>
-        <h1
-          style={{
-            fontSize: 29,
-            fontWeight: 700,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.14,
-            margin: '0 0 10px',
-          }}
-        >
-          What games have you played?
-        </h1>
-        <p
-          style={{
-            fontSize: 14.5,
-            color: 'var(--text-secondary)',
-            lineHeight: 1.45,
-            margin: '0 0 20px',
-            textWrap: 'pretty',
-          }}
-        >
-          We'll use what you selected to recommend games that you'll like. They'll also be added to
-          your “Finished” list in your library.
-        </p>
+      <div className="scroll-y" style={{ flex: 1, minHeight: 0 }}>
+        <div style={{ padding: '30px 20px 0' }}>
+          <h1
+            style={{
+              fontSize: 29,
+              fontWeight: 700,
+              letterSpacing: '-0.03em',
+              lineHeight: 1.14,
+              margin: '0 0 10px',
+            }}
+          >
+            What games have you played?
+          </h1>
+          <p
+            style={{
+              fontSize: 14.5,
+              color: 'var(--text-secondary)',
+              lineHeight: 1.45,
+              margin: '0 0 20px',
+              textWrap: 'pretty',
+            }}
+          >
+            We'll use what you selected to recommend games that you'll like. They'll also be added to
+            your “Finished” list in your library.
+          </p>
+        </div>
+
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            borderBottom: `1.5px solid ${
-              state.playedFocus ? 'var(--accent-500)' : 'var(--border-strong)'
-            }`,
-            padding: '8px 2px',
-            transition: 'border-color 160ms',
+            position: 'sticky',
+            top: 0,
+            zIndex: 4,
+            padding: '6px 20px 0',
+            background: 'var(--surface-0)',
           }}
         >
-          <input
-            value={state.playedQuery}
-            onChange={(e) => actions.setPlayedQuery(e.target.value)}
-            onFocus={() => actions.setPlayedFocus(true)}
-            onBlur={() => actions.setPlayedFocus(false)}
-            placeholder="Search for a game"
-            aria-label="Search for a game"
-            style={{
-              flex: 1,
-              minWidth: 0,
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              color: 'var(--text-primary)',
-              fontFamily: 'inherit',
-              fontSize: 18,
-              fontWeight: 500,
-              letterSpacing: '-0.01em',
-              padding: 0,
-            }}
-          />
-          {state.playedQuery.length > 0 && (
-            <button
-              type="button"
-              className="u-quiet"
-              onClick={() => actions.setPlayedQuery('')}
-              aria-label="Clear search"
-              style={{
-                width: 24,
-                height: 24,
-                flex: 'none',
-                border: 'none',
-                background: 'var(--surface-2)',
-                borderRadius: '50%',
-                color: 'var(--text-secondary)',
-                fontSize: 12,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            >
-              ✕
-            </button>
-          )}
-          <span style={{ flex: 'none', color: 'var(--text-secondary)', display: 'inline-flex' }}>
-            <IconSearch />
-          </span>
-        </div>
-      </div>
-
-      <div className="scroll-y" style={{ flex: 1, minHeight: 0, padding: '16px 20px 0' }}>
-        {!noResults && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 11 }}>
-            {results.map((card) => (
-              <GameCard
-                key={card.id}
-                slotId={card.slotId}
-                name={card.name}
-                selected={!!state.played[card.id]}
-                onToggle={() => actions.togglePlayed(card.id)}
-              />
-            ))}
-          </div>
-        )}
-
-        {noResults && (
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              textAlign: 'center',
-              padding: '60px 24px 40px',
+              gap: 12,
+              borderBottom: `1.5px solid ${
+                state.playedFocus ? 'var(--accent-500)' : 'var(--border-strong)'
+              }`,
+              padding: '8px 2px',
+              transition: 'border-color 160ms',
             }}
           >
-            <div
+            <input
+              value={state.playedQuery}
+              onChange={(e) => actions.setPlayedQuery(e.target.value)}
+              onFocus={() => actions.setPlayedFocus(true)}
+              onBlur={() => actions.setPlayedFocus(false)}
+              placeholder="Search for a game"
+              aria-label="Search for a game"
               style={{
-                width: 54,
-                height: 54,
-                borderRadius: 15,
-                background: 'var(--surface-1)',
-                border: '1px solid var(--border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#8A787C',
-                marginBottom: 16,
+                flex: 1,
+                minWidth: 0,
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                color: 'var(--text-primary)',
+                fontFamily: 'inherit',
+                fontSize: 18,
+                fontWeight: 500,
+                letterSpacing: '-0.01em',
+                padding: 0,
               }}
-            >
-              <IconSearch size={24} />
-            </div>
-            <div style={{ fontSize: 17, fontWeight: 600 }}>No games found</div>
-            <div
-              style={{
-                fontSize: 13,
-                color: 'var(--text-muted)',
-                lineHeight: 1.5,
-                marginTop: 6,
-                maxWidth: 240,
-              }}
-            >
-              Nothing matches “{state.playedQuery}”. Try a different title or spelling.
-            </div>
+            />
+            {state.playedQuery.length > 0 && (
+              <button
+                type="button"
+                className="u-quiet"
+                onClick={() => actions.setPlayedQuery('')}
+                aria-label="Clear search"
+                style={{
+                  width: 24,
+                  height: 24,
+                  flex: 'none',
+                  border: 'none',
+                  background: 'var(--surface-2)',
+                  borderRadius: '50%',
+                  color: 'var(--text-secondary)',
+                  fontSize: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                ✕
+              </button>
+            )}
+            <span style={{ flex: 'none', color: 'var(--text-secondary)', display: 'inline-flex' }}>
+              <IconSearch />
+            </span>
           </div>
-        )}
-        <div style={{ height: 14 }} />
+        </div>
+
+        <div style={{ padding: '16px 20px 0' }}>
+          {!noResults && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 11 }}>
+              {results.map((card) => (
+                <GameCard
+                  key={card.id}
+                  slotId={card.slotId}
+                  name={card.name}
+                  selected={!!state.played[card.id]}
+                  onToggle={() => actions.togglePlayed(card.id)}
+                />
+              ))}
+            </div>
+          )}
+
+          {noResults && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                padding: '60px 24px 40px',
+              }}
+            >
+              <div
+                style={{
+                  width: 54,
+                  height: 54,
+                  borderRadius: 15,
+                  background: 'var(--surface-1)',
+                  border: '1px solid var(--border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#8A787C',
+                  marginBottom: 16,
+                }}
+              >
+                <IconSearch size={24} />
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 600 }}>No games found</div>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                  marginTop: 6,
+                  maxWidth: 240,
+                }}
+              >
+                Nothing matches “{state.playedQuery}”. Try a different title or spelling.
+              </div>
+            </div>
+          )}
+          <div style={{ height: 14 }} />
+        </div>
       </div>
 
       <div

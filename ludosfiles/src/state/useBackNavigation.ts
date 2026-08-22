@@ -38,9 +38,9 @@ function openLayers(state: State): Layer[] {
   // A panel sliding out counts as gone, like a sheet mid-exit below.
   if (state.libDetailOpen && state.libDetailIn) open.push('libDetail');
   if (state.libEditOpen && state.libEditIn) open.push('libEdit');
-  if (state.frSheet) open.push('frSheet');
-  if (state.frAddOpen) open.push('frAdd');
-  if (state.prEditOpen) open.push('prEdit');
+  if (state.frSheet && !state.frSheetClosing) open.push('frSheet');
+  if (state.frAddOpen && state.frAddIn) open.push('frAdd');
+  if (state.prEditOpen && state.prEditIn) open.push('prEdit');
 
   // A sheet mid-exit-animation is already on its way out; counting it would
   // push a fresh entry for something that's closing.

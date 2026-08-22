@@ -5,13 +5,16 @@ import { StatusSheet } from './components/StatusSheet';
 import { Toast } from './components/Toast';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { useAppUpdate } from './lib/appUpdate';
-import { Placeholder } from './screens/Placeholder';
+import { GameDetail } from './screens/detail/GameDetail';
+import { Friends } from './screens/friends/Friends';
 import { Library } from './screens/library/Library';
 import { ListEdit } from './screens/library/ListEdit';
 import { HeadToHead } from './screens/h2h/HeadToHead';
 import { Discover } from './screens/home/Discover';
 import { TabBar } from './screens/home/TabBar';
 import { Onboarding } from './screens/onboarding/Onboarding';
+import { Profile } from './screens/profile/Profile';
+import { Search } from './screens/search/Search';
 import { TAB_FLOWS, type Flow } from './state/types';
 import { useBackNavigation } from './state/useBackNavigation';
 import { jumpPatch, useLudos } from './state/useLudos';
@@ -33,7 +36,7 @@ function hasTabBar(flow: Flow): boolean {
 }
 
 export function App() {
-  const { state, actions, homeScroll } = useLudos();
+  const { state, actions, homeScroll, detailScroll, reviewPrompt } = useLudos();
   const update = useAppUpdate();
 
   // Back closes what's open rather than exiting the installed app.
@@ -56,11 +59,18 @@ export function App() {
       {state.flow === 'home' && (
         <Discover state={state} actions={actions} scrollRef={homeScroll} />
       )}
-      {state.flow === 'detail' && <Placeholder name="Game detail" />}
+      {state.flow === 'detail' && (
+        <GameDetail
+          state={state}
+          actions={actions}
+          scrollRef={detailScroll}
+          promptRef={reviewPrompt}
+        />
+      )}
       {state.flow === 'library' && <Library state={state} actions={actions} />}
-      {state.flow === 'friends' && <Placeholder name="Friends" />}
-      {state.flow === 'search' && <Placeholder name="Search" />}
-      {state.flow === 'profile' && <Placeholder name="Profile" />}
+      {state.flow === 'friends' && <Friends state={state} actions={actions} />}
+      {state.flow === 'search' && <Search state={state} actions={actions} />}
+      {state.flow === 'profile' && <Profile state={state} actions={actions} />}
       {state.flow === 'h2h' && <HeadToHead state={state} actions={actions} />}
 
       {/* One tab bar for every tabbed flow, rather than one per screen — the

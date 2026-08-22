@@ -59,6 +59,8 @@ interface RailProps {
   show: boolean;
   itemStatus: Record<string, GameStatus>;
   onOpenSheet: (item: RailItem, slotId: string) => void;
+  /** Tapping the card itself. Only Elden Ring has a detail screen to open. */
+  onOpen: (item: RailItem) => void;
   onStub: () => void;
 }
 
@@ -70,10 +72,11 @@ export function Rail({
   show,
   itemStatus,
   onOpenSheet,
+  onOpen,
   onStub,
 }: RailProps) {
   return (
-    <section style={{ marginBottom: 22 }}>
+    <section style={{ marginTop: 30, marginBottom: 30 }}>
       <div
         style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 18px', marginBottom: 3 }}
       >
@@ -101,7 +104,7 @@ export function Rail({
               <div
                 key={item.k}
                 className="u-lift"
-                onClick={onStub}
+                onClick={() => onOpen(item)}
                 style={{
                   width: 138,
                   flex: 'none',

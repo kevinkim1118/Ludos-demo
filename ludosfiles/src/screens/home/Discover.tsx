@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import { BottomSheet } from '../../components/BottomSheet';
 import { IconChevronRight, IconSearchSmall } from '../../components/icons';
-import { CONFIG, archetypePlural } from '../../config';
+import { CONFIG, archetypePlural, friendsConnected } from '../../config';
 import { RAILS, TIME_OPTIONS } from '../../data/content';
 import { backlogGames } from '../../state/reducer';
 import type { State } from '../../state/types';
@@ -202,17 +202,18 @@ export function Discover({ state, actions, scrollRef }: DiscoverProps) {
             sub={
               rail.prefix === 'ts'
                 ? `Other ${archetypePlural(CONFIG.archetype)} ${rail.sub}`
-                : rail.requiresFriends && !CONFIG.friendsConnected
+                : rail.requiresFriends && !friendsConnected
                   ? 'Connect to see friend activity'
                   : rail.sub
             }
             prefix={rail.prefix}
             items={rail.items}
-            show={!rail.requiresFriends || CONFIG.friendsConnected}
+            show={!rail.requiresFriends || friendsConnected}
             itemStatus={state.itemStatus}
             onOpenSheet={(item, slotId) =>
               actions.openSheet({ name: item.n, meta: item.p, slotId })
             }
+            onOpen={(item) => (item.k === 'eldenring' ? actions.openDetail() : actions.demo())}
             onStub={actions.demo}
           />
         ))}

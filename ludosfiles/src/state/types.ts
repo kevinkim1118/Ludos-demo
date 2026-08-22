@@ -1,4 +1,7 @@
+import type { GdTab, Tone } from '../data/detail';
+import type { FriendsFilter } from '../data/friends';
 import type { LibSeg } from '../data/library';
+import type { PrListSort } from '../data/profile';
 import type { Game, Intent } from '../data/games';
 
 export type Flow =
@@ -22,9 +25,6 @@ export type LibView = 'library' | 'lists';
 
 /** Which tab the Profile is showing. */
 export type ProfileTab = 'reviews' | 'lists' | 'activity';
-
-/** Which slice of the friends feed is showing. */
-export type FriendsFilter = 'all' | 'finishes' | 'ratings' | 'playing';
 
 /**
  * Panels and sheets the secondary tabs own. They live here rather than inside
@@ -109,6 +109,15 @@ export interface State {
   spotDismissed: boolean;
   spotDismissing: boolean;
 
+  // game detail
+  /** Which slice of the review list is showing. */
+  gdTab: GdTab;
+  /** The rating picked in the review prompt, before it's posted. */
+  gdRating: Tone | null;
+  gdReviewText: string;
+  /** Whether the picked rating has been posted as the user's own review. */
+  gdPosted: boolean;
+
   // library tab
   libView: LibView;
   /** Which chip the shelf is filtered to. */
@@ -144,11 +153,40 @@ export interface State {
   // friends
   frFilter: FriendsFilter;
   frSheet: boolean;
+  /** True while the friends sheet plays its exit animation. */
+  frSheetClosing: boolean;
+  /** The add-friends panel is the same Open/In pair as the library's. */
   frAddOpen: boolean;
+  frAddIn: boolean;
+  frAddQuery: string;
+  /** Directory keys whose Add button has flipped to "Requested". */
+  frAdded: Record<string, boolean>;
 
   // profile
   prTab: ProfileTab;
+  /** The edit sheet is the same Open/In pair as the library's panels. */
   prEditOpen: boolean;
+  prEditIn: boolean;
+  prUsername: string;
+  prBio: string;
+  /** Edit-sheet drafts — discarded unless Save commits them. */
+  prUsernameDraft: string;
+  prBioDraft: string;
+
+  // profile → lists tab
+  prListSearch: string;
+  prListSort: PrListSort;
+  /** Whether the sort popover under the search row is showing. */
+  prListFilterOpen: boolean;
+
+  // search
+  /**
+   * The raw query, exactly as typed. Session UI state — deliberately not
+   * serialized, and reset by the `?screen=search` deep link.
+   */
+  srQuery: string;
+  /** Whether the input has focus, which is what turns its underline accent. */
+  srFocused: boolean;
 
   // overlays
   sheet: SheetTarget | null;

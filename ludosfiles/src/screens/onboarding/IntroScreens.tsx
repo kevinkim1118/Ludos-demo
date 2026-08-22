@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Cover } from '../../components/Cover';
+import { COVERS } from '../../data/covers';
 import { MARQUEE_ROWS, REVIEWS } from '../../data/content';
 
 const screenBase = {
@@ -32,21 +34,51 @@ const MARQUEE_H = MARQUEE_ROWS.length * COVER_H + (MARQUEE_ROWS.length - 1) * RO
 
 /** 1 · Welcome. */
 export function IntroWelcome() {
+  const [logoFailed, setLogoFailed] = useState(false);
+
   return (
-    <div style={{ ...screenBase, padding: '24px 28px 12px' }}>
-      <div style={{ flex: 1 }} />
-      <Cover
-        id="intro-logo"
+    <div
+      style={{
+        ...screenBase,
+        // Not redundant: screenBase sets `height: 100%`, which resolves to a
+        // definite length equal to the scroller's height. Left in place it
+        // ties with the min-height below, the clamp is a no-op, and the screen
+        // still clips instead of growing. Killing it is the whole fix.
+        height: 'auto',
+        minHeight: '100%',
+        padding: '24px 28px 12px',
+      }}
+    >
+      <div style={{ flex: 1, minHeight: 12 }} />
+      {/*
+        Not a `Cover`: both of that component's branches end in
+        `object-fit: cover`, and the mark's opaque pixels reach all four edges
+        of its square source, so filling this taller box would shave ~7.5px off
+        each side. Contained, the box letterboxes instead — the mark paints
+        153×153 centred with transparent space above and below, which is what
+        the prototype renders. No radius and no plate for the same reason:
+        there's nothing here to round but the mark itself.
+
+        `flex: none` because the screen is a column flex container and a
+        shrinkable logo squashes on a short viewport instead of letting the
+        spacers give way.
+      */}
+      <img
+        src={COVERS['intro-logo'].src}
         alt="Ludos"
+        decoding="async"
+        // No `loading="lazy"`: this is the first thing on the app's first
+        // screen. On failure, hide rather than leave a broken-image glyph —
+        // the box holds its space and the h1 below already says "Ludos".
+        onError={() => setLogoFailed(true)}
         style={{
-          // Square, because the box crops to fill and the mark reaches its own
-          // edges — a wider box would shave the L's foot and the top of the O.
-          // No corner radius for the same reason: there's no icon plate here to
-          // round, only the mark, and rounding it clips the L.
-          width: 150,
-          height: 150,
+          display: 'block',
+          flex: 'none',
+          width: 153,
+          height: 168,
+          objectFit: 'contain',
           margin: '0 auto',
-          background: 'transparent',
+          visibility: logoFailed ? 'hidden' : undefined,
         }}
       />
       <h1

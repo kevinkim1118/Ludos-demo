@@ -1,3 +1,5 @@
+import type { GdTab, Tone } from '../data/detail';
+import type { FriendsFilter } from '../data/friends';
 import { GAMES, type Game, type Intent } from '../data/games';
 import {
   LIB_DEFAULT_LIST,
@@ -7,6 +9,11 @@ import {
   type LibSeg,
 } from '../data/library';
 import {
+  PR_DEFAULT_BIO,
+  PR_DEFAULT_USERNAME,
+  type PrListSort,
+} from '../data/profile';
+import {
   INTRO_STEPS,
   type Flow,
   type GameStatus,
@@ -14,6 +21,7 @@ import {
   type ObStep,
   type Overlay,
   type PlayingItem,
+  type ProfileTab,
   type SheetTarget,
   type Side,
   type Snapshot,
@@ -51,6 +59,11 @@ export const initialState: State = {
   spotDismissed: false,
   spotDismissing: false,
 
+  gdTab: 'friends',
+  gdRating: null,
+  gdReviewText: '',
+  gdPosted: false,
+
   libView: 'library',
   libSeg: 'want',
   libList: null,
@@ -74,10 +87,26 @@ export const initialState: State = {
 
   frFilter: 'all',
   frSheet: false,
+  frSheetClosing: false,
   frAddOpen: false,
+  frAddIn: false,
+  frAddQuery: '',
+  frAdded: {},
 
   prTab: 'reviews',
   prEditOpen: false,
+  prEditIn: false,
+  prUsername: PR_DEFAULT_USERNAME,
+  prBio: PR_DEFAULT_BIO,
+  prUsernameDraft: PR_DEFAULT_USERNAME,
+  prBioDraft: PR_DEFAULT_BIO,
+
+  prListSearch: '',
+  prListSort: 'recent',
+  prListFilterOpen: false,
+
+  srQuery: '',
+  srFocused: false,
 
   sheet: null,
   sheetClosing: false,
@@ -249,6 +278,29 @@ export type Action =
   | { type: 'lib/saveEdit' }
   | { type: 'lib/closingEdit' }
   | { type: 'lib/closedEdit' }
+  | { type: 'fr/filter'; filter: FriendsFilter }
+  | { type: 'fr/openSheet' }
+  | { type: 'fr/closingSheet' }
+  | { type: 'fr/closedSheet' }
+  | { type: 'fr/openAdd' }
+  | { type: 'fr/addIn' }
+  | { type: 'fr/closingAdd' }
+  | { type: 'fr/closedAdd' }
+  | { type: 'fr/addQuery'; value: string }
+  | { type: 'fr/request'; key: string }
+  | { type: 'pr/tab'; tab: ProfileTab }
+  | { type: 'pr/openEdit' }
+  | { type: 'pr/editIn' }
+  | { type: 'pr/saveEdit' }
+  | { type: 'pr/closingEdit' }
+  | { type: 'pr/closedEdit' }
+  | { type: 'pr/usernameDraft'; value: string }
+  | { type: 'pr/bioDraft'; value: string }
+  | { type: 'pr/listSearch'; value: string }
+  | { type: 'pr/listSort'; sort: PrListSort }
+  | { type: 'pr/toggleListFilter' }
+  | { type: 'sr/query'; value: string }
+  | { type: 'sr/focus'; value: boolean }
   | { type: 'time/open' }
   | { type: 'time/closing' }
   | { type: 'time/closed' }
@@ -258,6 +310,11 @@ export type Action =
   | { type: 'sheet/closed' }
   | { type: 'sheet/markPlaying'; item: PlayingItem }
   | { type: 'sheet/setStatus'; name: string; status: GameStatus }
+  | { type: 'gd/tab'; tab: GdTab }
+  | { type: 'gd/rating'; rating: Tone }
+  | { type: 'gd/reviewText'; value: string }
+  | { type: 'gd/post' }
+  | { type: 'gd/editReview' }
   | { type: 'spot/dismissing' }
   | { type: 'spot/dismissed' }
   | { type: 'h2h/setIntent'; intent: Intent }
@@ -321,11 +378,8 @@ export function reducer(state: State, action: Action): State {
     case 'flow/go':
       // Landing on Profile always shows the profile itself, never the editor
       // it was left in. The other tabs keep whatever they had open.
-      return {
-        ...state,
-        flow: action.flow,
-        prEditOpen: action.flow === 'profile' ? false : state.prEditOpen,
-      };
+      if (action.flow !== 'profile') return { ...state, flow: action.flow };
+      return { ...state, flow: action.flow, prEditOpen: false, prEditIn: false };
 
     case 'flow/goCompare':
       return { ...state, flow: 'h2h', h2hScreen: 'intent' };
@@ -447,6 +501,88 @@ export function reducer(state: State, action: Action): State {
     case 'lib/closedEdit':
       return { ...state, libEditOpen: false };
 
+    // ── friends ───────────────────────────────────────────────
+    case 'fr/filter':
+      return { ...state, frFilter: action.filter };
+
+    case 'fr/openSheet':
+      return { ...state, frSheet: true, frSheetClosing: false };
+
+    case 'fr/closingSheet':
+      return { ...state, frSheetClosing: true };
+
+    case 'fr/closedSheet':
+      return { ...state, frSheet: false, frSheetClosing: false };
+
+    // Mounted off-frame; `fr/addIn` a tick later is what animates it in.
+    case 'fr/openAdd':
+      return { ...state, frAddOpen: true, frAddIn: false };
+
+    case 'fr/addIn':
+      return state.frAddOpen ? { ...state, frAddIn: true } : state;
+
+    case 'fr/closingAdd':
+      return { ...state, frAddIn: false };
+
+    // The search resets with the panel — reopening it starts from Suggested.
+    case 'fr/closedAdd':
+      return { ...state, frAddOpen: false, frAddQuery: '' };
+
+    case 'fr/addQuery':
+      return { ...state, frAddQuery: action.value };
+
+    case 'fr/request':
+      return { ...state, frAdded: { ...state.frAdded, [action.key]: true } };
+
+    // ── profile ───────────────────────────────────────────────
+    case 'pr/tab':
+      return { ...state, prTab: action.tab };
+
+    // Mounted off-frame; `pr/editIn` a tick later is what animates it in.
+    // Both drafts are seeded from what's committed, so Cancel can drop them.
+    case 'pr/openEdit':
+      return {
+        ...state,
+        prEditOpen: true,
+        prEditIn: false,
+        prUsernameDraft: state.prUsername,
+        prBioDraft: state.prBio,
+      };
+
+    case 'pr/editIn':
+      return state.prEditOpen ? { ...state, prEditIn: true } : state;
+
+    case 'pr/saveEdit':
+      return { ...state, prUsername: state.prUsernameDraft, prBio: state.prBioDraft };
+
+    case 'pr/closingEdit':
+      return { ...state, prEditIn: false };
+
+    case 'pr/closedEdit':
+      return { ...state, prEditOpen: false };
+
+    case 'pr/usernameDraft':
+      return { ...state, prUsernameDraft: action.value };
+
+    case 'pr/bioDraft':
+      return { ...state, prBioDraft: action.value };
+
+    case 'pr/listSearch':
+      return { ...state, prListSearch: action.value };
+
+    case 'pr/listSort':
+      return { ...state, prListSort: action.sort };
+
+    case 'pr/toggleListFilter':
+      return { ...state, prListFilterOpen: !state.prListFilterOpen };
+
+    // ── search ────────────────────────────────────────────────
+    case 'sr/query':
+      return { ...state, srQuery: action.value };
+
+    case 'sr/focus':
+      return { ...state, srFocused: action.value };
+
     case 'time/open':
       return { ...state, timeSheet: true, timeClosing: false };
 
@@ -486,6 +622,23 @@ export function reducer(state: State, action: Action): State {
         playingItem:
           state.playingItem && state.playingItem.name === action.name ? null : state.playingItem,
       };
+
+    // ── game detail ───────────────────────────────────────────
+    case 'gd/tab':
+      return { ...state, gdTab: action.tab };
+
+    // Tapping the rating that's already picked clears it.
+    case 'gd/rating':
+      return { ...state, gdRating: state.gdRating === action.rating ? null : action.rating };
+
+    case 'gd/reviewText':
+      return { ...state, gdReviewText: action.value };
+
+    case 'gd/post':
+      return state.gdRating ? { ...state, gdPosted: true } : state;
+
+    case 'gd/editReview':
+      return { ...state, gdPosted: false };
 
     case 'spot/dismissing':
       return state.spotDismissing ? state : { ...state, spotDismissing: true };

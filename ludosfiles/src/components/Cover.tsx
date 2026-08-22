@@ -63,10 +63,30 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
   const boxRef = useRef<HTMLSpanElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [geometry, setGeometry] = useState<Geometry | null>(null);
+
   // Artwork isn't precached, so offline it can genuinely be missing. Falling
   // back to the empty box reads as a placeholder; a broken-image icon reads as
   // a bug.
-  const [failed, setFailed] = useState(false);
+  //
+  // What failed is recorded as a source, not a boolean. Several Covers stay
+  // mounted while their `id` changes under them — the pick card across
+  // "Another", the duel cards each round — and a boolean would carry one
+  // slot's failure onto the next slot's perfectly good art.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = entry?.src;
+  const failed = src != null && failedSrc === src;
+
+  // Nothing re-requests a cover that has already fallen back, so one dropped
+  // request leaves that card empty for the rest of the session. Retry when
+  // connectivity returns; dropping the flag remounts the `img`, which reloads
+  // it. Only a real offline stretch fires this — a dev server that died under
+  // a still-online browser needs a reload.
+  useEffect(() => {
+    if (!failed) return;
+    const retry = () => setFailedSrc(null);
+    window.addEventListener('online', retry);
+    return () => window.removeEventListener('online', retry);
+  }, [failed]);
 
   const recompute = useCallback(() => {
     if (!hasCrop || !entry) return;
@@ -122,7 +142,7 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
           alt={alt}
           loading="lazy"
           decoding="async"
-          onError={() => setFailed(true)}
+          onError={() => setFailedSrc(src ?? null)}
           style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </span>
@@ -137,7 +157,7 @@ export function Cover({ id, alt = '', style, className, fallback }: CoverProps) 
         alt={alt}
         decoding="async"
         onLoad={recompute}
-        onError={() => setFailed(true)}
+        onError={() => setFailedSrc(src ?? null)}
         style={
           geometry
             ? {

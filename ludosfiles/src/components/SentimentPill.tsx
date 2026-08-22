@@ -1,12 +1,17 @@
 import type { ReactNode } from 'react';
 import type { Sentiment } from '../data/detail';
 
-/** What the pill says when nothing overrides it. */
+/**
+ * What the pill says when nothing overrides it. The wording tracks `GD_SCALE`
+ * in `data/detail.ts`, which is the app's one sentiment vocabulary — the
+ * `Sentiment` keys stay `really-liked` / `really-disliked` because they are
+ * also the vendored CSS class names, and those are not ours to rename.
+ */
 const LABELS: Record<Sentiment, string> = {
-  'really-liked': 'Really liked it',
+  'really-liked': 'Loved it',
   liked: 'Liked it',
   'didnt-like': "Didn't like it",
-  'really-disliked': 'Really disliked it',
+  'really-disliked': 'Strongly disliked it',
 };
 
 /**

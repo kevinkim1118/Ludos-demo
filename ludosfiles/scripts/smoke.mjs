@@ -683,6 +683,77 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   await pr.close();
 }
 
+// ── Discover header ───────────────────────────────────────────
+// The header carries one control, not two: Search already has a tab, so a
+// second entry point up here was removed. What is left is the same avatar the
+// Profile screen leads with, and it has to actually go there — a round button
+// that only toasted was indistinguishable from an unfinished one.
+{
+  const hd = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  await hd.goto(`${BASE}/?screen=home`, { waitUntil: 'networkidle' });
+  await hd.waitForTimeout(500);
+
+  const header = hd.locator('.screen header');
+  ok('the header has no Search control', (await header.getByLabel('Search').count()) === 0);
+
+  const avatar = await hd.evaluate(() => {
+    const img = document.querySelector('.screen header button[aria-label="Profile"] img');
+    return { src: img?.getAttribute('src') ?? null, broken: img ? img.complete && img.naturalWidth === 0 : true };
+  });
+  ok(
+    'the header avatar is the profile art, resolved',
+    avatar.src === '/covers/profile-avatar.webp' && !avatar.broken,
+  );
+
+  await header.getByLabel('Profile').click();
+  await hd.waitForTimeout(500);
+  ok(
+    'the header avatar opens the profile',
+    (await hd.locator('.screen').innerText()).includes('obsessed with action RPGs'),
+  );
+  await hd.close();
+}
+
+// ── Replay onboarding ─────────────────────────────────────────
+// The profile editor can send you back through the intro. It has to clear the
+// persisted `onboardingComplete`, or a cold launch mid-replay would snap back
+// to Discover — and it has to leave the library alone, since this is a request
+// to see the intro again rather than to reset the demo.
+{
+  const rp = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  await rp.goto(`${BASE}/?screen=profile`, { waitUntil: 'networkidle' });
+  await rp.waitForTimeout(500);
+  await rp.evaluate(() => {
+    const save = JSON.parse(localStorage.getItem('ludos.state') ?? '{}');
+    save.backlog = { 'Elden Ring': true };
+    localStorage.setItem('ludos.state', JSON.stringify(save));
+  });
+
+  await rp.getByRole('button', { name: 'Edit profile' }).click();
+  await rp.waitForTimeout(500);
+  await rp.locator('button', { hasText: /^Replay onboarding$/ }).click();
+  await rp.waitForTimeout(600);
+
+  ok('replay lands on the first intro screen', (await rp.locator('.screen').innerText()).includes('Welcome to'));
+  ok(
+    'replay closes the editor behind it',
+    (await rp.locator('[role="dialog"][aria-label="Edit profile"]').count()) === 0,
+  );
+
+  const saved = await rp.evaluate(() => JSON.parse(localStorage.getItem('ludos.state')));
+  ok('replay clears the persisted completion flag', saved.onboardingComplete === false);
+  ok('replay keeps the library', Object.keys(saved.backlog).length > 0);
+
+  // The flag is persisted, so the replay has to survive a cold launch.
+  await rp.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+  await rp.waitForTimeout(500);
+  ok(
+    'a cold launch mid-replay stays in onboarding',
+    (await rp.locator('.screen').innerText()).includes('Welcome to'),
+  );
+  await rp.close();
+}
+
 // ── Search ────────────────────────────────────────────────────
 // The catalogue and the browse rows are fixed content, so what's worth
 // guarding is the matching: it runs on a normalized query on both sides, which
@@ -784,10 +855,13 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
 {
   const cv = await browser.newPage({ viewport: { width: 402, height: 874 } });
   const imgs = () => cv.locator('.screen img').count();
-  // Fails the first cover on screen the way a dropped request would.
+  // Fails the first cover in the scrolling content the way a dropped request
+  // would. Scoped to `.scroll-y` rather than the whole screen because Discover's
+  // header now carries the profile avatar, which is the first `img` in the DOM
+  // and is not the cover either half of this block is about.
   const drop = () =>
     cv.evaluate(() =>
-      document.querySelector('.screen img').dispatchEvent(new Event('error')),
+      document.querySelector('.screen .scroll-y img').dispatchEvent(new Event('error')),
     );
 
   await cv.goto(`${BASE}/?screen=search`, { waitUntil: 'networkidle' });

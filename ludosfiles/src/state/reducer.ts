@@ -247,6 +247,7 @@ export type Action =
   | { type: 'ob/introNext' }
   | { type: 'ob/introBack' }
   | { type: 'ob/retake' }
+  | { type: 'ob/replay' }
   | { type: 'played/toggle'; id: string }
   | { type: 'played/query'; value: string }
   | { type: 'played/focus'; value: boolean }
@@ -355,6 +356,26 @@ export function reducer(state: State, action: Action): State {
 
     case 'ob/retake':
       return { ...state, obStep: 'played', played: {}, playedQuery: '' };
+
+    // Replays the whole run from the first intro screen, unlike `ob/retake`,
+    // which restarts the picker alone. Clearing `onboardingComplete` is what
+    // makes it stick: it is persisted, so a cold launch mid-replay resumes in
+    // onboarding rather than snapping back to Discover. The picks are cleared
+    // for the same reason `ob/retake` clears them — a replayed picker showing
+    // last time's answers isn't a replay. Everything the user has told the app
+    // since (backlog, statuses, reviews) is deliberately left alone; this is a
+    // request to see the intro again, not to reset the demo.
+    case 'ob/replay':
+      return {
+        ...state,
+        flow: 'onboarding',
+        obStep: 'intro1',
+        onboardingComplete: false,
+        played: {},
+        playedQuery: '',
+        prEditOpen: false,
+        prEditIn: false,
+      };
 
     case 'played/toggle': {
       const played = { ...state.played };

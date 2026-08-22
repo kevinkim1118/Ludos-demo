@@ -1,8 +1,10 @@
 import type { RefObject } from 'react';
 import { BottomSheet } from '../../components/BottomSheet';
-import { IconChevronRight, IconSearchSmall } from '../../components/icons';
+import { Cover } from '../../components/Cover';
+import { IconChevronRight } from '../../components/icons';
 import { CONFIG, archetypePlural, friendsConnected } from '../../config';
 import { RAILS, TIME_OPTIONS } from '../../data/content';
+import { prInitials } from '../../data/profile';
 import { backlogGames } from '../../state/reducer';
 import type { State } from '../../state/types';
 import type { LudosActions } from '../../state/useLudos';
@@ -36,39 +38,31 @@ export function Discover({ state, actions, scrollRef }: DiscoverProps) {
       >
         <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.01em' }}>Discover</span>
         <span style={{ flex: 1 }} />
+        {/* The same avatar the Profile screen leads with, at header size — a
+            blank circle read as an unfinished control rather than as "you".
+            The Search tab already sits in the tab bar, so a second entry point
+            up here was one control too many. */}
         <button
           type="button"
-          className="u-quiet"
-          onClick={actions.demo}
-          aria-label="Search"
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 10,
-            border: '1px solid var(--border)',
-            background: 'transparent',
-            color: 'var(--text-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}
-        >
-          <IconSearchSmall />
-        </button>
-        <button
-          type="button"
-          onClick={actions.demo}
+          onClick={() => actions.navigate('profile')}
           aria-label="Profile"
           style={{
             width: 36,
             height: 36,
+            padding: 0,
             borderRadius: '50%',
             border: '1px solid var(--border-strong)',
             background: 'var(--surface-2)',
+            overflow: 'hidden',
             cursor: 'pointer',
           }}
-        />
+        >
+          <Cover
+            id="cv-profile-avatar"
+            fallback={prInitials(state.prUsername)}
+            style={{ display: 'block', width: '100%', height: '100%', fontSize: 12 }}
+          />
+        </button>
       </header>
 
       <div className="scroll-y" ref={scrollRef} style={{ flex: 1, minHeight: 0, position: 'relative' }}>

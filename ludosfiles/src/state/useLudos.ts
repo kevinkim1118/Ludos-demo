@@ -273,6 +273,16 @@ export function useLudos() {
         clearTimer('reading');
         dispatch({ type: 'ob/retake' });
       },
+      /**
+       * Replays onboarding from the first intro screen. Clears the analysis
+       * timer for the same reason `retake` does — a replay started while the
+       * "reading your taste" beat is still pending would otherwise be pushed
+       * on to the result screen by a timer from the previous run.
+       */
+      replayOnboarding: () => {
+        clearTimer('reading');
+        dispatch({ type: 'ob/replay' });
+      },
       enterLudos: () => dispatch({ type: 'flow/enterHome' }),
 
       // ── discover ────────────────────────────────────────────

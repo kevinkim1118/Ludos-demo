@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Cover } from '../../components/Cover';
+import { IconRefresh } from '../../components/icons';
 import { prInitials } from '../../data/profile';
 import type { State } from '../../state/types';
 import type { LudosActions } from '../../state/useLudos';
@@ -170,6 +171,47 @@ export function ProfileEdit({ state, actions }: { state: State; actions: LudosAc
             // opts back into the page font the same way.
             style={{ ...field, fontFamily: 'inherit', fontSize: 14, lineHeight: 1.45, resize: 'none' }}
           />
+
+          {/* Sits below the fields and behind a divider because it isn't one:
+              the fields above are drafts that Save commits, while this takes
+              effect immediately and leaves the sheet. Grouping it with them
+              would imply it waits for Save too. */}
+          <div
+            style={{
+              marginTop: 26,
+              paddingTop: 22,
+              borderTop: '1px solid var(--surface-1)',
+            }}
+          >
+            <span style={fieldLabel}>Onboarding</span>
+            <button
+              type="button"
+              className="u-quiet"
+              onClick={actions.replayOnboarding}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                width: '100%',
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                borderRadius: 10,
+                padding: 13,
+                color: 'var(--text-primary)',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              <IconRefresh />
+              Replay onboarding
+            </button>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8, lineHeight: 1.45 }}>
+              Runs the intro and the games picker again. Your library, statuses
+              and reviews are kept.
+            </div>
+          </div>
         </div>
       </div>
     </>

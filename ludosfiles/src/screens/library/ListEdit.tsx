@@ -27,6 +27,14 @@ export function ListEdit({ state, actions }: { state: State; actions: LudosActio
         transition: 'transform 300ms cubic-bezier(0.2,0,0,1)',
         display: 'flex',
         flexDirection: 'column',
+        // `.screen` carries the safe-area insets as padding, but an absolutely
+        // positioned child is laid out against its *padding box* — so this
+        // overlay covered them, and on a notched phone the device clock and
+        // battery sat on top of Cancel and Save, swallowing both taps. Every
+        // other editor is mounted inside a screen's own box and inherits the
+        // insets; this one is at app level, so it has to repeat them.
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
       <div

@@ -1,14 +1,7 @@
 import type { RefObject } from 'react';
 import { BottomSheet } from '../../components/BottomSheet';
-import {
-  IconBookmark,
-  IconCheckWide,
-  IconChevronRight,
-  IconPlayLarge,
-  IconPlus,
-  IconSearchSmall,
-} from '../../components/icons';
-import { CONFIG, archetypePlural } from '../../config';
+import { IconChevronRight, IconSearchSmall } from '../../components/icons';
+import { CONFIG, archetypePlural, friendsConnected } from '../../config';
 import { RAILS, TIME_OPTIONS } from '../../data/content';
 import { backlogGames } from '../../state/reducer';
 import type { State } from '../../state/types';
@@ -16,7 +9,6 @@ import type { LudosActions } from '../../state/useLudos';
 import { PickCard } from './PickCard';
 import { Rail } from './Rail';
 import { Spotlight } from './Spotlight';
-import { TabBar } from './TabBar';
 
 interface DiscoverProps {
   state: State;
@@ -210,77 +202,24 @@ export function Discover({ state, actions, scrollRef }: DiscoverProps) {
             sub={
               rail.prefix === 'ts'
                 ? `Other ${archetypePlural(CONFIG.archetype)} ${rail.sub}`
-                : rail.requiresFriends && !CONFIG.friendsConnected
+                : rail.requiresFriends && !friendsConnected
                   ? 'Connect to see friend activity'
                   : rail.sub
             }
             prefix={rail.prefix}
             items={rail.items}
-            show={!rail.requiresFriends || CONFIG.friendsConnected}
+            show={!rail.requiresFriends || friendsConnected}
             itemStatus={state.itemStatus}
             onOpenSheet={(item, slotId) =>
               actions.openSheet({ name: item.n, meta: item.p, slotId })
             }
+            onOpen={(item) => (item.k === 'eldenring' ? actions.openDetail() : actions.demo())}
             onStub={actions.demo}
           />
         ))}
 
         <div style={{ height: 14 }} />
       </div>
-
-      <TabBar onStub={actions.demo} />
-
-      {state.sheet && (
-        <BottomSheet
-          closing={state.sheetClosing}
-          onClose={actions.closeSheet}
-          title={<>Add {state.sheet.name} to…</>}
-          subtitle="Set a status to start tracking it"
-        >
-          <button
-            type="button"
-            className="u-accent"
-            onClick={() => actions.sheetAction('backlog', 'Added to backlog')}
-            style={{ ...sheetButton, background: 'var(--accent-500)', color: 'var(--on-accent)', border: 'none', fontWeight: 600 }}
-          >
-            <IconBookmark />
-            Add to backlog
-          </button>
-          <button
-            type="button"
-            className="u-outline"
-            onClick={() => actions.sheetAction('playing', 'Marked as playing')}
-            style={sheetButton}
-          >
-            <IconPlayLarge />
-            Mark as playing
-          </button>
-          <button
-            type="button"
-            className="u-outline"
-            onClick={() => actions.sheetAction('finished', 'Marked as finished')}
-            style={sheetButton}
-          >
-            <IconCheckWide />
-            Mark as finished
-          </button>
-          <button
-            type="button"
-            className="u-dashed"
-            onClick={actions.demo}
-            style={{
-              ...sheetButton,
-              marginBottom: 0,
-              color: 'var(--accent-300)',
-              border: '1px dashed var(--border-accent)',
-              fontWeight: 600,
-            }}
-          >
-            <IconPlus />
-            Add to a list
-          </button>
-        </BottomSheet>
-      )}
 
       {state.timeSheet && (
         <BottomSheet
@@ -327,20 +266,3 @@ export function Discover({ state, actions, scrollRef }: DiscoverProps) {
     </div>
   );
 }
-
-const sheetButton = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-  width: '100%',
-  textAlign: 'left',
-  background: 'transparent',
-  color: 'var(--text-primary)',
-  border: '1px solid var(--border-strong)',
-  borderRadius: 11,
-  padding: 14,
-  fontSize: 14,
-  fontWeight: 500,
-  cursor: 'pointer',
-  marginBottom: 9,
-} as const;

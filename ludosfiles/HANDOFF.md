@@ -154,7 +154,27 @@ Every new cover slot is already mapped in the design project's `image-manifest.j
 
 - The head-to-head flow in full — intent, duel, resolution rules (3-streak / 5-cap / exhausted), undo, skip, coldstart. Untouched this round.
 - The Discover rails' content, order, and cold-start behaviour.
+  - One exception, taken deliberately: `src/data/content.ts:128` spelled Baldur's
+    Gate 3 with a curly U+2019 apostrophe while every other surface uses a
+    straight one. `itemStatus` is keyed by the raw display name (`Rail.tsx`
+    reads `itemStatus[item.n]`, `useLudos.ts` writes `sheet/setStatus` with the
+    same string), so the curly entry was a separate key from the straight one
+    used by onboarding, Search, Library, the head-to-head catalogue and
+    GameDetail's discovery rail — marking BG3 from Discover lit no ✓ anywhere
+    else. Straightened it; this is a data-key defect, not a content decision.
+    The defect is upstream and the port is faithful: `Prototype.dc.html` carries
+    the same split (curly at 1898/2185/2195, straight at
+    1801/1823/1862/2082/2613). **Fix line 1898 in the design file before the
+    next export or this regresses.** `friends.ts:42` and `:96` keep their curly
+    apostrophes — those are printed feed prose, never keys.
 - `src/config.ts` values.
+  - One exception, taken deliberately: `friendsConnected` flips `false` → `true`.
+    The connected state is the only route from Discover into Game detail, so
+    large parts of the demo are unreachable while it is `false`. A new
+    `?friends` / `?friends=0` escape hatch reaches either state, and the
+    exported `friendsConnected` binding gates every friend-sourced surface —
+    read that rather than `CONFIG.friendsConnected`, so the flag reaches every
+    gate. The in-code comment records the same override.
 - The PWA install hint and update prompt, including their device gating.
 - Everything in `ludosfiles/project/` other than refreshing `Prototype.dc.html` — that folder is history.
 

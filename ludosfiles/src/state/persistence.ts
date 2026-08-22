@@ -1,3 +1,4 @@
+import type { Tone } from '../data/detail';
 import type { GameStatus, PlayingItem, State } from './types';
 
 const KEY = 'ludos.state';
@@ -22,6 +23,17 @@ export interface PersistedState {
   upNext: string | null;
   playingItem: PlayingItem | null;
   played: Record<string, true>;
+  /**
+   * The user's own review on Game detail. Durable for the same reason
+   * `itemStatus` is: it's something they told the app, and the screen re-asks
+   * "How was it?" for anything finished without one — so dropping the review
+   * but keeping the status would prompt them to re-rate a game they'd already
+   * reviewed. The unposted draft rides along so a half-written one survives
+   * too.
+   */
+  gdRating: Tone | null;
+  gdReviewText: string;
+  gdPosted: boolean;
 }
 
 /** localStorage throws outright in some sandboxed and private-mode contexts. */
@@ -49,8 +61,13 @@ function filterRecord<T>(value: unknown, pick: (v: unknown) => v is T): Record<s
 
 const isBoolean = (v: unknown): v is boolean => typeof v === 'boolean';
 const isTrue = (v: unknown): v is true => v === true;
-const STATUSES: GameStatus[] = ['backlog', 'playing', 'finished'];
+// Widening this set doesn't need a VERSION bump — an older save stays readable,
+// and a newer one only loses statuses this build wouldn't understand anyway.
+const STATUSES: GameStatus[] = ['backlog', 'playing', 'finished', 'dnf'];
 const isStatus = (v: unknown): v is GameStatus => STATUSES.includes(v as GameStatus);
+
+const TONES: Tone[] = ['rd', 'dl', 'l', 'rl'];
+const isTone = (v: unknown): v is Tone => TONES.includes(v as Tone);
 
 function parsePlayingItem(value: unknown): PlayingItem | null {
   if (!isRecord(value)) return null;
@@ -94,6 +111,11 @@ function read(): PersistedState | null {
     upNext: typeof parsed.upNext === 'string' ? parsed.upNext : null,
     playingItem: parsePlayingItem(parsed.playingItem),
     played: filterRecord(parsed.played, isTrue),
+    // Absent from any save written before Game detail existed, which is why
+    // these degrade to the defaults rather than invalidating the whole save.
+    gdRating: isTone(parsed.gdRating) ? parsed.gdRating : null,
+    gdReviewText: typeof parsed.gdReviewText === 'string' ? parsed.gdReviewText : '',
+    gdPosted: parsed.gdPosted === true,
   };
 }
 
@@ -158,7 +180,7 @@ export function writeFlag(flag: Flag): void {
 /**
  * `useReducer`'s init argument: folds any save over the defaults. A completed
  * onboarding boots straight to Discover, which is the whole point — an
- * installed app must not replay the ten-game picker on every cold launch.
+ * installed app must not replay the games picker on every cold launch.
  */
 export function hydrate(base: State): State {
   const saved = read();
@@ -177,5 +199,8 @@ export function hydrate(base: State): State {
     upNext: saved.upNext,
     playingItem: saved.playingItem,
     played: saved.played,
+    gdRating: saved.gdRating,
+    gdReviewText: saved.gdReviewText,
+    gdPosted: saved.gdPosted,
   };
 }

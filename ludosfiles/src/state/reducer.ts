@@ -1,16 +1,42 @@
+import type { GdTab, Tone } from '../data/detail';
+import type { FriendsFilter } from '../data/friends';
 import { GAMES, type Game, type Intent } from '../data/games';
 import {
+  LIB_DEFAULT_LIST,
+  LIB_LISTS,
+  libOrderFor,
+  type LibList,
+  type LibSeg,
+} from '../data/library';
+import {
+  PR_DEFAULT_BIO,
+  PR_DEFAULT_USERNAME,
+  type PrListSort,
+} from '../data/profile';
+import {
   INTRO_STEPS,
+  type Flow,
   type GameStatus,
   type H2HScreen,
   type ObStep,
+  type Overlay,
   type PlayingItem,
+  type ProfileTab,
   type SheetTarget,
   type Side,
   type Snapshot,
   type State,
   type WinReason,
 } from './types';
+
+/** The `State` flag each dismissible tab overlay is held open by. */
+const OVERLAY_FLAG: Record<Overlay, keyof State> = {
+  libDetail: 'libDetailOpen',
+  libEdit: 'libEditOpen',
+  frSheet: 'frSheet',
+  frAdd: 'frAddOpen',
+  prEdit: 'prEditOpen',
+};
 
 export const initialState: State = {
   flow: 'onboarding',
@@ -30,9 +56,57 @@ export const initialState: State = {
   time: 1,
   upNext: null,
   playingItem: null,
-  statusMenu: false,
   spotDismissed: false,
   spotDismissing: false,
+
+  gdTab: 'friends',
+  gdRating: null,
+  gdReviewText: '',
+  gdPosted: false,
+
+  libView: 'library',
+  libSeg: 'want',
+  libList: null,
+
+  libDetailOpen: false,
+  libDetailIn: false,
+  libEditOpen: false,
+  libEditIn: false,
+
+  libEditTitleDraft: '',
+  libEditDescDraft: '',
+  libEditOrderedDraft: true,
+  libEditProfileDraft: true,
+  libEditOrderDraft: [],
+  libEditDragFrom: null,
+
+  libOverrides: {},
+  libOrder: {},
+  libOrdered: {},
+  libProfileShown: {},
+
+  frFilter: 'all',
+  frSheet: false,
+  frSheetClosing: false,
+  frAddOpen: false,
+  frAddIn: false,
+  frAddQuery: '',
+  frAdded: {},
+
+  prTab: 'reviews',
+  prEditOpen: false,
+  prEditIn: false,
+  prUsername: PR_DEFAULT_USERNAME,
+  prBio: PR_DEFAULT_BIO,
+  prUsernameDraft: PR_DEFAULT_USERNAME,
+  prBioDraft: PR_DEFAULT_BIO,
+
+  prListSearch: '',
+  prListSort: 'recent',
+  prListFilterOpen: false,
+
+  srQuery: '',
+  srFocused: false,
 
   sheet: null,
   sheetClosing: false,
@@ -80,6 +154,43 @@ export function activePickName(state: State): string {
   if (state.playingItem) return state.playingItem.name;
   if (state.upNext) return GAMES[state.upNext]?.name ?? 'Game';
   return 'Game';
+}
+
+/**
+ * What the pick card is showing, in the shape the status sheet wants. A
+ * head-to-head winner (`upNext`) outranks a game marked playing by hand.
+ */
+export function activePickTarget(state: State): { name: string; meta: string; slotId: string } {
+  if (state.playingItem) {
+    const { name, meta, slotId } = state.playingItem;
+    return { name, meta, slotId: slotId || 'cv-pick-x' };
+  }
+  const pick = (state.upNext ? GAMES[state.upNext] : null) ?? currentPick(state) ?? GAMES.hades;
+  return {
+    name: pick.name,
+    meta: `${pick.genre} · ${pick.plat} · ${pick.hrs}`,
+    slotId: `cv-pick-${pick.k}`,
+  };
+}
+
+/** The list the detail panel and the editor are working on. */
+export function activeList(state: State): { name: string; list: LibList } {
+  const name = state.libList && LIB_LISTS[state.libList] ? state.libList : LIB_DEFAULT_LIST;
+  return { name, list: LIB_LISTS[name] };
+}
+
+/** A list's title and description, with any saved edit applied. */
+export function listCopy(state: State, name: string, list: LibList) {
+  const override = state.libOverrides[name];
+  return {
+    title: override?.title ?? list.title,
+    desc: override?.desc ?? list.desc,
+  };
+}
+
+/** Whether a list shows position numbers, with any saved edit applied. */
+export function listIsRanked(state: State, name: string, list: LibList): boolean {
+  return state.libOrdered[name] ?? list.ranked;
 }
 
 function snapshot(state: State): Snapshot {
@@ -141,13 +252,55 @@ export type Action =
   | { type: 'played/focus'; value: boolean }
   | { type: 'seed/toggle'; k: string }
   | { type: 'flow/enterHome' }
+  | { type: 'flow/go'; flow: Flow }
   | { type: 'flow/goCompare' }
   | { type: 'pick/fadeStart' }
   | { type: 'pick/advance' }
   | { type: 'pick/startPlaying' }
   | { type: 'pick/clearStatus'; status: GameStatus; name: string }
   | { type: 'pickIntro/set'; value: boolean }
-  | { type: 'status/toggleMenu' }
+  | { type: 'overlay/close'; overlay: Overlay }
+  | { type: 'lib/view'; view: State['libView'] }
+  | { type: 'lib/seg'; seg: LibSeg }
+  | { type: 'lib/openDetail'; name: string }
+  | { type: 'lib/detailIn' }
+  | { type: 'lib/closingDetail' }
+  | { type: 'lib/closedDetail' }
+  | { type: 'lib/openEdit' }
+  | { type: 'lib/editIn' }
+  | { type: 'lib/editTitle'; value: string }
+  | { type: 'lib/editDesc'; value: string }
+  | { type: 'lib/toggleOrdered' }
+  | { type: 'lib/toggleProfile' }
+  | { type: 'lib/dragStart'; index: number }
+  | { type: 'lib/dragOver'; index: number }
+  | { type: 'lib/dragEnd' }
+  | { type: 'lib/saveEdit' }
+  | { type: 'lib/closingEdit' }
+  | { type: 'lib/closedEdit' }
+  | { type: 'fr/filter'; filter: FriendsFilter }
+  | { type: 'fr/openSheet' }
+  | { type: 'fr/closingSheet' }
+  | { type: 'fr/closedSheet' }
+  | { type: 'fr/openAdd' }
+  | { type: 'fr/addIn' }
+  | { type: 'fr/closingAdd' }
+  | { type: 'fr/closedAdd' }
+  | { type: 'fr/addQuery'; value: string }
+  | { type: 'fr/request'; key: string }
+  | { type: 'pr/tab'; tab: ProfileTab }
+  | { type: 'pr/openEdit' }
+  | { type: 'pr/editIn' }
+  | { type: 'pr/saveEdit' }
+  | { type: 'pr/closingEdit' }
+  | { type: 'pr/closedEdit' }
+  | { type: 'pr/usernameDraft'; value: string }
+  | { type: 'pr/bioDraft'; value: string }
+  | { type: 'pr/listSearch'; value: string }
+  | { type: 'pr/listSort'; sort: PrListSort }
+  | { type: 'pr/toggleListFilter' }
+  | { type: 'sr/query'; value: string }
+  | { type: 'sr/focus'; value: boolean }
   | { type: 'time/open' }
   | { type: 'time/closing' }
   | { type: 'time/closed' }
@@ -157,6 +310,11 @@ export type Action =
   | { type: 'sheet/closed' }
   | { type: 'sheet/markPlaying'; item: PlayingItem }
   | { type: 'sheet/setStatus'; name: string; status: GameStatus }
+  | { type: 'gd/tab'; tab: GdTab }
+  | { type: 'gd/rating'; rating: Tone }
+  | { type: 'gd/reviewText'; value: string }
+  | { type: 'gd/post' }
+  | { type: 'gd/editReview' }
   | { type: 'spot/dismissing' }
   | { type: 'spot/dismissed' }
   | { type: 'h2h/setIntent'; intent: Intent }
@@ -217,8 +375,14 @@ export function reducer(state: State, action: Action): State {
     case 'flow/enterHome':
       return { ...state, flow: 'home', onboardingComplete: true };
 
+    case 'flow/go':
+      // Landing on Profile always shows the profile itself, never the editor
+      // it was left in. The other tabs keep whatever they had open.
+      if (action.flow !== 'profile') return { ...state, flow: action.flow };
+      return { ...state, flow: action.flow, prEditOpen: false, prEditIn: false };
+
     case 'flow/goCompare':
-      return { ...state, flow: 'h2h', h2hScreen: 'intent', statusMenu: false };
+      return { ...state, flow: 'h2h', h2hScreen: 'intent' };
 
     // ── discover ──────────────────────────────────────────────
     case 'pick/fadeStart':
@@ -238,7 +402,6 @@ export function reducer(state: State, action: Action): State {
     case 'pick/clearStatus':
       return {
         ...state,
-        statusMenu: false,
         upNext: null,
         playingItem: null,
         itemStatus: { ...state.itemStatus, [action.name]: action.status },
@@ -247,8 +410,178 @@ export function reducer(state: State, action: Action): State {
     case 'pickIntro/set':
       return { ...state, pickIntro: action.value };
 
-    case 'status/toggleMenu':
-      return { ...state, statusMenu: !state.statusMenu };
+    case 'overlay/close':
+      return { ...state, [OVERLAY_FLAG[action.overlay]]: false };
+
+    // ── library ───────────────────────────────────────────────
+    case 'lib/view':
+      return { ...state, libView: action.view };
+
+    case 'lib/seg':
+      return { ...state, libSeg: action.seg };
+
+    // Mounted off-frame; `lib/detailIn` a tick later is what animates it in.
+    case 'lib/openDetail':
+      return { ...state, libDetailOpen: true, libDetailIn: false, libList: action.name };
+
+    case 'lib/detailIn':
+      return state.libDetailOpen ? { ...state, libDetailIn: true } : state;
+
+    case 'lib/closingDetail':
+      return { ...state, libDetailIn: false };
+
+    case 'lib/closedDetail':
+      return { ...state, libDetailOpen: false };
+
+    case 'lib/openEdit': {
+      const { name, list } = activeList(state);
+      const copy = listCopy(state, name, list);
+      return {
+        ...state,
+        libEditOpen: true,
+        libEditIn: false,
+        libEditTitleDraft: copy.title,
+        libEditDescDraft: copy.desc,
+        libEditOrderedDraft: listIsRanked(state, name, list),
+        libEditProfileDraft: state.libProfileShown[name] ?? true,
+        libEditOrderDraft: libOrderFor(list, state.libOrder[name]).slice(),
+        libEditDragFrom: null,
+      };
+    }
+
+    case 'lib/editIn':
+      return state.libEditOpen ? { ...state, libEditIn: true } : state;
+
+    case 'lib/editTitle':
+      return { ...state, libEditTitleDraft: action.value };
+
+    case 'lib/editDesc':
+      return { ...state, libEditDescDraft: action.value };
+
+    case 'lib/toggleOrdered':
+      return { ...state, libEditOrderedDraft: !state.libEditOrderedDraft };
+
+    case 'lib/toggleProfile':
+      return { ...state, libEditProfileDraft: !state.libEditProfileDraft };
+
+    case 'lib/dragStart':
+      return { ...state, libEditDragFrom: action.index };
+
+    case 'lib/dragOver': {
+      const from = state.libEditDragFrom;
+      if (from === null || from === action.index) return state;
+      const order = state.libEditOrderDraft.slice();
+      const [moved] = order.splice(from, 1);
+      order.splice(action.index, 0, moved);
+      // The row now under the cursor becomes the drag source, so the next
+      // crossing measures from where the row actually is.
+      return { ...state, libEditOrderDraft: order, libEditDragFrom: action.index };
+    }
+
+    case 'lib/dragEnd':
+      return { ...state, libEditDragFrom: null };
+
+    case 'lib/saveEdit': {
+      const { name } = activeList(state);
+      return {
+        ...state,
+        libOverrides: {
+          ...state.libOverrides,
+          [name]: { title: state.libEditTitleDraft, desc: state.libEditDescDraft },
+        },
+        libOrder: { ...state.libOrder, [name]: state.libEditOrderDraft },
+        libOrdered: { ...state.libOrdered, [name]: state.libEditOrderedDraft },
+        libProfileShown: { ...state.libProfileShown, [name]: state.libEditProfileDraft },
+      };
+    }
+
+    case 'lib/closingEdit':
+      return { ...state, libEditIn: false };
+
+    case 'lib/closedEdit':
+      return { ...state, libEditOpen: false };
+
+    // ── friends ───────────────────────────────────────────────
+    case 'fr/filter':
+      return { ...state, frFilter: action.filter };
+
+    case 'fr/openSheet':
+      return { ...state, frSheet: true, frSheetClosing: false };
+
+    case 'fr/closingSheet':
+      return { ...state, frSheetClosing: true };
+
+    case 'fr/closedSheet':
+      return { ...state, frSheet: false, frSheetClosing: false };
+
+    // Mounted off-frame; `fr/addIn` a tick later is what animates it in.
+    case 'fr/openAdd':
+      return { ...state, frAddOpen: true, frAddIn: false };
+
+    case 'fr/addIn':
+      return state.frAddOpen ? { ...state, frAddIn: true } : state;
+
+    case 'fr/closingAdd':
+      return { ...state, frAddIn: false };
+
+    // The search resets with the panel — reopening it starts from Suggested.
+    case 'fr/closedAdd':
+      return { ...state, frAddOpen: false, frAddQuery: '' };
+
+    case 'fr/addQuery':
+      return { ...state, frAddQuery: action.value };
+
+    case 'fr/request':
+      return { ...state, frAdded: { ...state.frAdded, [action.key]: true } };
+
+    // ── profile ───────────────────────────────────────────────
+    case 'pr/tab':
+      return { ...state, prTab: action.tab };
+
+    // Mounted off-frame; `pr/editIn` a tick later is what animates it in.
+    // Both drafts are seeded from what's committed, so Cancel can drop them.
+    case 'pr/openEdit':
+      return {
+        ...state,
+        prEditOpen: true,
+        prEditIn: false,
+        prUsernameDraft: state.prUsername,
+        prBioDraft: state.prBio,
+      };
+
+    case 'pr/editIn':
+      return state.prEditOpen ? { ...state, prEditIn: true } : state;
+
+    case 'pr/saveEdit':
+      return { ...state, prUsername: state.prUsernameDraft, prBio: state.prBioDraft };
+
+    case 'pr/closingEdit':
+      return { ...state, prEditIn: false };
+
+    case 'pr/closedEdit':
+      return { ...state, prEditOpen: false };
+
+    case 'pr/usernameDraft':
+      return { ...state, prUsernameDraft: action.value };
+
+    case 'pr/bioDraft':
+      return { ...state, prBioDraft: action.value };
+
+    case 'pr/listSearch':
+      return { ...state, prListSearch: action.value };
+
+    case 'pr/listSort':
+      return { ...state, prListSort: action.sort };
+
+    case 'pr/toggleListFilter':
+      return { ...state, prListFilterOpen: !state.prListFilterOpen };
+
+    // ── search ────────────────────────────────────────────────
+    case 'sr/query':
+      return { ...state, srQuery: action.value };
+
+    case 'sr/focus':
+      return { ...state, srFocused: action.value };
 
     case 'time/open':
       return { ...state, timeSheet: true, timeClosing: false };
@@ -278,7 +611,6 @@ export function reducer(state: State, action: Action): State {
         itemStatus: { ...state.itemStatus, [action.item.name]: 'playing' },
         playingItem: action.item,
         upNext: null,
-        statusMenu: false,
         pickIntro: true,
       };
 
@@ -290,6 +622,23 @@ export function reducer(state: State, action: Action): State {
         playingItem:
           state.playingItem && state.playingItem.name === action.name ? null : state.playingItem,
       };
+
+    // ── game detail ───────────────────────────────────────────
+    case 'gd/tab':
+      return { ...state, gdTab: action.tab };
+
+    // Tapping the rating that's already picked clears it.
+    case 'gd/rating':
+      return { ...state, gdRating: state.gdRating === action.rating ? null : action.rating };
+
+    case 'gd/reviewText':
+      return { ...state, gdReviewText: action.value };
+
+    case 'gd/post':
+      return state.gdRating ? { ...state, gdPosted: true } : state;
+
+    case 'gd/editReview':
+      return { ...state, gdPosted: false };
 
     case 'spot/dismissing':
       return state.spotDismissing ? state : { ...state, spotDismissing: true };

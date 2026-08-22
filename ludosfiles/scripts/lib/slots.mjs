@@ -10,7 +10,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const read = (p) => readFileSync(resolve(root, p), 'utf8');
 
 /** Slot-id prefixes that follow the `cv-<prefix>-<game key>` convention. */
-export const GAME_SLOT_PREFIXES = ['pick', 'h2h', 'seed', 'fr', 'ts', 'gl', 'search'];
+export const GAME_SLOT_PREFIXES = ['pick', 'h2h', 'seed', 'fr', 'ts', 'gl', 'search', 'lib', 'list', 'disc'];
 
 /**
  * @returns {{ all: Set<string>, byPrefix: Record<string, Set<string>>, standalone: Set<string> }}
@@ -20,10 +20,24 @@ export const GAME_SLOT_PREFIXES = ['pick', 'h2h', 'seed', 'fr', 'ts', 'gl', 'sea
 export function appSlots() {
   const games = read('src/data/games.ts');
   const content = read('src/data/content.ts');
+  const library = read('src/data/library.ts');
+  const detail = read('src/data/detail.ts');
+  const friends = read('src/data/friends.ts');
+  const profile = read('src/data/profile.ts');
 
   const all = new Set();
   const byPrefix = Object.fromEntries(GAME_SLOT_PREFIXES.map((p) => [p, new Set()]));
-  const standalone = new Set(['intro-logo', 'intro-elden-cover', 'cv-spotlight']);
+  const standalone = new Set([
+    'intro-logo',
+    'intro-elden-cover',
+    'cv-spotlight',
+    // Game detail's landscape key art, the one slot that isn't a cover.
+    'cv-detail-hero',
+    // The profile's banner and avatar — a 196px landscape band and an 80px
+    // circle, neither of them a 2:3 capsule, so both stay off the convention.
+    'cv-profile-cover',
+    'cv-profile-avatar',
+  ]);
 
   const addGame = (prefix, key) => {
     byPrefix[prefix].add(key);
@@ -34,6 +48,19 @@ export function appSlots() {
   for (const row of [1, 2, 3]) {
     for (let n = 1; n <= 6; n++) standalone.add(`disc-r${row}-${n}`);
   }
+
+  // The friends feed keys its covers by who acted, not by the game — `ff-alex`
+  // rather than `cv-fr-eldenring` — so they fall outside the prefix convention.
+  for (const m of friends.matchAll(/\{ g: '[^']+', key: '([^']+)'/g)) standalone.add(`ff-${m[1]}`);
+
+  // The profile's reviews and activity are keyed by the entry, not the game —
+  // `cv-act-a-elden` rather than `cv-act-eldenring` — so they sit outside the
+  // prefix convention too. `PR_ACTIVITY` keys already carry their own `a-`.
+  const prReviews = profile.match(/PR_REVIEWS: PrReview\[\] = \[([\s\S]*?)\n\];/)?.[1] ?? '';
+  for (const m of prReviews.matchAll(/\{ k: '([^']+)'/g)) standalone.add(`cv-rev-${m[1]}`);
+
+  const prActivity = profile.match(/PR_ACTIVITY: PrActivityItem\[\] = \[([\s\S]*?)\n\];/)?.[1] ?? '';
+  for (const m of prActivity.matchAll(/\{ k: '([^']+)'/g)) standalone.add(`cv-act-${m[1]}`);
 
   // Reviewer avatars — initials only, no artwork by design.
   for (const m of content.matchAll(/slotId: '(cv-review-\d+)'/g)) standalone.add(m[1]);
@@ -53,6 +80,22 @@ export function appSlots() {
   // Seeded backlog on the onboarding result screen.
   const seed = games.match(/export const SEED = \[([^\]]+)\]/)?.[1] ?? '';
   for (const m of seed.matchAll(/'([^']+)'/g)) addGame('seed', m[1]);
+
+  // Library shelf — one card per LIB_GAMES entry.
+  const libGames = library.match(/LIB_GAMES: LibGame\[\] = \[([\s\S]*?)\n\];/)?.[1] ?? '';
+  for (const m of libGames.matchAll(/\{ k: '([^']+)', n: /g)) addGame('lib', m[1]);
+
+  // Related games at the foot of the game-detail screen.
+  for (const m of detail.matchAll(/\{ k: '([^']+)', n: /g)) addGame('disc', m[1]);
+
+  // Rows inside a list's detail panel.
+  for (const m of library.matchAll(/\{ k: '([^']+)', name: /g)) addGame('list', m[1]);
+
+  // Collection cover strips — `cv-coll-<key>-<n>`, capped at ten by libCoverStrip.
+  for (const m of library.matchAll(/key: '([^']+)', count: (\d+)/g)) {
+    const n = Math.min(Number(m[2]), 10);
+    for (let i = 0; i < n; i++) standalone.add(`cv-coll-${m[1]}-${i}`);
+  }
 
   // Discover rails — each block's prefix applies to the items beneath it.
   for (const block of content.split(/prefix: '/).slice(1)) {

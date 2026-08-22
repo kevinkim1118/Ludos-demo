@@ -35,13 +35,13 @@ for (const expect of ['Discover video games', 'Find video games to play', 'Read 
 await page.getByRole('button', { name: 'Get started' }).click();
 await page.waitForTimeout(200);
 ok('reaches played-games picker', await has('What games have you played?'));
-ok('Next disabled at 0 picks', await has("Pick at least 10 more games"));
+ok('Next disabled at 0 picks', await has("Pick at least 5 more games"));
 
-// Select ten covers.
+// Select the five the picker asks for.
 const cards = page.locator('.scroll-y button[aria-pressed]');
-for (let i = 0; i < 10; i++) await cards.nth(i).click();
+for (let i = 0; i < 5; i++) await cards.nth(i).click();
 await page.waitForTimeout(200);
-ok('counter flips at 10', await has('10 games ready for your Finished list'));
+ok('counter flips at 5', await has('5 games ready for your Finished list'));
 
 await page.getByRole('button', { name: 'Next', exact: true }).click();
 await page.waitForTimeout(200);
@@ -282,6 +282,732 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   await sq.close();
 }
 
+// ── Library ───────────────────────────────────────────────────
+// The shelf is fixed demo content, so what's worth guarding is the machinery
+// around it: the chip filter, the two-pane slide, and the editor's drafts. The
+// editor commits into four per-list override maps at once — a Save that only
+// half-lands leaves a list wearing one edit's title and another's order.
+{
+  const lib = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const ltext = () => lib.locator('.screen').innerText();
+  const lhas = async (t) => (await ltext()).includes(t);
+  // Shelf cards are the only thing carrying the lift treatment on this screen.
+  const cards = () => lib.locator('.u-lift').count();
+
+  await lib.goto(`${BASE}/?screen=library`, { waitUntil: 'networkidle' });
+  await lib.waitForTimeout(500);
+  ok('library opens on the backlog shelf', (await lhas('Your library')) && (await cards()) === 6);
+
+  const chips = (await lib.locator('[aria-pressed]').allInnerTexts()).join(',').replace(/\n/g, '');
+  ok('chip counts read 6/4/4/2/16', chips === 'Backlog6,Playing4,Finished4,DNF2,All16');
+
+  for (const [chip, n, title] of [
+    ['Playing', 4, 'Playing now'],
+    ['Finished', 4, 'Finished'],
+    ['DNF', 2, 'Did not finish'],
+    ['All', 16, 'All games'],
+  ]) {
+    await lib.locator('[aria-pressed]', { hasText: new RegExp(`^${chip}`) }).first().click();
+    await lib.waitForTimeout(300);
+    ok(`${chip} filters to ${n} and retitles`, (await cards()) === n && (await lhas(title)));
+  }
+
+  // Each status shows a different fact, and picking the wrong one reads as a
+  // bug rather than a blank: hours played under a game you never started.
+  const shelf = await ltext();
+  ok(
+    'each status carries its own meta line',
+    shelf.includes('~21 hours') &&
+      shelf.includes('40h played') &&
+      shelf.includes("Aug '24") &&
+      shelf.includes('9h played'),
+  );
+
+  // A slot with no registry entry renders an empty box rather than a broken
+  // image, so missing artwork is silent — worth asserting outright.
+  const art = await lib.evaluate(() => {
+    const cards = [...document.querySelectorAll('.u-lift')];
+    return {
+      cards: cards.length,
+      withArt: cards.filter((c) => c.querySelector('img')).length,
+      broken: [...document.querySelectorAll('img')].filter(
+        (i) => i.complete && i.naturalWidth === 0,
+      ).length,
+    };
+  });
+  ok(
+    'every shelf card resolves its cover',
+    art.cards === 16 && art.withArt === 16 && art.broken === 0,
+  );
+
+  // Both panes are mounted at once and the track slides between them, so a
+  // broken transform leaves the wrong pane on screen with no error.
+  await lib.goto(`${BASE}/?screen=library:lists`, { waitUntil: 'networkidle' });
+  await lib.waitForTimeout(500);
+  const track = await lib.evaluate(
+    () => [...document.querySelectorAll('div')].find((d) => d.style.width === '200%')?.style.transform,
+  );
+  ok('?screen=library:lists lands on the lists pane', track === 'translateX(-50%)');
+  ok('collections list their counts', await lhas('8 games · updated 2d ago'));
+
+  const strips = await lib.evaluate(() =>
+    [...document.querySelectorAll('.scroll-x')]
+      .filter((el) => el.querySelector('img, span'))
+      .map((el) => el.children.length),
+  );
+  ok('cover strips fill from the collection count', strips.join(',').endsWith('8,8,4'));
+
+  // A ranked list numbers its rows; an unranked one must not.
+  await lib.locator('button', { hasText: 'Favorite Games' }).click();
+  await lib.waitForTimeout(600);
+  ok(
+    'a ranked list opens with numbered rows',
+    (await lhas('Ranking of my favorite games')) && (await lhas('1.')),
+  );
+
+  await lib.getByLabel('Back to your library').click();
+  await lib.waitForTimeout(500);
+  await lib.locator('button', { hasText: 'Cozy night-ins' }).click();
+  await lib.waitForTimeout(600);
+  ok('an unranked list shows no positions', !(await lhas('1.')) && (await lhas('Spiritfarer')));
+
+  // Cancel has to drop every draft, not just the ones left untouched.
+  await lib.getByLabel('Edit list').click();
+  await lib.waitForTimeout(500);
+  ok('the editor opens prefilled', (await lib.locator('#lib-edit-title').inputValue()) === 'Cozy night-ins');
+  ok('profile toggle copy follows the toggle', await lhas('Visible to others on your profile'));
+  await lib.getByLabel('Toggle display on profile').click();
+  await lib.waitForTimeout(200);
+  ok('flipping it hides the list instead', await lhas('Hidden — only you can see this list'));
+
+  await lib.locator('#lib-edit-title').fill('Scratch title');
+  await lib.locator('button', { hasText: /^Cancel$/ }).click();
+  await lib.waitForTimeout(500);
+  ok('cancel discards the drafts', (await lhas('Cozy night-ins')) && !(await lhas('Scratch title')));
+
+  // Reordering is applied through CSS `order`, so a row never remounts — and
+  // the saved order has to survive the panel closing and reopening.
+  await lib.getByLabel('Edit list').click();
+  await lib.waitForTimeout(500);
+  await lib.locator('#lib-edit-title').fill('Rainy days');
+  await lib.getByLabel('Toggle ranked list').click();
+  await lib.waitForTimeout(150);
+  const rows = () =>
+    lib.evaluate(() =>
+      [...document.querySelectorAll('[draggable="true"]')].map((r) => r.innerText.replace(/\n/g, ' ').trim()),
+    );
+  const before = (await rows())[0];
+  await lib.locator('[draggable="true"]').nth(0).dragTo(lib.locator('[draggable="true"]').nth(2));
+  await lib.waitForTimeout(300);
+  const after = await rows();
+  ok('dragging a row reorders and renumbers the draft', after[0] !== before && after[0].startsWith('1.'));
+
+  await lib.locator('button', { hasText: /^Save$/ }).click();
+  await lib.waitForTimeout(600);
+  ok(
+    'save commits title, ranked flag and order together',
+    (await lhas('Rainy days')) && (await lhas('1.')) && (await lhas(after[0].replace(/^1\.\s*/, ''))),
+  );
+  await lib.close();
+}
+
+// ── Friends ───────────────────────────────────────────────────
+// The feed is fixed content, so what's worth guarding is the arithmetic
+// around it: chip counts are taken across the whole feed rather than the group
+// they sit above, and a group with nothing left in it drops out instead of
+// leaving a bare rule behind.
+{
+  const fr = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const ftext = () => fr.locator('.screen').innerText();
+  // The group rules are uppercased in CSS and innerText reflects that.
+  const fhas = async (t) => (await ftext()).toLowerCase().includes(t.toLowerCase());
+  // One cover per feed row, and nothing else on the screen carries art.
+  const rows = () => fr.locator('.screen img').count();
+
+  await fr.goto(`${BASE}/?screen=friends`, { waitUntil: 'networkidle' });
+  await fr.waitForTimeout(500);
+  ok(
+    'friends opens on the grouped feed',
+    (await fhas('Today')) && (await fhas('This week')) && (await rows()) === 7,
+  );
+
+  const chips = (await fr.locator('[aria-pressed]').allInnerTexts()).join(',').replace(/\n/g, '');
+  ok(
+    'chip counts read across the whole feed',
+    chips === 'All activity7,Finishes & reviews3,Ratings2,Playing1',
+  );
+
+  ok('the footer counts your friends', await fhas("You're all caught up · 8 friends"));
+
+  const art = await fr.evaluate(() => {
+    const img = [...document.querySelectorAll('.screen img')];
+    return { n: img.length, broken: img.filter((i) => i.complete && i.naturalWidth === 0).length };
+  });
+  ok('every feed row resolves its cover', art.n === 7 && art.broken === 0);
+
+  // Ratings has one row in each group; Playing has one, in Today only.
+  await fr.locator('[aria-pressed]', { hasText: /^Ratings/ }).first().click();
+  await fr.waitForTimeout(350);
+  ok(
+    'a filter keeps the groups that still have rows',
+    (await rows()) === 2 && (await fhas('Today')) && (await fhas('This week')),
+  );
+
+  await fr.locator('[aria-pressed]', { hasText: /^Playing/ }).first().click();
+  await fr.waitForTimeout(350);
+  ok(
+    'an emptied group drops out entirely',
+    (await rows()) === 1 && (await fhas('Today')) && !(await fhas('This week')),
+  );
+
+  // The friends sheet and the add panel are the tab's two dismissible layers.
+  await fr.getByLabel('Friends list').click();
+  await fr.waitForTimeout(450);
+  ok(
+    'the friends sheet lists everyone and who is online',
+    (await fhas('8 Friends · 5 online')) && (await fhas('Last seen 3d ago')),
+  );
+
+  await fr.locator('[role="dialog"]').evaluate((el) => el.previousElementSibling.click());
+  await fr.waitForTimeout(450);
+  await fr.getByLabel('Add friends').click();
+  await fr.waitForTimeout(450);
+  ok(
+    'the add panel slides in over the feed',
+    (await fhas('Or invite directly')) && (await fhas('2 mutual friends')),
+  );
+
+  await fr.getByLabel('Search by username').fill('em');
+  await fr.waitForTimeout(250);
+  ok(
+    'the username search filters the directory',
+    (await fhas('EmberFox')) && !(await fhas('WrenTactics')),
+  );
+
+  await fr.getByLabel('Search by username').fill('');
+  await fr.waitForTimeout(250);
+  await fr.getByLabel('Add GhostLantern').click();
+  await fr.waitForTimeout(400);
+  ok(
+    'Add flips that row to Requested and toasts',
+    (await fhas('Requested')) && (await fhas('Friend request sent')),
+  );
+
+  // The clipboard rejects without permission in a headless browser — the toast
+  // has to fire on that path too, or the button reads as broken offline.
+  await fr.waitForTimeout(1700);
+  await fr.locator('button', { hasText: /^Copy$/ }).click();
+  await fr.waitForTimeout(400);
+  ok('copying the invite link toasts either way', await fhas('Invite link copied'));
+
+  // The connect card is the one thing on this screen the config gates.
+  ok('no connect card while friends are connected', !(await fhas('Quiet feed?')));
+
+  await fr.goto(`${BASE}/?screen=friends&friends=0`, { waitUntil: 'networkidle' });
+  await fr.waitForTimeout(500);
+  ok('?friends=0 puts the connect card in Today', await fhas('Quiet feed?'));
+
+  await fr.locator('[aria-pressed]', { hasText: /^Ratings/ }).first().click();
+  await fr.waitForTimeout(350);
+  ok('the connect card is unfiltered-feed only', !(await fhas('Quiet feed?')));
+  await fr.close();
+}
+
+// ── Profile ───────────────────────────────────────────────────
+// Almost everything here is fixed content, so what's worth guarding is where
+// the profile deliberately disagrees with the rest of the app: its own
+// sentiment wording, its own copy of the lists, and an editor that stops short
+// of the tab bar instead of covering it like the list editor does.
+{
+  const pr = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const ptext = () => pr.locator('.screen').innerText();
+  const phas = async (t) => (await ptext()).toLowerCase().includes(t.toLowerCase());
+  const tab = (name) => pr.locator('[aria-pressed]', { hasText: new RegExp(`^${name}$`) }).first();
+
+  await pr.goto(`${BASE}/?screen=profile`, { waitUntil: 'networkidle' });
+  await pr.waitForTimeout(500);
+  ok(
+    'profile opens on your reviews',
+    (await phas('ColinVolt')) && (await phas('obsessed with action RPGs')),
+  );
+
+  // Four hardcoded cells, and the labels have to stay paired with the numbers.
+  const stats = await pr.evaluate(() =>
+    [...document.querySelectorAll('div')]
+      .filter((d) => getComputedStyle(d).fontFamily.includes('mono'))
+      .map((d) => `${d.innerText}${d.nextElementSibling?.innerText ?? ''}`)
+      .join(' '),
+  );
+  ok('the stat card reads 3/42/16/2 in mono', stats === '3Playing 42Finished 16Backlogged 2DNF');
+
+  // Three review rows, plus the banner and the avatar. Those two are the only
+  // slots in the app with no game behind them, so name them separately —
+  // Cover falls back silently, and a missing one would just read as styling.
+  const art = await pr.evaluate(() => {
+    const img = [...document.querySelectorAll('.screen img')];
+    return {
+      n: img.length,
+      broken: img.filter((i) => i.complete && i.naturalWidth === 0).length,
+      profile: img.filter((i) => i.getAttribute('src').includes('/profile-')).length,
+    };
+  });
+  ok('every review row resolves its cover', art.n === 5 && art.broken === 0);
+  ok('the banner and avatar resolve their own art', art.profile === 2);
+
+  // A third sentiment vocabulary: not SentimentPill's defaults and not the
+  // friends feed's "Loved it" either.
+  const pills = await pr.locator('.ds-sentiment-pill').allInnerTexts();
+  ok('reviews use the profile’s own pill wording', pills.join(',') === 'Loved,Loved,Disliked');
+
+  await tab('Activity').click();
+  await pr.waitForTimeout(350);
+  const activity = await ptext();
+  ok(
+    'activity reads verb-first, with a list target where there is one',
+    activity.includes('Started Persona 4 Golden') && activity.includes('to Action RPGs'),
+  );
+  ok(
+    'an activity row with no verdict shows no pill or quote',
+    (await pr.locator('.ds-sentiment-pill').count()) === 3 &&
+      (await pr.locator('.screen img').count()) === 7,
+  );
+
+  // PR_LISTS is its own copy, not a view of LIB_COLLECTIONS — the two disagree
+  // on both the name and the relative time for the very same list.
+  await tab('Lists').click();
+  await pr.waitForTimeout(350);
+  ok(
+    'the lists tab uses the profile’s own copy',
+    (await phas('Cozy nights in')) && (await phas('8 games · updated 5 days ago')),
+  );
+
+  const strips = await pr.evaluate(() =>
+    [...document.querySelectorAll('.scroll-x')].map((el) => el.children.length),
+  );
+  ok('list cards reuse the library’s cover strips', strips.join(',') === '8,8,4');
+
+  await pr.getByLabel('Search your lists').fill('hand');
+  await pr.waitForTimeout(250);
+  ok(
+    'the list search narrows to one card',
+    (await phas('Handheld / Travel')) && !(await phas('Cozy nights in')),
+  );
+
+  await pr.getByLabel('Search your lists').fill('zzz');
+  await pr.waitForTimeout(250);
+  ok('a search matching nothing says so', await phas('No lists match your search'));
+
+  await pr.getByLabel('Clear search').click();
+  await pr.waitForTimeout(250);
+  ok('clearing the search brings every list back', await phas('Cozy nights in'));
+
+  // The sort button is the only thing saying the options below belong to it,
+  // so it has to change while the popover is open. The three orders happen to
+  // coincide for this data, so what's assertable is the state, not the order.
+  const sortBg = () =>
+    pr.locator('[aria-label="Sort lists"]').evaluate((el) => getComputedStyle(el).backgroundColor);
+  const closedBg = await sortBg();
+  await pr.getByLabel('Sort lists').click();
+  await pr.waitForTimeout(250);
+  const openBg = await sortBg();
+  ok(
+    'the sort button changes while its popover is open',
+    openBg !== closedBg && (await phas('Recently updated')) && (await phas('Most games')),
+  );
+
+  await pr.locator('[aria-pressed]', { hasText: 'Name (A–Z)' }).click();
+  await pr.waitForTimeout(250);
+  ok(
+    'picking a sort moves the selection off Recently updated',
+    (await pr.locator('[aria-pressed="true"]', { hasText: 'Name (A–Z)' }).count()) === 1 &&
+      (await pr.locator('[aria-pressed="true"]', { hasText: 'Recently updated' }).count()) === 0,
+  );
+
+  // Cancel has to drop both drafts, and Save has to commit both.
+  await tab('Reviews').click();
+  await pr.waitForTimeout(300);
+  await pr.getByRole('button', { name: 'Edit profile' }).click();
+  await pr.waitForTimeout(500);
+  ok(
+    'the editor opens prefilled from what is committed',
+    (await pr.locator('#pr-edit-username').inputValue()) === 'ColinVolt',
+  );
+
+  // The list editor covers the tab bar; this one deliberately does not.
+  const clearsTabBar = await pr.evaluate(() => {
+    const sheet = document.querySelector('[role="dialog"][aria-label="Edit profile"]');
+    const bar = document.querySelector('nav');
+    return Math.round(sheet.getBoundingClientRect().bottom) <= Math.round(bar.getBoundingClientRect().top);
+  });
+  ok('the profile editor stops short of the tab bar', clearsTabBar);
+
+  await pr.locator('#pr-edit-username').fill('Scratch');
+  await pr.locator('#pr-edit-bio').fill('Scratch bio');
+  await pr.locator('button', { hasText: /^Cancel$/ }).click();
+  await pr.waitForTimeout(500);
+  ok(
+    'cancel discards both drafts',
+    (await phas('ColinVolt')) && !(await phas('Scratch')),
+  );
+
+  await pr.getByRole('button', { name: 'Edit profile' }).click();
+  await pr.waitForTimeout(500);
+  await pr.locator('#pr-edit-username').fill('VoltColin');
+  await pr.locator('#pr-edit-bio').fill('Back on the JRPGs.');
+  await pr.locator('button', { hasText: /^Save$/ }).click();
+  await pr.waitForTimeout(500);
+  ok(
+    'save commits the username and bio together',
+    (await phas('VoltColin')) && (await phas('Back on the JRPGs.')),
+  );
+
+  // A mapped list leaves the profile behind for the real Library list; the
+  // unmapped one only toasts.
+  await tab('Lists').click();
+  await pr.waitForTimeout(350);
+  await pr.locator('button', { hasText: 'Handheld / Travel' }).click();
+  await pr.waitForTimeout(400);
+  ok('the unmapped list only toasts', await phas('Not available in this demo'));
+
+  await pr.waitForTimeout(1700);
+  await pr.locator('button', { hasText: 'Cozy nights in' }).click();
+  await pr.waitForTimeout(700);
+  ok(
+    'a mapped list opens its Library detail',
+    (await phas('Games for a rainy day or a night in')) && (await phas('Spiritfarer')),
+  );
+
+  await pr.goto(`${BASE}/?screen=profile:activity`, { waitUntil: 'networkidle' });
+  await pr.waitForTimeout(500);
+  ok('?screen=profile:activity lands on the activity tab', await phas('Reviewed Hades II'));
+  await pr.close();
+}
+
+// ── Search ────────────────────────────────────────────────────
+// The catalogue and the browse rows are fixed content, so what's worth
+// guarding is the matching: it runs on a normalized query on both sides, which
+// makes a punctuation-only query empty rather than unmatchable, and the empty
+// state still quotes what was actually typed.
+{
+  const sr = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const shas = async (t) => (await sr.locator('.screen').innerText()).includes(t);
+  // One cover per result card, and nothing else on the screen carries art.
+  const cards = () => sr.locator('.screen img').count();
+  const box = () => sr.getByLabel('Search for a game');
+
+  await sr.goto(`${BASE}/?screen=search`, { waitUntil: 'networkidle' });
+  await sr.waitForTimeout(500);
+  ok(
+    'search opens on the browse rows',
+    (await shas('Trending Right Now')) &&
+      (await shas('Popular with Completionists')) &&
+      (await shas('New Releases')) &&
+      (await cards()) === 0,
+  );
+
+  // "!!!" normalizes to the empty string. It can't match a title, but it isn't
+  // a failed search either — the browse rows stay.
+  await box().fill('!!!');
+  await sr.waitForTimeout(250);
+  ok(
+    'a query that normalizes to nothing keeps the browse rows',
+    (await shas('Trending Right Now')) && !(await shas('No games found')),
+  );
+
+  await box().fill('hollow');
+  await sr.waitForTimeout(250);
+  ok(
+    'a partial match filters the grid',
+    (await shas('Hollow Knight')) && (await shas('Mina the Hollower')) && (await cards()) === 2,
+  );
+
+  const art = await sr.evaluate(() => {
+    const img = [...document.querySelectorAll('.screen img')];
+    return { n: img.length, broken: img.filter((i) => i.complete && i.naturalWidth === 0).length };
+  });
+  ok('every result resolves its cover', art.n === 2 && art.broken === 0);
+
+  // Both sides drop the apostrophe, so the possessive closes up.
+  await box().fill('baldurs gate');
+  await sr.waitForTimeout(250);
+  ok('the match ignores the apostrophe', (await shas('Baldur')) && (await cards()) === 1);
+
+  await box().fill('zzz');
+  await sr.waitForTimeout(250);
+  ok(
+    'no match quotes the query as it was typed',
+    (await shas('No games found')) && (await shas('Nothing matches \u201Czzz\u201D')),
+  );
+
+  await sr.getByLabel('Clear search').click();
+  await sr.waitForTimeout(250);
+  ok(
+    'clearing returns to the browse rows',
+    (await shas('Trending Right Now')) && (await cards()) === 0,
+  );
+
+  // A browse row fills the field with the whole title, which then matches
+  // only itself.
+  await sr.locator('button', { hasText: 'Sekiro: Shadows Die Twice' }).first().click();
+  await sr.waitForTimeout(300);
+  ok(
+    'a browse row lands on a one-card grid',
+    (await box().inputValue()) === 'Sekiro: Shadows Die Twice' && (await cards()) === 1,
+  );
+
+  // The add badge opens the same sheet the rails do, and flips once tracked.
+  await sr.getByLabel('Add Sekiro: Shadows Die Twice').click();
+  await sr.waitForTimeout(400);
+  ok('a result opens the status sheet in add mode', await shas('Add Sekiro: Shadows Die Twice to…'));
+
+  await sr.getByRole('button', { name: 'Add to backlog' }).click();
+  await sr.waitForTimeout(500);
+  const badge = await sr.getByLabel('Add Sekiro: Shadows Die Twice').innerText();
+  ok('adding flips the badge and stays on search', badge.trim() === '\u2713' && (await shas('Added to backlog')));
+
+  // Session state, not a durable fact: the deep link lands on browse.
+  await sr.goto(`${BASE}/?screen=search`, { waitUntil: 'networkidle' });
+  await sr.waitForTimeout(500);
+  ok(
+    'the query does not survive a reload',
+    (await box().inputValue()) === '' && (await shas('Trending Right Now')),
+  );
+  await sr.close();
+}
+
+// ── Cover fallback and recovery ───────────────────────────────
+// A cover that fails falls back to an empty box, and nothing re-requests it —
+// so the flag has to be tied to the source that failed, not a bare boolean.
+// Covers whose `id` changes under them while mounted (the pick card across
+// "Another", the duel cards each round) would otherwise show an empty box over
+// the next slot's perfectly good art.
+{
+  const cv = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const imgs = () => cv.locator('.screen img').count();
+  // Fails the first cover on screen the way a dropped request would.
+  const drop = () =>
+    cv.evaluate(() =>
+      document.querySelector('.screen img').dispatchEvent(new Event('error')),
+    );
+
+  await cv.goto(`${BASE}/?screen=search`, { waitUntil: 'networkidle' });
+  await cv.waitForTimeout(500);
+  await cv.getByLabel('Search for a game').fill('hollow');
+  await cv.waitForTimeout(400);
+
+  const before = await imgs();
+  await drop();
+  await cv.waitForTimeout(300);
+  ok('a dropped cover request falls back to the empty box', before === 2 && (await imgs()) === 1);
+
+  await cv.evaluate(() => window.dispatchEvent(new Event('online')));
+  await cv.waitForTimeout(600);
+  const healed = await cv.evaluate(() => {
+    const img = [...document.querySelectorAll('.screen img')];
+    return { n: img.length, broken: img.filter((i) => i.complete && i.naturalWidth === 0).length };
+  });
+  ok('the cover returns when connectivity does', healed.n === 2 && healed.broken === 0);
+
+  // The pick card is one mounted Cover that takes a new slot on every re-roll.
+  await cv.goto(`${BASE}/?screen=home`, { waitUntil: 'networkidle' });
+  await cv.waitForTimeout(600);
+  await drop();
+  await cv.waitForTimeout(300);
+  const blanked = await imgs();
+  await cv.getByRole('button', { name: 'Another' }).click();
+  await cv.waitForTimeout(700);
+  ok(
+    'a Cover reused for another slot does not inherit the failure',
+    (await imgs()) === blanked + 1,
+  );
+  await cv.close();
+}
+
+// ── Game detail ───────────────────────────────────────────────
+// The screen is fixed content bar one thing: the review you write yourself.
+// So what's worth guarding is that path — the prompt only appears once the
+// game is finished, the rating gates the post, and posting moves the review
+// into the verdict card at the top of the trust ladder.
+{
+  const gd = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const gtext = () => gd.locator('.screen').innerText();
+  const ghas = async (t) => (await gtext()).includes(t);
+
+  await gd.goto(`${BASE}/?screen=detail`, { waitUntil: 'networkidle' });
+  await gd.waitForTimeout(500);
+  ok('?screen=detail opens the game', (await ghas('About Elden Ring')) && (await ghas('Verdict')));
+
+  // Detail takes over the whole screen — it is not one of the tabs.
+  ok('game detail hides the tab bar', (await gd.locator('nav [aria-current]').count()) === 0);
+
+  // The hero is landscape key art, not a cover, and the rail below it is the
+  // only other artwork on the screen.
+  const art = await gd.evaluate(() => {
+    const imgs = [...document.querySelectorAll('img')];
+    return { count: imgs.length, broken: imgs.filter((i) => i.complete && !i.naturalWidth).length };
+  });
+  ok('hero and discovery rail resolve their art', art.count === 5 && art.broken === 0);
+
+  // Both friend-gated blocks: the Friends source at the top of the Verdict
+  // card's trust ladder, and the activity list further down.
+  ok(
+    'friend blocks show when friends are connected',
+    (await ghas('3 friends finished Elden Ring')) && (await ghas('Friend activity')),
+  );
+
+  // ?friends=0 is the only route back to the disconnected state now that the
+  // build ships connected. Showing an empty "3 friends finished" would be
+  // worse than showing nothing, so both blocks have to drop out together.
+  {
+    const cold = await browser.newPage({ viewport: { width: 402, height: 874 } });
+    await cold.goto(`${BASE}/?friends=0&screen=detail`, { waitUntil: 'networkidle' });
+    await cold.waitForTimeout(450);
+    const t = await cold.locator('.screen').innerText();
+    ok(
+      '?friends=0 drops both friend blocks',
+      !t.includes('Friend activity') && !t.includes('3 friends finished'),
+    );
+    await cold.close();
+  }
+
+  ok('an untracked game offers to be added', await ghas('Add to list'));
+  ok('no review prompt before the game is finished', !(await ghas('How was it?')));
+
+  await gd.getByRole('button', { name: 'Add to list' }).click();
+  await gd.waitForTimeout(400);
+  ok('the footer opens the sheet in add mode', await ghas('Add Elden Ring to…'));
+
+  await gd.getByRole('button', { name: 'Mark as finished' }).click();
+  await gd.waitForTimeout(1200);
+  ok('finishing reveals the review prompt', await ghas('How was it?'));
+
+  // The prompt mounts below the fold, so it is scrolled to — and centred
+  // rather than pinned to the top, or the rating row sits under the edge.
+  const centred = await gd.evaluate(() => {
+    const scroller = document.querySelector('.scroll-y');
+    const card = [...scroller.querySelectorAll('div')].find((d) =>
+      d.innerText?.startsWith('YOUR REVIEW\nHow was it?'),
+    );
+    if (!card) return null;
+    const cr = card.getBoundingClientRect();
+    const sr = scroller.getBoundingClientRect();
+    return Math.abs((cr.top + cr.height / 2) - (sr.top + sr.height / 2));
+  });
+  ok('the prompt is scrolled to the middle of the screen', centred !== null && centred < 24);
+
+  await gd.getByRole('button', { name: 'Post review' }).click();
+  await gd.waitForTimeout(400);
+  ok('posting without a rating is refused', await ghas('Pick a rating first'));
+
+  // Picking the rating you already picked clears it, so the scale is never a
+  // one-way door.
+  await gd.getByRole('button', { name: 'Loved', exact: true }).click();
+  await gd.waitForTimeout(200);
+  const lovedPressed = () =>
+    gd.getByRole('button', { name: 'Loved', exact: true }).getAttribute('aria-pressed');
+  ok('picking a rating selects it', (await lovedPressed()) === 'true');
+  await gd.getByRole('button', { name: 'Loved', exact: true }).click();
+  await gd.waitForTimeout(200);
+  ok('picking it again clears it', (await lovedPressed()) === 'false');
+
+  await gd.getByRole('button', { name: 'Loved', exact: true }).click();
+  await gd.getByLabel('Your review').fill('Every death taught me something.');
+  await gd.waitForTimeout(150);
+  await gd.getByRole('button', { name: 'Post review' }).click();
+  await gd.waitForTimeout(600);
+  ok(
+    'posting moves the review into the verdict card',
+    !(await ghas('How was it?')) &&
+      (await ghas('Loved it')) &&
+      (await ghas('Every death taught me something.')),
+  );
+
+  await gd.getByRole('button', { name: /^Edit/ }).click();
+  await gd.waitForTimeout(400);
+  ok('Edit hands the review back to the prompt', await ghas('How was it?'));
+
+  // The tab swap is a keyed re-render; a broken key leaves the old list up.
+  // Scoped to the Reviews card: ColinVolt also writes a row in Friend activity,
+  // so reading the whole screen would never see him leave.
+  const reviewsText = () =>
+    gd.evaluate(
+      () =>
+        [...document.querySelectorAll('div')].find(
+          (d) => d.firstElementChild?.textContent === 'Reviews',
+        )?.innerText ?? '',
+    );
+  ok('the friends tab starts on friend reviews', (await reviewsText()).includes('ColinVolt'));
+  await gd.getByRole('button', { name: 'All', exact: true }).click();
+  await gd.waitForTimeout(400);
+  const swapped = await reviewsText();
+  ok(
+    'the review tabs swap the list',
+    swapped.includes('MorningCoffee') && !swapped.includes('ColinVolt'),
+  );
+
+  // A tracked game's footer names its status and opens the sheet in the other
+  // mode — updating what is already tracked, not adding it again.
+  ok('a tracked game names its status in the footer', await ghas('Finished'));
+  // The only chevron on the screen — the footer's own status button.
+  await gd.locator('button', { hasText: '▾' }).click();
+  await gd.waitForTimeout(400);
+  ok('the footer opens the sheet in status mode', await ghas('Update Elden Ring'));
+
+  await gd.getByRole('button', { name: 'Did not finish' }).click();
+  await gd.waitForTimeout(600);
+  ok('the status sheet carries dnf through', await ghas('did not finish'));
+
+  await gd.getByLabel('Back', { exact: true }).click();
+  await gd.waitForTimeout(400);
+  ok('back leaves game detail for Discover', await ghas('What to play next'));
+  await gd.close();
+}
+
+// ── The review survives a cold launch ─────────────────────────
+// `itemStatus` persists, so without the review persisting too the app would
+// remember you finished the game, forget your verdict, and ask "How was it?"
+// about something you'd already reviewed.
+{
+  const rv = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const rhas = async (t) => (await rv.locator('.screen').innerText()).includes(t);
+
+  await rv.goto(`${BASE}/?reset`, { waitUntil: 'networkidle' });
+  await rv.goto(`${BASE}/?screen=detail`, { waitUntil: 'networkidle' });
+  await rv.waitForTimeout(500);
+  await rv.getByRole('button', { name: 'Add to list' }).click();
+  await rv.waitForTimeout(400);
+  await rv.getByRole('button', { name: 'Mark as finished' }).click();
+  await rv.waitForTimeout(1000);
+  await rv.getByRole('button', { name: 'Loved', exact: true }).click();
+  await rv.getByLabel('Your review').fill('Worth every hour.');
+  await rv.waitForTimeout(150);
+  await rv.getByRole('button', { name: 'Post review' }).click();
+  await rv.waitForTimeout(600);
+
+  await rv.goto(`${BASE}/?screen=detail`, { waitUntil: 'networkidle' });
+  await rv.waitForTimeout(700);
+  ok(
+    'a posted review survives a cold launch',
+    (await rhas('Loved it')) && (await rhas('Worth every hour.')) && !(await rhas('How was it?')),
+  );
+
+  // An unposted draft rides along on the same slice, so picking a rating and
+  // walking away doesn't lose it either.
+  await rv.getByRole('button', { name: /^Edit/ }).click();
+  await rv.waitForTimeout(400);
+  await rv.getByLabel('Your review').fill('Second thoughts, still great.');
+  await rv.waitForTimeout(250);
+  await rv.goto(`${BASE}/?screen=detail`, { waitUntil: 'networkidle' });
+  await rv.waitForTimeout(700);
+  ok(
+    'an unposted draft survives too',
+    (await rv.getByLabel('Your review').inputValue()) === 'Second thoughts, still great.' &&
+      (await rv.getByRole('button', { name: 'Loved', exact: true }).getAttribute('aria-pressed')) ===
+        'true',
+  );
+  await rv.close();
+}
+
 // ── Back navigation ───────────────────────────────────────────
 // Installed there's no browser chrome, so Android's back button goes to the OS.
 // Each dismissible layer owns a history entry so back closes it instead of
@@ -318,6 +1044,113 @@ for (const step of ['intro1', 'intro2', 'intro3', 'intro4']) {
   await nav.waitForTimeout(700);
   ok('closing in-app leaves no orphan history entry', nav.url().startsWith('about:blank'));
   await nav.close();
+}
+
+// ── Back navigation through the library ───────────────────────
+// The library stacks two panels on top of a tab, so back has three things to
+// unwind before it may leave. Each must come off on its own press, and a panel
+// mid-slide has to count as already gone — otherwise closing one pushes a
+// fresh entry instead of spending the one it owns, and back starts no-opping.
+{
+  const lnav = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const lhas = async (t) => (await lnav.locator('.screen').innerText()).includes(t);
+  await lnav.goto('about:blank');
+  await lnav.goto(`${BASE}/?screen=library:lists`, { waitUntil: 'networkidle' });
+  await lnav.waitForTimeout(600);
+
+  await lnav.locator('button', { hasText: 'Favorite Games' }).click();
+  await lnav.waitForTimeout(600);
+  await lnav.getByLabel('Edit list').click();
+  await lnav.waitForTimeout(500);
+
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok(
+    'back closes the list editor first',
+    !(await lhas('Edit list')) && (await lhas('Ranking of my favorite games')),
+  );
+
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok('back then closes the list detail', !(await lhas('Ranking of my favorite games')));
+
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok('back then leaves the library for Discover', await lhas('What to play next'));
+
+  // Three layers opened, three retired: one more press leaves the app.
+  await lnav.goBack();
+  await lnav.waitForTimeout(600);
+  ok('the library stack leaves no orphan history entries', lnav.url().startsWith('about:blank'));
+  await lnav.close();
+}
+
+// ── Back navigation through friends ───────────────────────────
+// Both friends layers animate out, and neither may be counted while it's
+// leaving: the sheet fades for 280ms and the add panel slides for 300ms. Count
+// one of those and closing it pushes a fresh entry instead of spending its own,
+// which a later back press then silently swallows.
+{
+  const fnav = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const fhas = async (t) =>
+    (await fnav.locator('.screen').innerText()).toLowerCase().includes(t.toLowerCase());
+  await fnav.goto('about:blank');
+  await fnav.goto(`${BASE}/?screen=friends`, { waitUntil: 'networkidle' });
+  await fnav.waitForTimeout(600);
+
+  await fnav.getByLabel('Friends list').click();
+  await fnav.waitForTimeout(450);
+  await fnav.goBack();
+  await fnav.waitForTimeout(600);
+  ok(
+    'back closes the friends sheet first',
+    !(await fhas('8 Friends · 5 online')) && (await fhas('This week')),
+  );
+
+  await fnav.getByLabel('Add friends').click();
+  await fnav.waitForTimeout(450);
+  await fnav.goBack();
+  await fnav.waitForTimeout(700);
+  ok('back then closes the add panel', !(await fhas('Or invite directly')));
+
+  await fnav.goBack();
+  await fnav.waitForTimeout(600);
+  ok('back then leaves friends for Discover', await fhas('What to play next'));
+
+  // Two layers opened, two retired: one more press leaves the app.
+  await fnav.goBack();
+  await fnav.waitForTimeout(600);
+  ok('the friends stack leaves no orphan history entries', fnav.url().startsWith('about:blank'));
+  await fnav.close();
+}
+
+// ── Back navigation through the profile ───────────────────────
+// openLayers() counted the editor on `prEditOpen` alone, with no `…In` guard —
+// so while the sheet animated out it pushed a fresh entry instead of spending
+// its own, and the next back press silently did nothing.
+{
+  const pnav = await browser.newPage({ viewport: { width: 402, height: 874 } });
+  const phas = async (t) =>
+    (await pnav.locator('.screen').innerText()).toLowerCase().includes(t.toLowerCase());
+  await pnav.goto('about:blank');
+  await pnav.goto(`${BASE}/?screen=profile`, { waitUntil: 'networkidle' });
+  await pnav.waitForTimeout(600);
+
+  await pnav.getByRole('button', { name: 'Edit profile' }).click();
+  await pnav.waitForTimeout(500);
+  await pnav.goBack();
+  await pnav.waitForTimeout(700);
+  ok('back closes the profile editor first', !(await phas('Tap to replace')) && (await phas('ColinVolt')));
+
+  await pnav.goBack();
+  await pnav.waitForTimeout(600);
+  ok('back then leaves the profile for Discover', await phas('What to play next'));
+
+  // One layer opened, one retired: the next press leaves the app.
+  await pnav.goBack();
+  await pnav.waitForTimeout(600);
+  ok('the profile stack leaves no orphan history entries', pnav.url().startsWith('about:blank'));
+  await pnav.close();
 }
 
 // ── Installed-app viewport height ─────────────────────────────

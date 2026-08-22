@@ -8,7 +8,7 @@ import { IconClose, IconShare } from './icons';
  * nothing tells the user that. This is that nothing, filled in.
  *
  * Shown once, on Discover rather than mid-onboarding — by then the user has
- * picked ten games and has something worth keeping.
+ * picked their played games and has something worth keeping.
  */
 
 /** How long to let the screen settle before sliding the hint in. */

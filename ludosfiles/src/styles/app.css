@@ -34,8 +34,24 @@ body {
   box-sizing: border-box;
 }
 
+/* `.screen` establishes the app's text colour, but a button doesn't inherit
+   either colour or font from its container — the UA gives it `buttontext`,
+   which is black. Any button that doesn't name its own colour is meant to
+   carry the screen's. */
 button {
   font-family: inherit;
+  color: inherit;
+}
+
+/* Tapping anything on a touch device paints the UA's tap highlight over it —
+   translucent blue in Chrome, grey in Safari — which reads as a blue flash on
+   a cover the moment you touch it. The app draws its own feedback (`:active`
+   fills, the card lift, whatever the tap opens), so the highlight is only ever
+   a second, off-palette one. Set on the root because the property inherits,
+   and the flash belongs to the element you touched, not to the cover inside
+   it: scoping it to covers would leave chips and the tab bar still flashing. */
+html {
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
@@ -227,6 +243,24 @@ a:hover {
   background: var(--surface-3);
 }
 
+/* Search's clear button: one step darker than `.u-quiet` above, which is
+   where the prototype puts it. */
+.u-clear:hover {
+  background: var(--surface-3);
+  color: var(--text-primary);
+}
+
+/* Search's browse rows — text on the page background, with nothing to warm, so
+   the whole row dims instead. */
+.u-fade:hover {
+  opacity: 0.72;
+}
+
+/* A row that only warms its background — the friends sheet's people list. */
+.u-row-soft:hover {
+  background: var(--surface-2);
+}
+
 .u-lift {
   transition:
     transform 160ms var(--ease),
@@ -257,6 +291,37 @@ a:hover {
 
 .u-tab:hover {
   color: var(--text-secondary);
+}
+
+/* Floating controls over Game detail's hero art — already translucent, so
+   hover deepens the tint rather than changing colour. */
+.u-hero-btn:hover {
+  background: rgba(18, 11, 13, 0.75);
+}
+
+/* The settings button over the profile banner — a darker scrim than the hero
+   buttons above, so hover deepens its own tint rather than borrowing theirs. */
+.u-scrim-btn:hover {
+  background: rgba(8, 5, 6, 0.75);
+}
+
+/* Text-only buttons: a list card's title link, Cancel, "Search in list". */
+.u-link:hover {
+  color: var(--text-primary);
+}
+
+.u-link-accent:hover {
+  color: var(--accent-400);
+}
+
+/* An input or textarea that warms its border while it has focus. */
+.u-focus-accent:focus {
+  border-color: var(--border-accent);
+}
+
+/* A card that only firms up its border on hover. */
+.u-border-hover:hover {
+  border-color: var(--border-strong);
 }
 
 .u-underline:hover {

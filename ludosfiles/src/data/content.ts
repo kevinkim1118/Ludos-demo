@@ -24,13 +24,19 @@ export interface Review {
   text: string;
 }
 
-/** Sample reviews on intro screen 4. */
+/**
+ * Sample reviews on intro screen 4.
+ *
+ * The archetype chip is a taste-alignment label, not a title — "The" reads
+ * oddly at chip size, so it's dropped here. `CONFIG.archetype` on the result
+ * screen keeps its "The"; that one *is* a title.
+ */
 export const REVIEWS: Review[] = [
   {
     initials: 'CV',
     slotId: 'cv-review-1',
     name: 'ColinVolt',
-    archetype: 'The Completionist',
+    archetype: 'Completionist',
     meta: 'Finished · Dec 2024',
     verdict: 'Really liked it',
     pillClass: 'ds-sentiment-pill--really-liked',
@@ -40,7 +46,7 @@ export const REVIEWS: Review[] = [
     initials: 'ZF',
     slotId: 'cv-review-2',
     name: 'ZenithForce',
-    archetype: 'The Completionist',
+    archetype: 'Completionist',
     meta: 'Finished · Dec 2024',
     verdict: 'Really liked it',
     pillClass: 'ds-sentiment-pill--really-liked',
@@ -50,7 +56,7 @@ export const REVIEWS: Review[] = [
     initials: 'MA',
     slotId: 'cv-review-3',
     name: 'Marcus1994',
-    archetype: 'The Explorer',
+    archetype: 'Explorer',
     meta: 'Finished · Nov 2024',
     verdict: 'Liked it',
     pillClass: 'ds-sentiment-pill--liked',
@@ -90,6 +96,8 @@ export const RAILS: {
     sub: 'Recently logged by people you follow',
     requiresFriends: true,
     items: [
+      // The one rail card that opens Game detail rather than the status sheet.
+      { k: 'eldenring', n: 'Elden Ring', p: 'PC · PS5' },
       { k: 'hades', n: 'Hades II', p: 'PC · Switch' },
       { k: 'pizzatower', n: 'Pizza Tower', p: 'PC' },
       { k: 'citizensleeper', n: 'Citizen Sleeper', p: 'PC · Switch' },
@@ -117,7 +125,7 @@ export const RAILS: {
     title: 'Widely played right now',
     sub: "What's popular and trending recently",
     items: [
-      { k: 'bg3', n: 'Baldur’s Gate 3', p: 'PC · PS5 · Xbox' },
+      { k: 'bg3', n: "Baldur's Gate 3", p: 'PC · PS5 · Xbox' },
       { k: 'firstlight', n: '007 First Light', p: 'PC · PS5' },
       { k: 'subnautica', n: 'Subnautica 2', p: 'PC · Xbox' },
       { k: 'forza', n: 'Forza Horizon 6', p: 'PC' },

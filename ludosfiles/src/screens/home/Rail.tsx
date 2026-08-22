@@ -1,5 +1,10 @@
 import { Cover } from '../../components/Cover';
-import { IconBookmark, IconCheckWide, IconPlayLarge } from '../../components/icons';
+import {
+  IconBookmark,
+  IconCheckWide,
+  IconCircleSlash,
+  IconPlayLarge,
+} from '../../components/icons';
 import type { RailItem } from '../../data/content';
 import type { GameStatus } from '../../state/types';
 
@@ -19,6 +24,8 @@ function StatusBadge({ status }: { status: GameStatus | undefined }) {
   if (status === 'backlog') return <span style={badgeBase}><IconBookmark size={15} strokeWidth={1.8} /></span>;
   if (status === 'playing') return <span style={badgeBase}><IconPlayLarge size={15} /></span>;
   if (status === 'finished') return <span style={badgeBase}><IconCheckWide size={15} /></span>;
+  if (status === 'dnf')
+    return <span style={badgeBase}><IconCircleSlash size={15} strokeWidth={1.9} /></span>;
 
   return (
     <span
@@ -52,6 +59,8 @@ interface RailProps {
   show: boolean;
   itemStatus: Record<string, GameStatus>;
   onOpenSheet: (item: RailItem, slotId: string) => void;
+  /** Tapping the card itself. Only Elden Ring has a detail screen to open. */
+  onOpen: (item: RailItem) => void;
   onStub: () => void;
 }
 
@@ -63,10 +72,11 @@ export function Rail({
   show,
   itemStatus,
   onOpenSheet,
+  onOpen,
   onStub,
 }: RailProps) {
   return (
-    <section style={{ marginBottom: 22 }}>
+    <section style={{ marginTop: 30, marginBottom: 30 }}>
       <div
         style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 18px', marginBottom: 3 }}
       >
@@ -94,7 +104,7 @@ export function Rail({
               <div
                 key={item.k}
                 className="u-lift"
-                onClick={onStub}
+                onClick={() => onOpen(item)}
                 style={{
                   width: 138,
                   flex: 'none',

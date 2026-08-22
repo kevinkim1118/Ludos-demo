@@ -1,12 +1,22 @@
 # Ludos — project state
 
-Orientation for a new session. Everything the original handoff asked for is
-built, deployed and verified; this now describes what exists, what's
-deliberately left alone, and the small number of things still open.
+Orientation for a new session. This describes what exists, what's deliberately
+left alone, and the small number of things still open.
 
 **Live:** https://ludos-demo.vercel.app — deploys from `main` on push.
-**Branch:** work from `main`. `feat/pwa` and `feat/pwa-polish` are both fully
-merged and safe to delete.
+**Branch:** `feat/delta-001`, pushed to `origin` on 2026-08-22 for a Vercel
+preview. Delta 001 is complete and committed there but is **not merged and not
+deployed to production** — the live site is still the pre-delta build.
+
+**The merge is not a fast-forward.** `origin/main` carries three
+"Add files via upload" commits (GitHub web UI, 2026-08-19) that local `main`
+never had: `HANDOFF.md` and the `project/` design bundle. Check `origin/main`,
+not local `main`, before planning the merge. The two design files —
+`project/Prototype.dc.html` and `project/image-manifest.js` — are already
+byte-identical to this branch's copies, so they merge silently; `HANDOFF.md`
+differs and is the one real conflict to resolve by hand.
+
+`feat/pwa` and `feat/pwa-polish` are fully merged and safe to delete.
 
 ---
 
@@ -41,19 +51,33 @@ bundle in `project/`, conversations in `chats/`), then implemented as a real app
 **Stack:** React 19 + Vite 7 + TypeScript. Node 22. No router, no state
 library — one `useReducer`. Static build, no server. Installable PWA.
 
-**Scope:** implements `project/Prototype.dc.html` only — three flows:
+**Scope:** implements `project/Prototype.dc.html` — eight flows. Delta 001
+completed the set; **there are no stub screens left**, and every tab reaches a
+real screen. `Flow` in `state/types.ts` is the authoritative list:
 
-- **Onboarding** — 4 intro screens → played-games picker (unlocks at 10
-  selections) → analysis beat → player-type result with seeded backlog → done
-- **Discover** — pick card with "Another" re-roll, flips to "Currently playing"
-  with a status dropdown; head-to-head entry; three trust-ladder rails
-  (friends → taste → global); status sheet on any `+`
+- **Onboarding** — 4 intro screens → played-games picker (unlocks at 5
+  selections, `PLAYED_MINIMUM`) → analysis beat → player-type result with seeded
+  backlog → done
+- **Discover** — pick card with "Another" re-roll, flips to "Currently playing";
+  head-to-head entry; three trust-ladder rails (friends → taste → global);
+  status sheet on any `+`
 - **Head-to-head** — mood → winner-stays duel → outcome → mark as playing
+- **Game detail** — verdict card, review prompt (rate → write → post, with a
+  durable draft), friend activity, discovery rail
+- **Library** — tracked games and Lists, with list detail and a list editor
+- **Friends** — friend reviews and activity, an add panel, and a profile sheet
+- **Profile** — stats, Lists tab that jumps into the Library, and in-place edit
+- **Search** — browse sections and a result grid, reaching the same status sheet
 
-The Library / Friends / Search / Profile tabs are **deliberate stubs** that fire
-a "Not available in this demo" toast, matching the prototype. Full designs for
-those screens exist as separate `.dc.html` files in `project/` if they're ever
-wanted.
+The tab bar navigates between five of these (`TAB_FLOWS`); `detail` and `h2h`
+are pushed on top. Back unwinds the topmost layer first — see `useBackNavigation`.
+
+**"No stubs" means no stub _screens_.** `actions.demo()` — the "Not available in
+this demo" toast — is still alive and wired to plenty of individual controls
+inside the real screens (overflow menus, secondary buttons, most rail tiles).
+That's the prototype's own behaviour, not unfinished work. The one worth knowing
+about: `Discover.tsx` opens Game detail from **Elden Ring only**; every other
+rail item toasts.
 
 ## Commands
 
@@ -89,13 +113,18 @@ src/
     standaloneHeight.ts  Corrects iOS's wrong viewport height when installed
     appUpdate.ts         Registers the worker, reports a waiting build
   data/
-    games.ts             GAMES, SEED, PLAYED_DB, PLAYED_BLANKS, intents
+    games.ts             GAMES, SEED, PLAYED_DB, PLAYED_BLANKS, intents,
+                         PLAYED_MINIMUM, normalize()
     content.ts           Rails, reviews, taste axes, copy
+    library.ts  detail.ts  friends.ts  profile.ts  search.ts
+                         Per-screen fixtures added by Delta 001
     covers.ts            GENERATED — do not hand-edit
-  components/            Cover, PhoneShell, BottomSheet, Toast, IosInstallHint,
+  components/            Cover, PhoneShell, BottomSheet, StatusSheet, Toast,
+                         SentimentPill, VerdictBar, IosInstallHint,
                          UpdatePrompt, icons
   screens/
-    onboarding/  home/  h2h/
+    onboarding/  home/ (incl. TabBar)  h2h/
+    detail/  library/  friends/  profile/  search/
   styles/
     ludos.css            Design system, vendored verbatim — do not hand-edit
     fonts.css            GENERATED by scripts/fetch-fonts.mjs
@@ -112,7 +141,8 @@ scripts/
   pack-single.mjs        npm run pack
   smoke.mjs              npm run smoke
 public/
-  images/                18 decorative marquee tiles (all that's left)
+  images/                18 decorative marquee tiles (disc-r*), plus the
+                         Library/Profile/detail art Delta 001 added (cv-*)
   covers/                Full-res 600×900 drop-ins (see its README)
   icons/                 GENERATED by scripts/gen-icons.mjs
   splash/                GENERATED — iOS launch images
@@ -122,12 +152,19 @@ public/
 ## Verified state
 
 - `npm run build` and `npm run typecheck` clean
-- All **61 smoke checks pass**, zero console errors
+- All **163 smoke checks pass**, zero console errors, no page errors
 - The update prompt was driven against a genuine second build: banner on a real
   waiting worker, handover on Reload, nothing left waiting afterwards
 - Deployed headers confirmed correct; offline behaviour confirmed against
   production
 - Installed and confirmed working on a real iPhone
+
+The build, typecheck and smoke results above are current for `feat/delta-001`.
+The last four — update prompt, headers, offline, real iPhone — were verified
+against the **deployed pre-delta build** and have not been re-run since. The
+service worker can't be exercised by `vite preview` in a sandboxed browser, so
+re-check it on a Vercel preview deployment before merging, comparing the built
+asset hash rather than grepping.
 
 ---
 
@@ -258,6 +295,14 @@ Nothing blocking. In rough order of value:
 - **The 18 marquee tiles** on the onboarding carousel are still on the design
   tool's low-resolution exports. They're decorative and heavily masked, so it
   has never looked wrong.
+- **Returning visitors lose one BG3 marking when the delta deploys.** Delta 001
+  straightened the curly apostrophe in `content.ts`, but `itemStatus` is keyed
+  by raw display name and `VERSION` stayed at `1`, so saves already in people's
+  browsers keep the old curly key — it now matches nothing and BG3 renders
+  unmarked. Verified against a seeded pre-delta save: the app boots clean and
+  restores everything else, and re-marking BG3 writes the straight key and
+  self-heals. Left alone deliberately — a `VERSION` bump would discard every
+  save and replay onboarding for everyone, which is worse.
 
 ---
 
@@ -267,10 +312,15 @@ Nothing blocking. In rough order of value:
   opens it — `onOpenTime` was never wired into the template in the original
   prototype either (a leftover from the Library port). `state.time` still drives
   the pick card's session-fit line, defaulting to "a free evening".
-- **`CONFIG.showRecommendedCard` and `CONFIG.friendsConnected` default to
-  `false`** (`src/config.ts`), matching the prototype's saved tweak state. So
-  the "Recommended for you" spotlight is hidden and the friends rail shows its
-  cold-start prompt.
+- **`CONFIG.showRecommendedCard` defaults to `false`** (`src/config.ts`),
+  matching the prototype's saved tweak state, so the "Recommended for you"
+  spotlight is hidden.
+- **`CONFIG.friendsConnected` defaults to `true`** — changed by Delta 001, and
+  the one place the delta knowingly overrode its own "do not change" list. The
+  connected state is the only route from Discover into Game detail, so leaving
+  it `false` made a whole screen unreachable. Read the exported
+  `friendsConnected` binding rather than `CONFIG.friendsConnected` directly, so
+  the `?friends` / `?friends=0` dev flag reaches every friend-gated surface.
 - **`cv-review-1/2/3` avatars render initials** by design. `<Cover>` falls back
   gracefully.
 - **`src/styles/ludos.css` is vendored verbatim** from `project/_ds/`. Don't
@@ -283,7 +333,7 @@ Nothing blocking. In rough order of value:
 
 ## Cover art
 
-All 38 registry keys now have 600×900 drop-ins in `public/covers/`; nothing
+All 45 registry keys now have 600×900 drop-ins in `public/covers/`; nothing
 falls back to the design tool's exports any more. The exports were ~240 px tall
 after being recompressed three times to fit a 2 MB cap in the design tool —
 roughly 2× too small for a 3× phone screen. To replace a cover, drop

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+import { GD_NAME, type GdTab, type Tone } from '../data/detail';
+import { FR_INVITE_LINK, type FriendsFilter } from '../data/friends';
 import { GAMES, type Intent } from '../data/games';
 import { hydrate, serialize, write } from './persistence';
 import {
-  activePickName,
+  activePickTarget,
   backlogGames,
   currentPick,
   initialState,
@@ -10,7 +12,28 @@ import {
   reducer,
   type Action,
 } from './reducer';
-import type { GameStatus, ObStep, PlayingItem, SheetTarget, Side, State } from './types';
+import type { LibSeg } from '../data/library';
+import type { PrListSort } from '../data/profile';
+import type {
+  GameStatus,
+  LibView,
+  ObStep,
+  Overlay,
+  PlayingItem,
+  ProfileTab,
+  SheetTarget,
+  Side,
+  State,
+  TabFlow,
+} from './types';
+
+/** Toast copy for a status set from the sheet's status mode. */
+function statusToast(status: GameStatus, name: string): string {
+  if (status === 'finished') return `Marked ${name} as finished`;
+  if (status === 'backlog') return `Moved ${name} to backlog`;
+  if (status === 'dnf') return `Marked ${name} as did not finish`;
+  return `Now playing ${name}`;
+}
 
 /**
  * Animation and flow timings, in ms. These are load-bearing: sheets and the
@@ -19,6 +42,10 @@ import type { GameStatus, ObStep, PlayingItem, SheetTarget, Side, State } from '
  */
 const TIMING = {
   toast: 1900,
+  /** One tick out of frame before a sliding panel moves, so the transition runs. */
+  panelEnter: 40,
+  /** Matches the `left` / `transform` transitions on the library panels. */
+  panelExit: 300,
   /** "Analyzing what you've played…" before the result screen. */
   reading: 2400,
   /** Highlight the chosen card before the next matchup loads. */
@@ -26,6 +53,8 @@ const TIMING = {
   /** Cross-fade out, swap the pick, fade back in. */
   pickFade: 180,
   sheetClose: 280,
+  /** After the sheet's close animation, so the review prompt has mounted. */
+  reviewPromptScroll: 320,
   spotDismiss: 380,
   /** Pick card's entrance after landing back on Discover. */
   pickIntroFromDuel: 1000,
@@ -42,7 +71,17 @@ type TimerKey =
   | 'timeSheet'
   | 'pickIntro'
   | 'spot'
-  | 'scroll';
+  | 'scroll'
+  | 'libDetail'
+  | 'libDetailIn'
+  | 'libEdit'
+  | 'libEditIn'
+  | 'frSheet'
+  | 'frAdd'
+  | 'frAddIn'
+  | 'prEdit'
+  | 'prEditIn'
+  | 'gdScroll';
 
 export function useLudos() {
   const [state, dispatch] = useReducer(reducer, initialState, hydrate);
@@ -59,6 +98,9 @@ export function useLudos() {
         upNext: state.upNext,
         playingItem: state.playingItem,
         played: state.played,
+        gdRating: state.gdRating,
+        gdReviewText: state.gdReviewText,
+        gdPosted: state.gdPosted,
       }),
     [
       state.onboardingComplete,
@@ -67,6 +109,9 @@ export function useLudos() {
       state.upNext,
       state.playingItem,
       state.played,
+      state.gdRating,
+      state.gdReviewText,
+      state.gdPosted,
     ],
   );
 
@@ -81,6 +126,10 @@ export function useLudos() {
 
   const timers = useRef<Partial<Record<TimerKey, ReturnType<typeof setTimeout>>>>({});
   const homeScroll = useRef<HTMLDivElement>(null);
+  // Game detail's scroller and its review prompt, so marking the game finished
+  // can scroll the newly-mounted prompt into view.
+  const detailScroll = useRef<HTMLDivElement>(null);
+  const reviewPrompt = useRef<HTMLDivElement>(null);
 
   const setTimer = useCallback((key: TimerKey, fn: () => void, ms: number) => {
     clearTimeout(timers.current[key]);
@@ -129,6 +178,73 @@ export function useLudos() {
     setTimer('timeSheet', () => dispatch({ type: 'time/closed' }), TIMING.sheetClose);
   }, [setTimer]);
 
+  const closeLibDetail = useCallback(() => {
+    if (!stateRef.current.libDetailOpen) return;
+    dispatch({ type: 'lib/closingDetail' });
+    setTimer('libDetail', () => dispatch({ type: 'lib/closedDetail' }), TIMING.panelExit);
+  }, [setTimer]);
+
+  /** Cancel discards the drafts; Save commits them before the panel leaves. */
+  const closeLibEdit = useCallback(
+    (save: boolean) => {
+      if (!stateRef.current.libEditOpen) return;
+      if (save) dispatch({ type: 'lib/saveEdit' });
+      dispatch({ type: 'lib/closingEdit' });
+      setTimer('libEdit', () => dispatch({ type: 'lib/closedEdit' }), TIMING.panelExit);
+    },
+    [setTimer],
+  );
+
+  const closeFrSheet = useCallback(() => {
+    if (!stateRef.current.frSheet) return;
+    dispatch({ type: 'fr/closingSheet' });
+    setTimer('frSheet', () => dispatch({ type: 'fr/closedSheet' }), TIMING.sheetClose);
+  }, [setTimer]);
+
+  const closeFrAdd = useCallback(() => {
+    if (!stateRef.current.frAddOpen) return;
+    dispatch({ type: 'fr/closingAdd' });
+    setTimer('frAdd', () => dispatch({ type: 'fr/closedAdd' }), TIMING.panelExit);
+  }, [setTimer]);
+
+  /** Cancel discards the username and bio drafts; Save commits them. */
+  const closePrEdit = useCallback(
+    (save: boolean) => {
+      if (!stateRef.current.prEditOpen) return;
+      if (save) dispatch({ type: 'pr/saveEdit' });
+      dispatch({ type: 'pr/closingEdit' });
+      setTimer('prEdit', () => dispatch({ type: 'pr/closedEdit' }), TIMING.panelExit);
+    },
+    [setTimer],
+  );
+
+  /**
+   * Bring the "How was it?" prompt into view once the game is marked finished
+   * from Game detail. The card only mounts when the status lands, so this runs
+   * after the sheet's close animation — and it centres the card rather than
+   * pinning it to the top, so the rating buttons aren't flush with the edge.
+   */
+  const scrollToReviewPrompt = useCallback(
+    (status: GameStatus, name: string) => {
+      if (status !== 'finished') return;
+      if (stateRef.current.flow !== 'detail' || name !== GD_NAME) return;
+      setTimer(
+        'gdScroll',
+        () => {
+          const scroller = detailScroll.current;
+          const card = reviewPrompt.current;
+          if (!scroller || !card) return;
+          const cr = card.getBoundingClientRect();
+          const sr = scroller.getBoundingClientRect();
+          const top = scroller.scrollTop + cr.top - sr.top - (sr.height - cr.height) / 2;
+          scroller.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        },
+        TIMING.reviewPromptScroll,
+      );
+    },
+    [setTimer],
+  );
+
   const actions = useMemo(
     () => ({
       dispatch: (action: Action) => dispatch(action),
@@ -170,18 +286,133 @@ export function useLudos() {
         dispatch({ type: 'pick/startPlaying' });
         flash(`Now playing ${game.name}`);
       },
-      toggleStatusMenu: () => dispatch({ type: 'status/toggleMenu' }),
-      markPickFinished: () => {
-        const name = activePickName(stateRef.current);
-        dispatch({ type: 'pick/clearStatus', status: 'finished', name });
-        flash(`Marked ${name} as finished`);
-      },
-      moveToBacklog: () => {
-        const name = activePickName(stateRef.current);
-        dispatch({ type: 'pick/clearStatus', status: 'backlog', name });
-        flash(`Moved ${name} to backlog`);
+      /** The pick card's "Update Status" button — the sheet in status mode. */
+      openStatusSheet: () => {
+        clearTimer('sheet');
+        dispatch({
+          type: 'sheet/open',
+          target: { ...activePickTarget(stateRef.current), statusUpdate: true },
+        });
       },
       goCompare: () => dispatch({ type: 'flow/goCompare' }),
+
+      // ── navigation ──────────────────────────────────────────
+      navigate: (flow: TabFlow) => dispatch({ type: 'flow/go', flow }),
+      goDiscover: () => dispatch({ type: 'flow/go', flow: 'home' }),
+      openDetail: () => dispatch({ type: 'flow/go', flow: 'detail' }),
+      /**
+       * Used by back navigation, which knows what's open but not how each
+       * layer leaves. Every layer animates out, so back has to go through the
+       * same closer the in-app control does rather than dropping the flag.
+       */
+      closeOverlay: (overlay: Overlay) => {
+        if (overlay === 'libDetail') closeLibDetail();
+        else if (overlay === 'libEdit') closeLibEdit(false);
+        else if (overlay === 'frSheet') closeFrSheet();
+        else if (overlay === 'frAdd') closeFrAdd();
+        else if (overlay === 'prEdit') closePrEdit(false);
+        else dispatch({ type: 'overlay/close', overlay });
+      },
+
+      // ── library ─────────────────────────────────────────────
+      setLibView: (view: LibView) => dispatch({ type: 'lib/view', view }),
+      setLibSeg: (seg: LibSeg) => dispatch({ type: 'lib/seg', seg }),
+
+      openLibList: (name: string) => {
+        clearTimer('libDetail');
+        dispatch({ type: 'lib/openDetail', name });
+        setTimer('libDetailIn', () => dispatch({ type: 'lib/detailIn' }), TIMING.panelEnter);
+      },
+      closeLibList: closeLibDetail,
+
+      openLibEdit: () => {
+        clearTimer('libEdit');
+        dispatch({ type: 'lib/openEdit' });
+        setTimer('libEditIn', () => dispatch({ type: 'lib/editIn' }), TIMING.panelEnter);
+      },
+      cancelLibEdit: () => closeLibEdit(false),
+      saveLibEdit: () => closeLibEdit(true),
+
+      setLibEditTitle: (value: string) => dispatch({ type: 'lib/editTitle', value }),
+      setLibEditDesc: (value: string) => dispatch({ type: 'lib/editDesc', value }),
+      toggleLibRanked: () => dispatch({ type: 'lib/toggleOrdered' }),
+      toggleLibProfile: () => dispatch({ type: 'lib/toggleProfile' }),
+      libDragStart: (index: number) => dispatch({ type: 'lib/dragStart', index }),
+      libDragOver: (index: number) => dispatch({ type: 'lib/dragOver', index }),
+      libDragEnd: () => dispatch({ type: 'lib/dragEnd' }),
+
+      // ── friends ─────────────────────────────────────────────
+      setFrFilter: (filter: FriendsFilter) => dispatch({ type: 'fr/filter', filter }),
+
+      openFrSheet: () => {
+        clearTimer('frSheet');
+        dispatch({ type: 'fr/openSheet' });
+      },
+      closeFrSheet,
+
+      openFrAdd: () => {
+        clearTimer('frAdd');
+        dispatch({ type: 'fr/openAdd' });
+        setTimer('frAddIn', () => dispatch({ type: 'fr/addIn' }), TIMING.panelEnter);
+      },
+      closeFrAdd,
+      setFrAddQuery: (value: string) => dispatch({ type: 'fr/addQuery', value }),
+      requestFriend: (key: string) => {
+        dispatch({ type: 'fr/request', key });
+        flash('Friend request sent');
+      },
+
+      /**
+       * The clipboard API is unavailable over plain HTTP and in some embedded
+       * webviews. The toast fires either way — telling someone the copy failed
+       * is no more useful than the link they can already read on screen.
+       */
+      copyInvite: () => {
+        const done = () => flash('Invite link copied');
+        if (navigator.clipboard?.writeText) {
+          navigator.clipboard.writeText(FR_INVITE_LINK).then(done, done);
+        } else {
+          done();
+        }
+      },
+
+      // ── profile ─────────────────────────────────────────────
+      setPrTab: (tab: ProfileTab) => dispatch({ type: 'pr/tab', tab }),
+
+      openPrEdit: () => {
+        clearTimer('prEdit');
+        dispatch({ type: 'pr/openEdit' });
+        setTimer('prEditIn', () => dispatch({ type: 'pr/editIn' }), TIMING.panelEnter);
+      },
+      cancelPrEdit: () => closePrEdit(false),
+      savePrEdit: () => closePrEdit(true),
+      setPrUsernameDraft: (value: string) => dispatch({ type: 'pr/usernameDraft', value }),
+      setPrBioDraft: (value: string) => dispatch({ type: 'pr/bioDraft', value }),
+
+      setPrListSearch: (value: string) => dispatch({ type: 'pr/listSearch', value }),
+      setPrListSort: (sort: PrListSort) => dispatch({ type: 'pr/listSort', sort }),
+      togglePrListFilter: () => dispatch({ type: 'pr/toggleListFilter' }),
+
+      /**
+       * A profile list card opens the real Library list it maps to, which
+       * means leaving the Profile behind: back then closes the detail and
+       * returns to Discover, not here. The prototype behaves the same way.
+       */
+      openPrList: (libKey: string | null) => {
+        if (!libKey) {
+          demo();
+          return;
+        }
+        dispatch({ type: 'flow/go', flow: 'library' });
+        dispatch({ type: 'lib/view', view: 'lists' });
+        clearTimer('libDetail');
+        dispatch({ type: 'lib/openDetail', name: libKey });
+        setTimer('libDetailIn', () => dispatch({ type: 'lib/detailIn' }), TIMING.panelEnter);
+      },
+
+      // ── search ──────────────────────────────────────────────
+      setSrQuery: (value: string) => dispatch({ type: 'sr/query', value }),
+      setSrFocus: (value: boolean) => dispatch({ type: 'sr/focus', value }),
 
       dismissSpotlight: () => {
         if (stateRef.current.spotDismissing) return;
@@ -204,6 +435,20 @@ export function useLudos() {
         dispatch({ type: 'sheet/open', target });
       },
       closeSheet,
+
+      /**
+       * Status chosen from the sheet's status mode. Unlike the add sheet this
+       * clears the pick card outright — the game it was showing is no longer
+       * what's in flight.
+       */
+      setPickStatus: (status: GameStatus) => {
+        const name = stateRef.current.sheet?.name;
+        closeSheet();
+        if (!name) return;
+        dispatch({ type: 'pick/clearStatus', status, name });
+        flash(statusToast(status, name));
+        scrollToReviewPrompt(status, name);
+      },
 
       /** Status chosen from the add sheet. "Playing" also takes over the pick card. */
       sheetAction: (status: GameStatus, msg: string) => {
@@ -234,7 +479,22 @@ export function useLudos() {
 
         flash(msg);
         dispatch({ type: 'sheet/setStatus', name, status });
+        scrollToReviewPrompt(status, name);
       },
+
+      // ── game detail ─────────────────────────────────────────
+      setGdTab: (tab: GdTab) => dispatch({ type: 'gd/tab', tab }),
+      pickGdRating: (rating: Tone) => dispatch({ type: 'gd/rating', rating }),
+      setGdReviewText: (value: string) => dispatch({ type: 'gd/reviewText', value }),
+      postGdReview: () => {
+        if (!stateRef.current.gdRating) {
+          flash('Pick a rating first');
+          return;
+        }
+        dispatch({ type: 'gd/post' });
+        flash('Review posted — thanks for your take');
+      },
+      editGdReview: () => dispatch({ type: 'gd/editReview' }),
 
       // ── head-to-head ────────────────────────────────────────
       setIntent: (intent: Intent) => dispatch({ type: 'h2h/setIntent', intent }),
@@ -263,10 +523,24 @@ export function useLudos() {
       },
       h2hBack: () => dispatch({ type: 'h2h/back' }),
     }),
-    [flash, demo, setTimer, clearTimer, closeSheet, closeTimeSheet, scrollHomeTop],
+    [
+      flash,
+      demo,
+      setTimer,
+      clearTimer,
+      closeSheet,
+      closeTimeSheet,
+      closeLibDetail,
+      closeLibEdit,
+      closeFrSheet,
+      closeFrAdd,
+      closePrEdit,
+      scrollHomeTop,
+      scrollToReviewPrompt,
+    ],
   );
 
-  return { state, actions, homeScroll };
+  return { state, actions, homeScroll, detailScroll, reviewPrompt };
 }
 
 export type LudosActions = ReturnType<typeof useLudos>['actions'];
@@ -296,6 +570,43 @@ export function jumpPatch(state: State, target: string): Partial<State> | null {
       return { flow: 'home', upNext: game?.k ?? null, playingItem: null };
     }
     return { flow: 'home', upNext: null, playingItem: null };
+  }
+
+  // Landing on Search shows the browse rows, not whatever was last typed.
+  if (group === 'search') return { flow: 'search', srQuery: '' };
+
+  if (group === 'detail') return { flow: 'detail' };
+
+  // Each tab lands on itself with nothing it may have been left holding open.
+  if (group === 'profile') {
+    const tabs: ProfileTab[] = ['reviews', 'lists', 'activity'];
+    const prTab = tabs.find((t) => t === name) ?? 'reviews';
+    return { flow: 'profile', prTab, prEditOpen: false, prEditIn: false };
+  }
+
+  if (group === 'friends') {
+    const frFilter: FriendsFilter = 'all';
+    return {
+      flow: 'friends',
+      frFilter,
+      frSheet: false,
+      frSheetClosing: false,
+      frAddOpen: false,
+      frAddIn: false,
+      frAddQuery: '',
+    };
+  }
+
+  if (group === 'library') {
+    const libView: LibView = name === 'lists' ? 'lists' : 'library';
+    return {
+      flow: 'library',
+      libView,
+      libDetailOpen: false,
+      libDetailIn: false,
+      libEditOpen: false,
+      libEditIn: false,
+    };
   }
 
   if (group === 'h2h') {

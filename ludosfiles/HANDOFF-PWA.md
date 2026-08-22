@@ -4,9 +4,18 @@ Orientation for a new session. This describes what exists, what's deliberately
 left alone, and the small number of things still open.
 
 **Live:** https://ludos-demo.vercel.app — deploys from `main` on push.
-**Branch:** `feat/delta-001`. Delta 001 is complete and committed there as of
-2026-08-21 but is **not merged and not deployed** — the live site is still the
-pre-delta build. `main` has not moved, so the merge is a fast-forward.
+**Branch:** `feat/delta-001`, pushed to `origin` on 2026-08-22 for a Vercel
+preview. Delta 001 is complete and committed there but is **not merged and not
+deployed to production** — the live site is still the pre-delta build.
+
+**The merge is not a fast-forward.** `origin/main` carries three
+"Add files via upload" commits (GitHub web UI, 2026-08-19) that local `main`
+never had: `HANDOFF.md` and the `project/` design bundle. Check `origin/main`,
+not local `main`, before planning the merge. The two design files —
+`project/Prototype.dc.html` and `project/image-manifest.js` — are already
+byte-identical to this branch's copies, so they merge silently; `HANDOFF.md`
+differs and is the one real conflict to resolve by hand.
+
 `feat/pwa` and `feat/pwa-polish` are fully merged and safe to delete.
 
 ---
